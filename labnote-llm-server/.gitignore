@@ -1,0 +1,24 @@
+# Secrets and environment
+.env
+
+# Generated models and large artifacts
+gguf_models/
+*.gguf
+*.fp16
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+*.onnx
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+nohup.out
+
+# Editor / OS files
+.DS_Store
+Thumbs.db

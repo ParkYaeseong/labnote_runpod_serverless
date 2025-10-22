@@ -1,0 +1,62 @@
+name: Release and Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # conventional-changelog-cli가 전체 git 히스토리에 접근할 수 있도록 설정
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install -g conventional-changelog-cli standard-version
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.event.pusher.name }}"
+          git config --global user.email "${{ github.event.pusher.email }}"
+
+      - name: Bump version and create changelog
+        id: version_bump
+        run: |
+          # standard-version을 실행하여 버전을 올리고, 태그를 생성하며, CHANGELOG.md를 업데이트합니다.
+          # --skip.commit, --skip.tag 옵션으로 실제 커밋과 태그는 다음 단계에서 수행합니다.
+          standard-version --skip.commit --skip.tag
+          
+          # 새로 생성된 버전 번호를 출력 변수로 저장합니다.
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update FastAPI version in main.py
+        run: |
+          # Python 스크립트를 사용하여 main.py의 버전을 업데이트합니다.
+          # sed 명령어보다 더 안정적입니다.
+          python -c "import re; file_path='main.py'; content=open(file_path).read(); new_content=re.sub(r'(version=\")([^\"]+)(\")', r'\1${{ steps.version_bump.outputs.new_version }}\3', content); open(file_path, 'w').write(new_content)"
+
+      - name: Commit and Tag new version
+        run: |
+          git add .
+          git commit -m "chore(release): ${{ steps.version_bump.outputs.new_version }}"
+          git tag -a "v${{ steps.version_bump.outputs.new_version }}" -m "Release ${{ steps.version_bump.outputs.new_version }}"
+          git push --follow-tags
+          
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version_bump.outputs.new_version }}
+          release_name: Release v${{ steps.version_bump.outputs.new_version }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false

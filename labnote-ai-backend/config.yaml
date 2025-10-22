@@ -1,0 +1,37 @@
+models:
+  - name: "LabNote Backend Logic"
+    provider: openai
+    model: "labnote-backend"
+    apiBase: "http://127.0.0.1:8000/v1"
+    apiKey: "labnote"
+    title: "LabNote Backend"
+
+  - name: "Ollama Llama3.1 70B"
+    provider: openai
+    model: "llama3.1:70b"
+    apiBase: "http://127.0.0.1:11434/v1"
+    apiKey: "ollama"
+    title: "Ollama Llama3.1 70B"
+
+  - name: "Ollama GPT-OSS 120B"
+    provider: openai
+    model: "gpt-oss:120b"
+    apiBase: "http://127.0.0.1:11434/v1"
+    apiKey: "ollama"
+    title: "Ollama GPT-OSS 120B"
+
+contextProviders:
+  - name: "active_file_content"
+    class: "FileContextProvider"
+    params:
+      filepath: "{{active_file_filepath}}"
+
+slashCommands:
+  - name: "populate"
+    description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
+    prompt: |
+      /populate {{user_input}}
+      ```markdown
+      {{active_file_content}}
+      ```
+    model: "LabNote Backend Logic"

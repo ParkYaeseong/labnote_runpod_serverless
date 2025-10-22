@@ -1,0 +1,15 @@
+# Environments
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+__pycache__/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~

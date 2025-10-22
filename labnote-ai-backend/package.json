@@ -1,0 +1,6 @@
+{
+  "name": "labnote-ai-backend",
+  "version": "2.5.0",
+  "description": "Backend for LabNote AI Assistant",
+  "private": true
+}

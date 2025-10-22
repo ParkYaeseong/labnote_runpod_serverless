@@ -1,0 +1,48 @@
+version: '3.8'
+
+# Docker Compose for Labnote AI Assistant
+# This file sets up the necessary services (Ollama and Redis) for local development.
+
+services:
+  # Ollama Service: Runs Large Language Models locally.
+  ollama:
+    image: ollama/ollama
+    container_name: labnote-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Persists Ollama's data (downloaded models, etc.) on the host machine.
+      - ./ollama_data:/root/.ollama
+      # **개선점**: Modelfile을 컨테이너 내부의 별도 경로에 마운트하여 `ollama create` 명령어에서 사용합니다.
+      # This is a safer pattern than mounting directly into Ollama's internal directories.
+      - ./ollama_custom_models:/custom_models
+    tty: true
+    restart: unless-stopped
+    # For Nvidia GPU acceleration, uncomment the following section.
+    # Ensure you have the NVIDIA Container Toolkit installed.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Redis Stack Service: Acts as a high-performance vector database for our RAG pipeline.
+  redis:
+    image: redis/redis-stack:latest
+    container_name: labnote-redis
+    ports:
+      # Standard Redis port for application access.
+      - "6379:6379"
+      # Redis Insight GUI, accessible at http://localhost:8001
+      - "8001:8001"
+    volumes:
+      # Persists Redis data on the host machine.
+      - ./redis_data:/data
+    restart: unless-stopped
+
+# Named volumes for persistent data storage.
+volumes:
+  ollama_data:
+  redis_data:

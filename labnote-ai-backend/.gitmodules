@@ -1,0 +1,3 @@
+[submodule "sop"]
+	path = sop
+	url = https://github.com/sblabkribb/labnote-sops.git

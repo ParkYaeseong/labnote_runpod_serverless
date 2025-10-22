@@ -1,0 +1,54 @@
+name: Generate DPO Feedback from Labnote Commits
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 push 될 때만 실행
+    paths:
+      # ⭐️ 변경점: 감시할 경로를 'sop'에서 'labnote'로 수정
+      - 'labnote/**.md'
+
+jobs:
+  generate-feedback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install redis requests
+
+      - name: Get changed files in labnote/
+        id: changed-files
+        run: |
+          # ⭐️ 변경점: diff 대상을 'labnote' 디렉토리로 한정
+          echo "files=$(git diff --name-only HEAD^ HEAD -- 'labnote/**.md')" >> $GITHUB_OUTPUT
+
+      - name: Generate and Send DPO Data
+        env:
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          BACKEND_API_URL: ${{ secrets.BACKEND_API_URL }}
+          COMMIT_AUTHOR: ${{ github.event.pusher.name }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          if [ -z "${{ steps.changed-files.outputs.files }}" ]; then
+            echo "No markdown files changed in labnote/. Skipping."
+            exit 0
+          fi
+          
+          for file in ${{ steps.changed-files.outputs.files }}; do
+            # 이전 버전의 파일 내용을 임시 파일로 저장
+            git show HEAD^:"$file" > prev_version.md
+            
+            # Python 스크립트 실행 (스크립트 자체는 수정할 필요 없음)
+            python scripts/generate_dpo_from_git.py --prev-file prev_version.md --curr-file "$file"
+          done
