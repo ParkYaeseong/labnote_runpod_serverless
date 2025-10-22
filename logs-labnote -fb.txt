@@ -1,0 +1,359 @@
+2025-10-22T08:37:35.912529080Z ==========
+2025-10-22T08:37:35.912562240Z == CUDA ==
+2025-10-22T08:37:35.912633051Z ==========
+2025-10-22T08:37:35.917635523Z CUDA Version 12.8.1
+2025-10-22T08:37:35.919258932Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2025-10-22T08:37:35.920798651Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+2025-10-22T08:37:35.920803582Z By pulling and using the container, you accept the terms and conditions of this license:
+2025-10-22T08:37:35.920807311Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+2025-10-22T08:37:35.920812771Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+2025-10-22T08:37:35.939670054Z --- [DIAGNOSIS] Verifying storage mounts ---
+2025-10-22T08:37:35.939694894Z >>> Displaying mounted filesystems (df -h):
+2025-10-22T08:37:35.944068877Z Filesystem                    Size  Used Avail Use% Mounted on
+2025-10-22T08:37:35.944078657Z overlay                        20G   15M   20G   1% /
+2025-10-22T08:37:35.944081497Z tmpfs                          64M     0   64M   0% /dev
+2025-10-22T08:37:35.944083337Z mfs#ca-mtl-3.runpod.net:9421  503T  376T  128T  75% /runpod-volume
+2025-10-22T08:37:35.944086488Z shm                            55G     0   55G   0% /dev/shm
+2025-10-22T08:37:35.944088008Z /dev/vda2                     6.4T  6.1T  293G  96% /etc/hosts
+2025-10-22T08:37:35.944089508Z /dev/vda1                      39G   11G   29G  27% /usr/bin/nvidia-smi
+2025-10-22T08:37:35.944091077Z tmpfs                         473G     0  473G   0% /sys/fs/cgroup
+2025-10-22T08:37:35.944092588Z tmpfs                         473G   12K  473G   1% /proc/driver/nvidia
+2025-10-22T08:37:35.944093977Z tmpfs                         473G  4.0K  473G   1% /etc/nvidia/nvidia-application-profiles-rc.d
+2025-10-22T08:37:35.944097788Z tmpfs                          95G  4.6M   95G   1% /run/nvidia-persistenced/socket
+2025-10-22T08:37:35.944099288Z tmpfs                         473G     0  473G   0% /proc/acpi
+2025-10-22T08:37:35.944100677Z tmpfs                         473G     0  473G   0% /proc/scsi
+2025-10-22T08:37:35.944102168Z tmpfs                         473G     0  473G   0% /sys/firmware
+2025-10-22T08:37:35.944103548Z tmpfs                         473G     0  473G   0% /sys/devices/virtual/powercap
+2025-10-22T08:37:35.944313621Z ---
+2025-10-22T08:37:35.944323571Z >>> Listing root directory contents (ls -la /):
+2025-10-22T08:37:35.948888557Z total 2967
+2025-10-22T08:37:35.948895967Z drwxr-xr-x    1 root   root         95 Oct 22 08:37 .
+2025-10-22T08:37:35.948898327Z drwxr-xr-x    1 root   root         95 Oct 22 08:37 ..
+2025-10-22T08:37:35.948899317Z -rwxr-xr-x    1 root   root          0 Oct 22 08:37 .dockerenv
+2025-10-22T08:37:35.948900317Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
+2025-10-22T08:37:35.948902527Z drwxr-xr-x    1 root   root         30 Oct 22 06:11 app
+2025-10-22T08:37:35.948903647Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
+2025-10-22T08:37:35.948904687Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
+2025-10-22T08:37:35.948909568Z drwxr-xr-x    2 root   root          6 Apr 22  2024 boot
+2025-10-22T08:37:35.948910708Z drwxr-xr-x    6 root   root        460 Oct 22 08:37 dev
+2025-10-22T08:37:35.948911908Z drwxr-xr-x    1 root   root         69 Oct 22 08:37 etc
+2025-10-22T08:37:35.948912828Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
+2025-10-22T08:37:35.948913778Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
+2025-10-22T08:37:35.948914748Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
+2025-10-22T08:37:35.948915838Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
+2025-10-22T08:37:35.948917618Z drwxr-xr-x    2 root   root          6 Jan 27  2025 media
+2025-10-22T08:37:35.948918658Z drwxr-xr-x    2 root   root          6 Jan 27  2025 mnt
+2025-10-22T08:37:35.948920068Z drwxr-xr-x    1 root   root         26 Oct 22 05:00 opt
+2025-10-22T08:37:35.948927528Z dr-xr-xr-x 3000 nobody nogroup       0 Oct 22 08:37 proc
+2025-10-22T08:37:35.948928788Z drwx------    1 root   root         32 Oct 22 05:21 root
+2025-10-22T08:37:35.948929608Z drwxr-xr-x    1 root   root         41 Oct 22 08:37 run
+2025-10-22T08:37:35.948930438Z drwxrwxrwx    5 root   root    3012995 Oct 21 07:36 runpod-volume
+2025-10-22T08:37:35.948931318Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
+2025-10-22T08:37:35.948932198Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
+2025-10-22T08:37:35.948933348Z drwxr-xr-x    2 root   root          6 Jan 27  2025 srv
+2025-10-22T08:37:35.948934208Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
+2025-10-22T08:37:35.948935048Z dr-xr-xr-x   13 nobody nogroup       0 Sep  1 08:42 sys
+2025-10-22T08:37:35.948936008Z drwxrwxrwt    1 root   root         10 Oct 22 06:11 tmp
+2025-10-22T08:37:35.948936848Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
+2025-10-22T08:37:35.948937678Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
+2025-10-22T08:37:35.948938538Z drwxr-xr-x    1 root   root         28 Oct  9 05:11 workspace
+2025-10-22T08:37:35.949148680Z ---
+2025-10-22T08:37:35.949167971Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
+2025-10-22T08:37:35.954314384Z total 8876
+2025-10-22T08:37:35.954339354Z drwxrwxrwx 5 root root 3012995 Oct 21 07:36 .
+2025-10-22T08:37:35.954344654Z drwxr-xr-x 1 root root      95 Oct 22 08:37 ..
+2025-10-22T08:37:35.954347494Z drwxrwxrwx 3 root root 2000397 Oct 21 07:36 .cache
+2025-10-22T08:37:35.954352524Z drwxrwxrwx 6 root root 1061195 Oct 21 07:34 labnote-Docker
+2025-10-22T08:37:35.954355594Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
+2025-10-22T08:37:35.954418005Z --- [DIAGNOSIS] Verification complete ---
+2025-10-22T08:37:35.962758758Z >>> vm.overcommit_memory set to 1 for Redis stability.
+2025-10-22T08:37:35.962770907Z >>> Starting core services...
+2025-10-22T08:37:35.967139841Z >>> Redis Stack Server started.
+2025-10-22T08:37:35.967349063Z >>> Waiting for Ollama server to be ready...
+2025-10-22T08:37:35.975984230Z     - Ollama not ready yet. Retrying in 2 seconds... (1/30)
+2025-10-22T08:37:35.981108873Z Starting redis-stack-server, database path /var/lib/redis-stack
+2025-10-22T08:37:35.991431710Z 67:C 22 Oct 2025 08:37:35.991 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+2025-10-22T08:37:35.991467080Z 67:C 22 Oct 2025 08:37:35.991 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+2025-10-22T08:37:35.991471760Z 67:C 22 Oct 2025 08:37:35.991 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=67, just started
+2025-10-22T08:37:35.991475140Z 67:C 22 Oct 2025 08:37:35.991 * Configuration loaded
+2025-10-22T08:37:35.992371952Z 67:M 22 Oct 2025 08:37:35.992 * monotonic clock: POSIX clock_gettime
+2025-10-22T08:37:35.995298498Z 67:M 22 Oct 2025 08:37:35.995 * Running mode=standalone, port=6379.
+2025-10-22T08:37:35.995542281Z 67:M 22 Oct 2025 08:37:35.995 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
+2025-10-22T08:37:35.996171078Z Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+2025-10-22T08:37:35.997110590Z 67:M 22 Oct 2025 08:37:35.997 * <search> Redis version found by RedisSearch : 7.4.6 - oss
+2025-10-22T08:37:35.997114220Z 67:M 22 Oct 2025 08:37:35.997 * <search> RediSearch version 2.10.20 (Git=5c09b69)
+2025-10-22T08:37:35.997115610Z 67:M 22 Oct 2025 08:37:35.997 * <search> Low level api version 1 initialized successfully
+2025-10-22T08:37:35.997165381Z 67:M 22 Oct 2025 08:37:35.997 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
+2025-10-22T08:37:35.997179231Z 67:M 22 Oct 2025 08:37:35.997 * <search> Initialized thread pools!
+2025-10-22T08:37:35.997219841Z 67:M 22 Oct 2025 08:37:35.997 * <search> Subscribe to config changes
+2025-10-22T08:37:35.997231362Z 67:M 22 Oct 2025 08:37:35.997 * <search> Enabled role change notification
+2025-10-22T08:37:35.997368483Z 67:M 22 Oct 2025 08:37:35.997 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
+2025-10-22T08:37:35.998622839Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
+2025-10-22T08:37:35.998628569Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
+2025-10-22T08:37:35.998632819Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
+2025-10-22T08:37:35.998636379Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> loaded server DUPLICATE_POLICY: block
+2025-10-22T08:37:35.998638489Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
+2025-10-22T08:37:35.998640549Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
+2025-10-22T08:37:35.998642879Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> Setting default series ENCODING to: compressed
+2025-10-22T08:37:35.998793971Z 67:M 22 Oct 2025 08:37:35.998 * <timeseries> Detected redis oss
+2025-10-22T08:37:35.998798081Z 67:M 22 Oct 2025 08:37:35.998 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
+2025-10-22T08:37:35.999292147Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Created new data type 'ReJSON-RL'
+2025-10-22T08:37:35.999334927Z 67:M 22 Oct 2025 08:37:35.999 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
+2025-10-22T08:37:35.999348917Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> version: 20809 git sha: unknown branch: unknown
+2025-10-22T08:37:35.999351937Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Exported RedisJSON_V1 API
+2025-10-22T08:37:35.999355997Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Exported RedisJSON_V2 API
+2025-10-22T08:37:35.999358647Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Exported RedisJSON_V3 API
+2025-10-22T08:37:35.999360547Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Exported RedisJSON_V4 API
+2025-10-22T08:37:35.999362337Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Exported RedisJSON_V5 API
+2025-10-22T08:37:35.999363918Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Enabled diskless replication
+2025-10-22T08:37:35.999370958Z 67:M 22 Oct 2025 08:37:35.999 * <ReJSON> Initialized shared string cache, thread safe: false.
+2025-10-22T08:37:35.999372658Z 67:M 22 Oct 2025 08:37:35.999 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
+2025-10-22T08:37:35.999375238Z 67:M 22 Oct 2025 08:37:35.999 * <search> Acquired RedisJSON_V5 API
+2025-10-22T08:37:35.999566291Z 67:M 22 Oct 2025 08:37:35.999 * <bf> RedisBloom version 2.8.7 (Git=unknown)
+2025-10-22T08:37:35.999653601Z Your new public key is:
+2025-10-22T08:37:35.999658832Z ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFk/BpIfUb/tAIO0S7GPSj/RHZ6yKNSLAhqUO+A6ONed
+2025-10-22T08:37:35.999661821Z 67:M 22 Oct 2025 08:37:35.999 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
+2025-10-22T08:37:36.000108667Z 67:M 22 Oct 2025 08:37:36.000 * <redisgears_2> Created new data type 'GearsType'
+2025-10-22T08:37:36.000250769Z 67:M 22 Oct 2025 08:37:36.000 * <redisgears_2> Detected redis oss
+2025-10-22T08:37:36.000321830Z 67:M 22 Oct 2025 08:37:36.000 # <redisgears_2> could not initialize RedisAI_InitError
+2025-10-22T08:37:36.000325820Z 67:M 22 Oct 2025 08:37:36.000 * <redisgears_2> Failed loading RedisAI API.
+2025-10-22T08:37:36.000327180Z 67:M 22 Oct 2025 08:37:36.000 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
+2025-10-22T08:37:36.000378950Z time=2025-10-22T08:37:36.000Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:INFO OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+2025-10-22T08:37:36.001266492Z 67:M 22 Oct 2025 08:37:36.001 * <redisgears_2> Registered backend: js.
+2025-10-22T08:37:36.001561305Z 67:M 22 Oct 2025 08:37:36.001 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
+2025-10-22T08:37:36.001890819Z 67:M 22 Oct 2025 08:37:36.001 * Server initialized
+2025-10-22T08:37:36.001892479Z 67:M 22 Oct 2025 08:37:36.001 * Ready to accept connections tcp
+2025-10-22T08:37:36.039818286Z time=2025-10-22T08:37:36.039Z level=INFO source=images.go:522 msg="total blobs: 21"
+2025-10-22T08:37:36.051162355Z time=2025-10-22T08:37:36.050Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
+2025-10-22T08:37:36.061191268Z time=2025-10-22T08:37:36.061Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
+2025-10-22T08:37:36.061780456Z time=2025-10-22T08:37:36.061Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
+2025-10-22T08:37:36.101340102Z time=2025-10-22T08:37:36.101Z level=INFO source=types.go:129 msg="inference compute" id=cpu library=cpu compute="" name=cpu description=cpu libdirs=ollama driver="" pci_id="" type="" total="944.4 GiB" available="844.5 GiB"
+2025-10-22T08:37:36.101365922Z time=2025-10-22T08:37:36.101Z level=INFO source=routes.go:1605 msg="entering low vram mode" "total vram"="0 B" threshold="20.0 GiB"
+2025-10-22T08:37:37.989417500Z [GIN] 2025/10/22 - 08:37:37 | 200 |      94.722µs |       127.0.0.1 | GET      "/"
+2025-10-22T08:37:37.990458242Z ✅ Ollama server is ready.
+2025-10-22T08:37:37.990473342Z >>> Checking for required models in persistent storage...
+2025-10-22T08:37:38.026106251Z [GIN] 2025/10/22 - 08:37:38 | 200 |        43.6µs |       127.0.0.1 | HEAD     "/"
+2025-10-22T08:37:38.053232964Z [GIN] 2025/10/22 - 08:37:38 | 200 |   26.542406ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-22T08:37:38.059694424Z     - Model 'nomic-embed-text' already exists.
+2025-10-22T08:37:38.089134606Z [GIN] 2025/10/22 - 08:37:38 | 200 |      42.091µs |       127.0.0.1 | HEAD     "/"
+2025-10-22T08:37:38.116094198Z [GIN] 2025/10/22 - 08:37:38 | 200 |   26.381024ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-22T08:37:38.121130589Z     - Model 'llama3.1:8b' already exists.
+2025-10-22T08:37:38.147217660Z [GIN] 2025/10/22 - 08:37:38 | 200 |      44.061µs |       127.0.0.1 | HEAD     "/"
+2025-10-22T08:37:38.172511591Z [GIN] 2025/10/22 - 08:37:38 | 200 |   23.374278ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-22T08:37:38.178163771Z     - Model 'mixtral' already exists.
+2025-10-22T08:37:38.210413167Z [GIN] 2025/10/22 - 08:37:38 | 200 |       32.97µs |       127.0.0.1 | HEAD     "/"
+2025-10-22T08:37:38.230164000Z [GIN] 2025/10/22 - 08:37:38 | 200 |   19.248547ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-22T08:37:38.235462686Z     - Model 'llama3.1:70b' already exists.
+2025-10-22T08:37:38.264291230Z [GIN] 2025/10/22 - 08:37:38 | 200 |      78.361µs |       127.0.0.1 | HEAD     "/"
+2025-10-22T08:37:38.285158077Z [GIN] 2025/10/22 - 08:37:38 | 200 |   20.593913ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-22T08:37:38.290289779Z     - Model 'gpt-oss:120b' already exists.
+2025-10-22T08:37:38.290310320Z ✅ All required models are available.
+2025-10-22T08:37:38.290355670Z Starting LabNote AI Backend server on port 8000 (foreground)...
+2025-10-22T08:37:43.270465750Z 2025-10-22 08:37:43,269 - INFO - SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
+2025-10-22T08:37:43.270518611Z 2025-10-22 08:37:43,270 - INFO - Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
+2025-10-22T08:37:43.270574823Z 2025-10-22 08:37:43,270 - INFO - Loaded 64 workflows and 83 unit operations.
+2025-10-22T08:37:43.282606430Z INFO:     Started server process [172]
+2025-10-22T08:37:43.282636611Z INFO:     Waiting for application startup.
+2025-10-22T08:37:43.282758402Z INFO:     Application startup complete.
+2025-10-22T08:37:43.283506842Z INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-10-22T08:37:50.256049233Z --- Starting Serverless Worker |  Version 1.7.13 ---
+2025-10-22T08:37:50.533074010Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
+2025-10-22T08:37:50.533116990Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
+2025-10-22T08:37:50.533120850Z {"requestId": "066aedb9-baea-4361-824a-c5434a086815-e2", "message": "Started.", "level": "INFO"}
+2025-10-22T08:37:50.554682856Z 2025-10-22 08:37:50,554 - INFO - OpenAI compatibility handler invoked: model=None, messages=0, stream=False
+2025-10-22T08:37:50.554712556Z 2025-10-22 08:37:50,554 - INFO - Inferred context for Continue: file_content_len=0, experiment_goal_preview=None
+2025-10-22T08:37:50.554719346Z 2025-10-22 08:37:50,554 - INFO - Running general chat flow for model: None
+2025-10-22T08:37:50.938766839Z llama_model_loader: loaded meta data with 29 key-value pairs and 292 tensors from /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 (version GGUF V3 (latest))
+2025-10-22T08:37:50.938814189Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-22T08:37:50.938819259Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-22T08:37:50.938821849Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-22T08:37:50.938824189Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 8B Instruct
+2025-10-22T08:37:50.938828459Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-22T08:37:50.938830509Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-22T08:37:50.938832740Z llama_model_loader: - kv   5:                         general.size_label str              = 8B
+2025-10-22T08:37:50.938836570Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-22T08:37:50.938838860Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-22T08:37:50.938842750Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-22T08:37:50.938845140Z llama_model_loader: - kv   9:                          llama.block_count u32              = 32
+2025-10-22T08:37:50.938847630Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-22T08:37:50.938849770Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 4096
+2025-10-22T08:37:50.938852020Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+2025-10-22T08:37:50.938854310Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+2025-10-22T08:37:50.938856500Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-22T08:37:50.938858730Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-22T08:37:50.938862950Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-22T08:37:50.938884070Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-22T08:37:50.938887660Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-22T08:37:50.938890370Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-22T08:37:50.938892470Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-22T08:37:50.938894720Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-22T08:37:50.959119569Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-22T08:37:50.966066584Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-22T08:37:51.009177704Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-22T08:37:51.009197715Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-22T08:37:51.009200186Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-22T08:37:51.009201655Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-22T08:37:51.009202726Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-22T08:37:51.009204835Z llama_model_loader: - type  f32:   66 tensors
+2025-10-22T08:37:51.009206606Z llama_model_loader: - type q4_K:  193 tensors
+2025-10-22T08:37:51.009207626Z llama_model_loader: - type q6_K:   33 tensors
+2025-10-22T08:37:51.009208486Z print_info: file format = GGUF V3 (latest)
+2025-10-22T08:37:51.009209366Z print_info: file type   = Q4_K - Medium
+2025-10-22T08:37:51.009210286Z print_info: file size   = 4.58 GiB (4.89 BPW)
+2025-10-22T08:37:51.146186020Z load: printing all EOG tokens:
+2025-10-22T08:37:51.146202530Z load:   - 128001 ('<|end_of_text|>')
+2025-10-22T08:37:51.146204980Z load:   - 128008 ('<|eom_id|>')
+2025-10-22T08:37:51.146205930Z load:   - 128009 ('<|eot_id|>')
+2025-10-22T08:37:51.146206800Z load: special tokens cache size = 256
+2025-10-22T08:37:51.183037423Z load: token to piece cache size = 0.7999 MB
+2025-10-22T08:37:51.183056892Z print_info: arch             = llama
+2025-10-22T08:37:51.183058332Z print_info: vocab_only       = 1
+2025-10-22T08:37:51.183059733Z print_info: model type       = ?B
+2025-10-22T08:37:51.183060773Z print_info: model params     = 8.03 B
+2025-10-22T08:37:51.183061693Z print_info: general.name     = Meta Llama 3.1 8B Instruct
+2025-10-22T08:37:51.183063824Z print_info: vocab type       = BPE
+2025-10-22T08:37:51.183064913Z print_info: n_vocab          = 128256
+2025-10-22T08:37:51.183065733Z print_info: n_merges         = 280147
+2025-10-22T08:37:51.183066584Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-22T08:37:51.183067444Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.183068804Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.183069673Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-22T08:37:51.183070513Z print_info: LF token         = 198 'Ċ'
+2025-10-22T08:37:51.183071364Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-22T08:37:51.183072204Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-22T08:37:51.183073624Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.183074564Z print_info: max token length = 256
+2025-10-22T08:37:51.183075444Z llama_model_load: vocab only - skipping tensors
+2025-10-22T08:37:51.193668374Z time=2025-10-22T08:37:51.193Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --model /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 --port 43599"
+2025-10-22T08:37:51.201629621Z time=2025-10-22T08:37:51.201Z level=INFO source=server.go:505 msg="system memory" total="944.4 GiB" free="845.1 GiB" free_swap="0 B"
+2025-10-22T08:37:51.201950146Z time=2025-10-22T08:37:51.201Z level=INFO source=memory.go:36 msg="new model will fit in available VRAM across minimum required GPUs, loading" model=/runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 library=cpu parallel=1 required="0 B" gpus=1
+2025-10-22T08:37:51.202114508Z time=2025-10-22T08:37:51.202Z level=INFO source=server.go:545 msg=offload library=cpu layers.requested=-1 layers.model=33 layers.offload=0 layers.split=[] memory.available="[845.2 GiB]" memory.gpu_overhead="0 B" memory.required.full="5.2 GiB" memory.required.partial="0 B" memory.required.kv="512.0 MiB" memory.required.allocations="[5.2 GiB]" memory.weights.total="4.3 GiB" memory.weights.repeating="3.9 GiB" memory.weights.nonrepeating="411.0 MiB" memory.graph.full="296.0 MiB" memory.graph.partial="677.5 MiB"
+2025-10-22T08:37:51.219652813Z time=2025-10-22T08:37:51.219Z level=INFO source=runner.go:893 msg="starting go runner"
+2025-10-22T08:37:51.221053130Z time=2025-10-22T08:37:51.219Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-22T08:37:51.221245872Z time=2025-10-22T08:37:51.221Z level=INFO source=runner.go:929 msg="Server listening on 127.0.0.1:43599"
+2025-10-22T08:37:51.225601226Z time=2025-10-22T08:37:51.225Z level=INFO source=runner.go:828 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:false KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-22T08:37:51.226010211Z time=2025-10-22T08:37:51.225Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-22T08:37:51.226430706Z time=2025-10-22T08:37:51.226Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-22T08:37:51.269774239Z llama_model_loader: loaded meta data with 29 key-value pairs and 292 tensors from /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 (version GGUF V3 (latest))
+2025-10-22T08:37:51.269806299Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-22T08:37:51.269809150Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-22T08:37:51.269810590Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-22T08:37:51.269811530Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 8B Instruct
+2025-10-22T08:37:51.269813619Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-22T08:37:51.269814650Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-22T08:37:51.269815639Z llama_model_loader: - kv   5:                         general.size_label str              = 8B
+2025-10-22T08:37:51.269817490Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-22T08:37:51.269818419Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-22T08:37:51.269820270Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-22T08:37:51.269821219Z llama_model_loader: - kv   9:                          llama.block_count u32              = 32
+2025-10-22T08:37:51.269822250Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-22T08:37:51.269823150Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 4096
+2025-10-22T08:37:51.269824259Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+2025-10-22T08:37:51.269825199Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+2025-10-22T08:37:51.269840671Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-22T08:37:51.269842320Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-22T08:37:51.269844051Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-22T08:37:51.269845180Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-22T08:37:51.269846091Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-22T08:37:51.269846971Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-22T08:37:51.269847791Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-22T08:37:51.269848620Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-22T08:37:51.290348933Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-22T08:37:51.297290298Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-22T08:37:51.341199328Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-22T08:37:51.341235329Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-22T08:37:51.341239929Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-22T08:37:51.341242418Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-22T08:37:51.341244909Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-22T08:37:51.341248798Z llama_model_loader: - type  f32:   66 tensors
+2025-10-22T08:37:51.341253189Z llama_model_loader: - type q4_K:  193 tensors
+2025-10-22T08:37:51.341255389Z llama_model_loader: - type q6_K:   33 tensors
+2025-10-22T08:37:51.341264598Z print_info: file format = GGUF V3 (latest)
+2025-10-22T08:37:51.341266978Z print_info: file type   = Q4_K - Medium
+2025-10-22T08:37:51.341269349Z print_info: file size   = 4.58 GiB (4.89 BPW)
+2025-10-22T08:37:51.487338915Z load: printing all EOG tokens:
+2025-10-22T08:37:51.487378066Z load:   - 128001 ('<|end_of_text|>')
+2025-10-22T08:37:51.487381946Z load:   - 128008 ('<|eom_id|>')
+2025-10-22T08:37:51.487383076Z load:   - 128009 ('<|eot_id|>')
+2025-10-22T08:37:51.487383976Z load: special tokens cache size = 256
+2025-10-22T08:37:51.524787765Z load: token to piece cache size = 0.7999 MB
+2025-10-22T08:37:51.524821246Z print_info: arch             = llama
+2025-10-22T08:37:51.524822866Z print_info: vocab_only       = 0
+2025-10-22T08:37:51.524824956Z print_info: n_ctx_train      = 131072
+2025-10-22T08:37:51.524826066Z print_info: n_embd           = 4096
+2025-10-22T08:37:51.524827196Z print_info: n_layer          = 32
+2025-10-22T08:37:51.524828036Z print_info: n_head           = 32
+2025-10-22T08:37:51.524828856Z print_info: n_head_kv        = 8
+2025-10-22T08:37:51.524829706Z print_info: n_rot            = 128
+2025-10-22T08:37:51.524830596Z print_info: n_swa            = 0
+2025-10-22T08:37:51.524831426Z print_info: is_swa_any       = 0
+2025-10-22T08:37:51.524832396Z print_info: n_embd_head_k    = 128
+2025-10-22T08:37:51.524833266Z print_info: n_embd_head_v    = 128
+2025-10-22T08:37:51.524834096Z print_info: n_gqa            = 4
+2025-10-22T08:37:51.524834916Z print_info: n_embd_k_gqa     = 1024
+2025-10-22T08:37:51.524836476Z print_info: n_embd_v_gqa     = 1024
+2025-10-22T08:37:51.524837326Z print_info: f_norm_eps       = 0.0e+00
+2025-10-22T08:37:51.524838156Z print_info: f_norm_rms_eps   = 1.0e-05
+2025-10-22T08:37:51.524838976Z print_info: f_clamp_kqv      = 0.0e+00
+2025-10-22T08:37:51.524839826Z print_info: f_max_alibi_bias = 0.0e+00
+2025-10-22T08:37:51.524840676Z print_info: f_logit_scale    = 0.0e+00
+2025-10-22T08:37:51.524853766Z print_info: f_attn_scale     = 0.0e+00
+2025-10-22T08:37:51.524855086Z print_info: n_ff             = 14336
+2025-10-22T08:37:51.524856036Z print_info: n_expert         = 0
+2025-10-22T08:37:51.524856896Z print_info: n_expert_used    = 0
+2025-10-22T08:37:51.524857706Z print_info: causal attn      = 1
+2025-10-22T08:37:51.524858526Z print_info: pooling type     = 0
+2025-10-22T08:37:51.524859496Z print_info: rope type        = 0
+2025-10-22T08:37:51.524860346Z print_info: rope scaling     = linear
+2025-10-22T08:37:51.524861716Z print_info: freq_base_train  = 500000.0
+2025-10-22T08:37:51.524862686Z print_info: freq_scale_train = 1
+2025-10-22T08:37:51.524863536Z print_info: n_ctx_orig_yarn  = 131072
+2025-10-22T08:37:51.524864396Z print_info: rope_finetuned   = unknown
+2025-10-22T08:37:51.524865386Z print_info: model type       = 8B
+2025-10-22T08:37:51.524866236Z print_info: model params     = 8.03 B
+2025-10-22T08:37:51.524867086Z print_info: general.name     = Meta Llama 3.1 8B Instruct
+2025-10-22T08:37:51.524869166Z print_info: vocab type       = BPE
+2025-10-22T08:37:51.524870056Z print_info: n_vocab          = 128256
+2025-10-22T08:37:51.524870926Z print_info: n_merges         = 280147
+2025-10-22T08:37:51.524871756Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-22T08:37:51.524872756Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.524873596Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.524874436Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-22T08:37:51.524875276Z print_info: LF token         = 198 'Ċ'
+2025-10-22T08:37:51.524876146Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-22T08:37:51.524876986Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-22T08:37:51.524877836Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-22T08:37:51.524878656Z print_info: max token length = 256
+2025-10-22T08:37:51.524879526Z load_tensors: loading model tensors, this can take a while... (mmap = false)
+2025-10-22T08:37:51.526547527Z load_tensors:          CPU model buffer size =  4685.30 MiB
+2025-10-22T08:38:07.644485115Z llama_init_from_model: model default pooling_type is [0], but [-1] was specified
+2025-10-22T08:38:07.644583236Z llama_context: constructing llama_context
+2025-10-22T08:38:07.644616307Z llama_context: n_seq_max     = 1
+2025-10-22T08:38:07.644619857Z llama_context: n_ctx         = 4096
+2025-10-22T08:38:07.644621927Z llama_context: n_ctx_per_seq = 4096
+2025-10-22T08:38:07.644623417Z llama_context: n_batch       = 512
+2025-10-22T08:38:07.644624747Z llama_context: n_ubatch      = 512
+2025-10-22T08:38:07.644626727Z llama_context: causal_attn   = 1
+2025-10-22T08:38:07.644628097Z llama_context: flash_attn    = disabled
+2025-10-22T08:38:07.644629477Z llama_context: kv_unified    = false
+2025-10-22T08:38:07.644630887Z llama_context: freq_base     = 500000.0
+2025-10-22T08:38:07.644632267Z llama_context: freq_scale    = 1
+2025-10-22T08:38:07.644633817Z llama_context: n_ctx_per_seq (4096) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+2025-10-22T08:38:07.644635367Z llama_context:        CPU  output buffer size =     0.50 MiB
+2025-10-22T08:38:07.644661707Z llama_kv_cache:        CPU KV buffer size =   512.00 MiB
+2025-10-22T08:38:07.858897558Z llama_kv_cache: size =  512.00 MiB (  4096 cells,  32 layers,  1/1 seqs), K (f16):  256.00 MiB, V (f16):  256.00 MiB
+2025-10-22T08:38:07.860971634Z llama_context:        CPU compute buffer size =   300.01 MiB
+2025-10-22T08:38:07.860993275Z llama_context: graph nodes  = 1158
+2025-10-22T08:38:07.860995675Z llama_context: graph splits = 1
+2025-10-22T08:38:08.082845499Z time=2025-10-22T08:38:08.082Z level=INFO source=server.go:1310 msg="llama runner started in 16.89 seconds"
+2025-10-22T08:38:08.082885090Z time=2025-10-22T08:38:08.082Z level=INFO source=sched.go:482 msg="loaded runners" count=1
+2025-10-22T08:38:08.082887060Z time=2025-10-22T08:38:08.082Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-22T08:38:08.083378736Z time=2025-10-22T08:38:08.083Z level=INFO source=server.go:1310 msg="llama runner started in 16.89 seconds"
+2025-10-22T08:38:35.133970077Z [GIN] 2025/10/22 - 08:38:35 | 200 | 44.549347214s |       127.0.0.1 | POST     "/api/chat"
+2025-10-22T08:38:35.135430575Z 2025-10-22 08:38:35,135 - INFO - HTTP Request: POST http://0.0.0.0:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-22T08:38:35.136218175Z 2025-10-22 08:38:35,136 - INFO - DIAGNOSIS: Raw text from LLM: ''
+2025-10-22T08:38:35.136587270Z 2025-10-22 08:38:35,136 - INFO - DIAGNOSIS: Processed text: ''
+2025-10-22T08:38:35.136626090Z 2025-10-22 08:38:35,136 - INFO - OpenAI compatibility returning response_preview=
+2025-10-22T08:38:35.137128026Z INFO:     127.0.0.1:45062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+2025-10-22T08:38:35.139406234Z _client.py          :1025 2025-10-22 08:38:35,139 HTTP Request: POST http://127.0.0.1:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2025-10-22T08:38:35.367116021Z {"requestId": "066aedb9-baea-4361-824a-c5434a086815-e2", "message": "Finished.", "level": "INFO"}

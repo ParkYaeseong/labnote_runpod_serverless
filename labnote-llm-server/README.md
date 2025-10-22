@@ -1,3 +1,23 @@
+## ⚙️ RunPod Serverless 베이스 이미지
+
+RunPod Serverless에서 LabNote 백엔드를 실행할 때 사용하는 베이스 이미지는 이 디렉터리의 `Dockerfile.base`와 루트의 `build_and_push.sh`로 관리합니다.
+
+1. **이미지 빌드/푸시**
+   - `./build_and_push.sh <TAG>` 실행 시 Step 1에서 `Dockerfile.base`를 기반으로 `mimikyou0607/labnote-ai-base:<TAG>`와 `:latest`를 빌드·푸시합니다.
+   - 베이스 이미지는 Redis Stack, Ollama, Python 가상환경(필수 패키지), 모델 캐시 경로 등을 미리 포함하므로 서버리스 워커는 코드만 내려받아 바로 실행할 수 있습니다.
+
+2. **구성 요소**
+   - **Redis Stack**: `/opt/redis-stack`에 설치되며, `start.sh`가 동일 경로의 설정 파일을 사용해 기동합니다.
+   - **Ollama**: 최신 릴리스를 수동 설치하여 `/usr/local/bin/ollama`로 배치하고, 모델 라이브러리는 `/usr/local/lib/ollama`에 포함됩니다.
+   - **Python 가상환경**: `/opt/venv`에 구축되며, `labnote-ai-backend/requirements.txt`를 미리 설치해 런타임 의존성을 충족합니다.
+   - **GPU 지원 기반 이미지**: `runpod/pytorch:*` 이미지를 상속해 CUDA/NVIDIA 드라이버가 사전 구성되어 있습니다.
+
+3. **사용 패턴**
+   - Step 2에서 생성되는 최종 앱 이미지(`labnote-ai-app`)는 베이스 이미지를 FROM으로 사용하며, 최신 애플리케이션 코드를 클론한 뒤 `start.sh`로 서비스를 구동합니다.
+   - 베이스 이미지를 최신 상태로 유지해야 할 경우(새 모델 추가, 시스템 패키지 업데이트 등) Step 1을 재실행한 뒤 Step 2를 이어서 수행합니다.
+
+> 로컬에서 실험하고 싶다면 아래 "🏁 시작하기" 절의 스크립트를 사용하면 됩니다. 다만 RunPod Serverless 배포만 필요하다면 `build_and_push.sh`만으로 환경이 준비됩니다.
+
 # Labnote LLM Server
 
 ## 📝 개요
@@ -65,6 +85,8 @@ graph TD
 ```
 
 ## 🏁 시작하기
+
+> RunPod Serverless를 사용하는 경우 이 절은 로컬 개발/디버깅 목적에만 필요합니다. 배포만 진행한다면 `build_and_push.sh` Step 1만 실행하면 됩니다.
 
 ### 사전 요구사항
 

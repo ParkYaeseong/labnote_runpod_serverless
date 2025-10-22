@@ -4,6 +4,10 @@
   "description": "An AI assistant to help with writing lab notes in VS Code.",
   "version": "2.5.0",
   "publisher": "BiofoundryLabs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sblabkribb/vscode-labnote-extension"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },

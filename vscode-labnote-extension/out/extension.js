@@ -67,6 +67,161 @@ function getBaseUrl() {
     }
     return url;
 }
+function normalizeEndpointPath(endpointPath) {
+    if (!endpointPath.startsWith('/')) {
+        return `/${endpointPath}`;
+    }
+    return endpointPath;
+}
+function joinUrl(baseUrl, endpointPath) {
+    return `${baseUrl.replace(/\/+$/, '')}${endpointPath}`;
+}
+function parseRunpodConfig(baseUrl) {
+    const trimmed = (baseUrl || '').trim();
+    if (!trimmed) {
+        return null;
+    }
+    if (trimmed.startsWith('runpod://')) {
+        const endpointId = trimmed.substring('runpod://'.length).replace(/\//g, '').trim();
+        if (endpointId) {
+            return { endpointId, apiBase: `https://api.runpod.ai/v2/${endpointId}` };
+        }
+    }
+    try {
+        const parsed = new URL(trimmed);
+        if (parsed.hostname.endsWith('.runpod.run')) {
+            const endpointId = parsed.hostname.split('.')[0];
+            if (endpointId) {
+                return { endpointId, apiBase: `https://api.runpod.ai/v2/${endpointId}` };
+            }
+        }
+        if (parsed.hostname === 'api.runpod.ai') {
+            const segments = parsed.pathname.split('/').filter(Boolean);
+            const v2Index = segments.indexOf('v2');
+            if (v2Index !== -1 && v2Index + 1 < segments.length) {
+                const endpointId = segments[v2Index + 1];
+                if (endpointId) {
+                    return { endpointId, apiBase: `https://api.runpod.ai/v2/${endpointId}` };
+                }
+            }
+        }
+    }
+    catch (error) {
+        return null;
+    }
+    return null;
+}
+async function safeReadText(response) {
+    try {
+        return await response.text();
+    }
+    catch (error) {
+        return '<no body>';
+    }
+}
+async function callRunpodServerless(config, path, init) {
+    const settings = vscode.workspace.getConfiguration('labnote.ai');
+    const apiKey = (settings.get('vesslApiToken') || '').trim();
+    if (!apiKey) {
+        vscode.window.showErrorMessage('RunPod API key is not set. Please configure `labnote.ai.vesslApiToken`.');
+        throw new Error('RunPod API key is not configured.');
+    }
+    const method = init.method ?? 'POST';
+    const jobInput = {
+        method,
+        path,
+        body: method === 'GET' ? undefined : init.body ?? {}
+    };
+    init.outputChannel?.appendLine(`[RunPod] Job payload for ${method} ${path}: ${JSON.stringify(jobInput).slice(0, 500)}...`);
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+    };
+    const submitResponse = await fetch(`${config.apiBase}/run`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ input: jobInput })
+    });
+    if (!submitResponse.ok) {
+        const errorText = await safeReadText(submitResponse);
+        throw new Error(`RunPod job submission failed (HTTP ${submitResponse.status}): ${errorText}`);
+    }
+    const submitData = await submitResponse.json();
+    const jobId = submitData.id;
+    if (!jobId) {
+        if (submitData.status && submitData.output !== undefined) {
+            init.outputChannel?.appendLine(`[RunPod] Synchronous response received (status=${submitData.status}).`);
+            if (submitData.status.toUpperCase() === 'COMPLETED') {
+                return submitData.output;
+            }
+            const serialized = JSON.stringify(submitData);
+            throw new Error(`RunPod synchronous call did not complete successfully: ${serialized}`);
+        }
+        const serialized = JSON.stringify(submitData);
+        throw new Error(`RunPod job submission did not return a job ID. Raw response: ${serialized}`);
+    }
+    init.outputChannel?.appendLine(`[RunPod] Submitted job ${jobId} for ${method} ${path} (status=${submitData.status || 'UNKNOWN'})`);
+    const timeoutMs = init.timeoutMs ?? 300000;
+    const pollIntervalMs = 2000;
+    const startTime = Date.now();
+    let lastStatus = null;
+    while (true) {
+        if (Date.now() - startTime > timeoutMs) {
+            throw new Error(`RunPod job ${jobId} timed out after ${(timeoutMs / 1000).toFixed(0)} seconds.`);
+        }
+        await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+        const statusResponse = await fetch(`${config.apiBase}/status/${jobId}`, {
+            method: 'GET',
+            headers
+        });
+        if (!statusResponse.ok) {
+            const errorText = await safeReadText(statusResponse);
+            throw new Error(`RunPod status check failed (HTTP ${statusResponse.status}): ${errorText}`);
+        }
+        const statusData = await statusResponse.json();
+        const status = statusData.status || 'UNKNOWN';
+        if (status !== lastStatus) {
+            init.outputChannel?.appendLine(`[RunPod] Job ${jobId} status: ${status}`);
+            lastStatus = status;
+        }
+        if (status === 'COMPLETED') {
+            if (statusData.output === undefined) {
+                throw new Error(`RunPod job ${jobId} completed without output.`);
+            }
+            return statusData.output;
+        }
+        if (status === 'FAILED' || status === 'CANCELLED' || status === 'TIMED_OUT') {
+            const errorDetail = statusData.error ? `: ${JSON.stringify(statusData.error)}` : '';
+            throw new Error(`RunPod job ${jobId} ${status.toLowerCase()}${errorDetail}`);
+        }
+    }
+}
+async function callBackendJson(baseUrl, rawPath, init = {}) {
+    const method = init.method ?? 'POST';
+    const path = normalizeEndpointPath(rawPath);
+    const runpodConfig = parseRunpodConfig(baseUrl);
+    if (runpodConfig) {
+        return callRunpodServerless(runpodConfig, path, { ...init, method, body: init.body });
+    }
+    const url = joinUrl(baseUrl, path);
+    const headers = { ...getApiHeaders() };
+    const requestInit = {
+        method,
+        headers
+    };
+    if (method === 'POST') {
+        requestInit.body = JSON.stringify(init.body ?? {});
+    }
+    const response = await fetch(url, requestInit);
+    if (!response.ok) {
+        const errorText = await safeReadText(response);
+        throw new Error(`${method} ${path} failed (HTTP ${response.status}): ${errorText}`);
+    }
+    if (response.status === 204) {
+        return undefined;
+    }
+    return await response.json();
+}
 // --- 확장 프로그램 활성화/비활성화 ---
 function activate(context) {
     const outputChannel = vscode.window.createOutputChannel("LabNote AI");
@@ -441,7 +596,7 @@ function registerEventListeners(context) {
 }
 function registerChatParticipant(context, outputChannel) {
     const handler = async (request, chatContext, stream, token) => {
-        const sessionId = "default_session";
+        const sessionId = "default_session"; // 단일 세션 관리를 위해 고정 ID 사용
         let session = chatSessions.get(sessionId);
         // --- 명시적 대화 시작 명령어 처리 ---
         if (request.prompt.startsWith('/')) {
@@ -450,7 +605,8 @@ function registerChatParticipant(context, outputChannel) {
                 chatSessions.set(sessionId, {
                     flow: 'generate_labnote',
                     state: 'awaiting_topic',
-                    data: {}
+                    data: {},
+                    context: {} // 새 context 초기화
                 });
                 stream.markdown("🔬 Okay. What is the main topic of the lab note to be generated?"); // This is already in English, no change needed.
                 return {};
@@ -471,7 +627,8 @@ function registerChatParticipant(context, outputChannel) {
                 chatSessions.set(sessionId, {
                     flow: 'populate_section',
                     state: 'awaiting_section_choice',
-                    data: { documentUri: editor.document.uri }
+                    data: { documentUri: editor.document.uri },
+                    context: {}
                 });
                 stream.markdown("✍️ Please select a section to populate with AI."); // This is already in English, no change needed.
                 sections.forEach(s => {
@@ -515,8 +672,14 @@ function registerChatParticipant(context, outputChannel) {
             stream.button({ title: '🏁 Complete Current Workflow', command: 'labnote.manager.completeWorkflow.chat' }); // This is already in English, no change needed.
             return {};
         }
-        // 일반 채팅 API 호출
-        await callChatApi(request.prompt, outputChannel, stream, null);
+        // 일반 채팅 API 호출 (상태 관리 포함)
+        const currentSession = chatSessions.get(sessionId) || { flow: 'generate_labnote', state: 'init', data: {}, context: {} };
+        const chatResult = await callChatApi(request.prompt, outputChannel, stream, currentSession.context);
+        if (chatResult) {
+            // 새로운 context로 세션 업데이트
+            currentSession.context = chatResult.context;
+            chatSessions.set(sessionId, currentSession);
+        }
         return {};
     };
     const participant = vscode.chat.createChatParticipant('labnote.participant', handler);
@@ -624,14 +787,15 @@ async function interactiveGenerateFlow(context, userInput, outputChannel, workfl
                     return;
             }
             progress.report({ increment: 60, message: "Creating lab note and workflow files..." }); // This is already in English, no change needed.
-            const createScaffoldResponse = await fetch(`${baseUrl}/create_scaffold`, {
-                method: 'POST',
-                headers: getApiHeaders(),
-                body: JSON.stringify({ query: userInput, workflow_id: finalWorkflowId, unit_operation_ids: finalUoIds, experimenter: "AI Assistant" }),
+            const scaffoldData = await callBackendJson(baseUrl, '/create_scaffold', {
+                body: {
+                    query: userInput,
+                    workflow_id: finalWorkflowId,
+                    unit_operation_ids: finalUoIds,
+                    experimenter: 'AI Assistant'
+                },
+                outputChannel
             });
-            if (!createScaffoldResponse.ok)
-                throw new Error(`Scaffold creation failed (HTTP ${createScaffoldResponse.status}): ${await createScaffoldResponse.text()}`);
-            const scaffoldData = await createScaffoldResponse.json();
             progress.report({ increment: 90, message: "Saving and displaying files..." }); // This is already in English, no change needed.
             for (const fileName in scaffoldData.files) {
                 const content = scaffoldData.files[fileName];
@@ -742,15 +906,16 @@ async function processAndApplyPopulation(extensionContext, outputChannel, docume
         const baseUrl = getBaseUrl();
         if (!baseUrl)
             return;
-        const populateResponse = await fetch(`${baseUrl}/populate_note`, {
-            method: 'POST',
-            headers: getApiHeaders(),
-            body: JSON.stringify({ file_content: fileContent, uo_id: uoId, section, query })
+        const populateData = await callBackendJson(baseUrl, '/populate_note', {
+            body: {
+                file_content: fileContent,
+                uo_id: uoId,
+                section,
+                query,
+                file_path: currentFilePath // file_path도 함께 전달
+            },
+            outputChannel
         });
-        if (!populateResponse.ok) {
-            throw new Error(`AI draft generation failed (HTTP ${populateResponse.status}): ${await populateResponse.text()}`);
-        }
-        const populateData = await populateResponse.json();
         if (!populateData.options || populateData.options.length === 0) {
             vscode.window.showInformationMessage("No drafts were generated by the AI."); // This is already in English, no change needed.
             return;
@@ -759,10 +924,8 @@ async function processAndApplyPopulation(extensionContext, outputChannel, docume
         panel.webview.onDidReceiveMessage(async (message) => {
             const { command, chosen_original, chosen_edited } = message;
             if (command === 'applyAndLearn' || command === 'copyAndLearn') {
-                fetch(`${baseUrl}/record_preference`, {
-                    method: 'POST',
-                    headers: getApiHeaders(),
-                    body: JSON.stringify({
+                void callBackendJson(baseUrl, '/record_preference', {
+                    body: {
                         uo_id: uoId,
                         section,
                         chosen_original,
@@ -772,7 +935,8 @@ async function processAndApplyPopulation(extensionContext, outputChannel, docume
                         file_content: (await vscode.workspace.openTextDocument(documentUri)).getText(),
                         file_path: currentFilePath,
                         supervisor_evaluations: populateData.supervisor_evaluations || []
-                    })
+                    },
+                    outputChannel
                 }).catch((err) => {
                     outputChannel.appendLine(`[WARN] Failed to record DPO data: ${err.message}`);
                 });
@@ -1065,21 +1229,17 @@ async function sendCompletionFeedback(context, outputChannel, document, completi
         const experimentTopic = readmeFrontMatter?.title || 'Unknown Topic';
         outputChannel.appendLine(`[Feedback] Sending completion data for '${workflowTitle}' (${completionType})`);
         // 백엔드에 새로운 엔드포인트 /record_completion_feedback 가 있다고 가정
-        fetch(`${baseUrl}/record_completion_feedback`, {
-            method: 'POST',
-            headers: getApiHeaders(),
-            body: JSON.stringify({ file_content: contentToSend, completion_type: completionType, workflow_title: workflowTitle, experiment_topic: experimentTopic })
-        }).then((response) => {
-            if (response.ok) {
-                outputChannel.appendLine(`[Feedback] Successfully sent completion feedback for '${workflowTitle}'. Status: ${response.status}`);
-            }
-            else {
-                // 404 Not Found 같은 오류를 여기서 잡습니다.
-                outputChannel.appendLine(`[ERROR] Failed to send completion feedback for '${workflowTitle}'. Server responded with status: ${response.status}`);
-                response.text().then((text) => outputChannel.appendLine(`[ERROR] Server response: ${text}`));
-            }
+        void callBackendJson(baseUrl, '/record_completion_feedback', {
+            body: {
+                file_content: contentToSend,
+                completion_type: completionType,
+                workflow_title: workflowTitle,
+                experiment_topic: experimentTopic
+            },
+            outputChannel
+        }).then(() => {
+            outputChannel.appendLine(`[Feedback] Successfully sent completion feedback for '${workflowTitle}'.`);
         }).catch((err) => {
-            // 네트워크 오류 등 fetch 자체가 실패한 경우
             outputChannel.appendLine(`[WARN] Failed to send completion feedback: ${err.message}`);
         });
     }
@@ -1087,32 +1247,31 @@ async function sendCompletionFeedback(context, outputChannel, document, completi
         outputChannel.appendLine(`[ERROR] Could not send completion feedback due to a local error: ${error.message}`);
     }
 }
-async function callChatApi(userInput, outputChannel, stream, conversationId = null) {
+async function callChatApi(userInput, outputChannel, stream, context = null) {
     try {
         stream.progress("Requesting from LabNote AI backend..."); // This is already in English, no change needed.
         const baseUrl = getBaseUrl();
         if (!baseUrl) {
             stream.markdown("Error: Backend URL is not set."); // This is already in English, no change needed.
-            return;
+            return null;
         }
-        const response = await fetch(`${baseUrl}/chat`, {
-            method: 'POST',
-            headers: getApiHeaders(),
-            body: JSON.stringify({
-                query: userInput,
-                conversation_id: conversationId
-            }),
+        // 백엔드로 보낼 메시지 배열 구성. 여기서는 간단히 마지막 사용자 입력만 보냅니다.
+        // 실제 애플리케이션에서는 전체 대화 기록을 보내야 할 수 있습니다.
+        const messages = [{ role: 'user', content: userInput }];
+        const chatData = await callBackendJson(baseUrl, '/api/chat', {
+            body: {
+                messages,
+                context
+            },
+            outputChannel
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Chat failed (HTTP ${response.status}): ${errorText}`);
-        }
-        const chatData = await response.json();
         stream.markdown(chatData.response);
+        return { response: chatData.response, context: chatData.context }; // 응답과 함께 새로운 context 반환
     }
     catch (error) {
         stream.markdown(`An error occurred while chatting with the AI: ${error.message}`);
         outputChannel.appendLine(`[ERROR] callChatApi: ${error.stack}`);
+        return null;
     }
 }
 async function handleGenerateFlow(session, request, stream, context, outputChannel) {
@@ -1384,11 +1543,10 @@ function parseAllSections(document) {
 }
 async function fetchConstants(context, baseUrl, outputChannel) {
     try {
-        const response = await fetch(`${baseUrl}/constants`, { headers: getApiHeaders() });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch constants (HTTP ${response.status})`);
-        }
-        return await response.json();
+        return await callBackendJson(baseUrl, '/constants', {
+            method: 'GET',
+            outputChannel
+        });
     }
     catch (e) {
         outputChannel.appendLine(`[Error] Could not fetch constants from backend: ${e.message}. Using local fallback.`);

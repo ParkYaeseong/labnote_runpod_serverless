@@ -1,3 +1,7 @@
 [submodule "sop"]
 	path = sop
 	url = https://github.com/sblabkribb/labnote-sops.git
+
+[submodule "labnote-dpo-trainer-data"]
+	path = labnote-dpo-trainer-data
+	url = https://github.com/sblabkribb/labnote-dpo-trainer.git

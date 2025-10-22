@@ -26,7 +26,7 @@
   * **대화형 AI 어시스턴트 (`@labnote`)**: VS Code 채팅창에서 `@labnote`를 호출하여 AI와 대화하며 연구노트 생성, 섹션 채우기 등 대부분의 기능을 직관적으로 실행할 수 있습니다.
   * **AI 기반 연구노트 자동 생성**: 실험의 핵심 내용을 AI와의 대화를 통해 전달하면, AI가 최적의 워크플로우와 Unit Operation을 조합하여 연구노트의 전체 구조와 파일(Scaffold)을 자동으로 생성합니다.
   * **AI 섹션 내용 채우기**: 연구노트의 각 섹션(Method, Reagent, Results 등)을 AI를 통해 자동으로 채울 수 있습니다. 여러 초안 중 원하는 것을 선택하고 수정하여 AI를 학습시킬 수 있습니다.
-  * **Visual Editor**: 마크다운 문법에 익숙하지 않은 사용자를 위해 직관적인 WYSIWYG 편집 환경을 제공합니다.
+  * **Visual Editor**: 마크다운 문법에 익숙하지 않은 사용자를 위해 직관적인 WYSIWYG 편집 환경을 제공합니다. (Quarto CLI 설치 필요)
   * **워크플로우 상태 관리**: 명령어 또는 채팅 UI를 통해 워크플로우와 개별 유닛 오퍼레이션의 완료 상태를 쉽게 업데이트하고, 실험 종료일을 자동으로 기록합니다.
   * **체계적인 템플릿 관리**: `Workflows`, `Hardware/Software Unit Operations` 등 표준화된 템플릿을 쉽게 추가하고 관리할 수 있습니다.
   * **번호 자동 재정렬**: 실험 폴더나 워크플로우 파일의 번호를 자동으로 정렬하여 일관성을 유지합니다.
@@ -139,14 +139,30 @@ sequenceDiagram
 
 ## 📥 설치
 
-1.  Visual Studio Code를 엽니다.
-2.  `Ctrl+Shift+X`를 눌러 확장 프로그램 마켓플레이스를 엽니다.
-3.  `LabNote AI Assistant`를 검색합니다.
-4.  **Install** 버튼을 클릭합니다.
+1. 제공된 `labnote-ai-aisstant-x.x.x.vsix` 파일을 다운로드합니다.
+2. VS Code의 **확장 프로그램(Extensions)** 뷰(`Ctrl+Shift+X`)를 엽니다.
+3. 뷰의 오른쪽 상단에 있는 `...` 메뉴를 클릭합니다.
+4. *"Install from VSIX..."**를 선택합니다.
+5. 다운로드한 `.vsix` 파일을 선택하여 설치합니다.
+6. 설치가 완료되면 VS Code를 다시 시작합니다.
 
 -----
 
 ## 🚀 사용법
+
+## ☁️ RunPod Serverless 연결 빠른 가이드
+
+1. **RunPod 자격 증명 준비**
+   - Serverless Endpoint ID (예: `t8z31me8m865sl`)와 RunPod API Key를 RunPod 콘솔에서 발급합니다.
+2. **VS Code 설정 업데이트**
+   - `Ctrl+,` → `LabNote` 검색 후 `labnote.ai.backendUrl`을 `runpod://<ENDPOINT_ID>` 또는 `https://<ENDPOINT_ID>.runpod.run` 형태로 입력합니다.
+   - `labnote.ai.vesslApiToken`에는 RunPod API Key를 저장합니다. 저장 후 확장은 RunPod `/run` + `/status` API를 통해 백엔드 엔드포인트를 호출합니다.
+3. **GitHub 토큰 공유**
+   - 컨테이너에서 백엔드 리포지토리를 클론할 수 있도록 RunPod Serverless Endpoint에 `github_token` 시크릿을 등록합니다. (이미지 빌드 시 동일한 이름으로 사용합니다.)
+4. **동작 확인**
+   - VS Code의 `LabNote AI` Output 채널에서 RunPod 호출 로그를 확인할 수 있습니다. 성공 시 RunPod Job ID가 표시되고, 응답이 도착하면 섹션 초안/채팅 결과가 출력됩니다.
+
+> RunPod API 호출 예시는 백엔드 리포지토리의 [0. RunPod Serverless 배포 빠른 시작](../labnote-ai-backend/README.md#0-runpod-serverless-배포-빠른-시작)을 참고하세요.
 
 ### 🤖 AI 어시스턴트와 대화하기 (`@labnote`)
 
@@ -154,81 +170,97 @@ VS Code의 채팅 뷰에서 `@labnote`를 입력하여 AI 어시스턴트를 호
 
 1.  **시작**: 채팅창에 `@labnote`를 입력하면 시작 메뉴가 나타납니다.
 2.  **기능 선택**: 버튼을 클릭하여 원하는 기능을 대화형으로 실행합니다.
-      * **🔬 새 연구노트 생성**: AI의 질문에 따라 '주제 -> 워크플로우 -> Unit Operation' 순서로 답변하며 연구노트를 생성합니다.
-      * **✍️ 섹션 내용 채우기 (AI)**: 현재 열린 파일에서 채우고 싶은 섹션을 버튼으로 선택하여 AI 제안을 받습니다.
-      * **➕ 워크플로우 추가**: 현재 연구노트에 표준 워크플로우를 추가합니다.
-      * **➕ 유닛 오퍼레이션 추가**: 현재 워크플로우 파일에 HW 또는 SW 유닛 오퍼레이션을 추가합니다.
-      * **🔄 워크플로우 번호 재정렬**: 현재 실험 폴더 내의 워크플로우 파일 번호를 순서대로 재정렬합니다.
-      * **🗂️ 실험 폴더 번호 재정렬**: `labnote` 폴더 아래의 모든 실험 폴더 번호를 순서대로 재정렬합니다.
-      * **✅ 현재 유닛오퍼레이션 완료**: 현재 파일의 Unit Operation 목록에서 완료할 항목을 선택합니다.
-      * **🏁 현재 워크플로우 완료**: 현재 워크플로우를 완료 상태로 변경하고 종료일을 기록합니다. (모든 유닛 오퍼레이션이 완료되어야 함)
-3.  **일반 질문**: `@labnote [질문 내용]` 형식으로 과학적 지식이나 실험 아이디어에 대해 자유롭게 질문할 수 있습니다.
-4.  **작업 취소**: 대화 중간에 `/cancel`을 입력하여 언제든지 현재 작업을 중단할 수 있습니다.
+      * **🔬 새 연구노트 생성**: AI의 질문에 따라 '주제 -\> 워크플로우 -\> Unit Operation' 순서로 답변하며 연구노트를 생성합니다.
+      * **✍️ Fill Section Content (AI)**: Choose a section in the current file and let the AI draft the content for you.
+      * **➕ Add Workflow**: Insert a standard workflow into the active lab note.
+      * **➕ Add Unit Operation**: Append a hardware or software unit operation to the current workflow file.
+      * **🔄 Renumber Workflows**: Resequence workflow file numbers inside the current experiment folder.
+      * **🗂️ Renumber Experiment Folders**: Resequence every experiment folder number under the `labnote` directory.
+      * **✅ Complete Current Unit Operation**: Mark a unit operation from the current file as complete.
+      * **🏁 Complete Current Workflow**: Mark the current workflow complete and record its completion date (all unit operations must already be complete).
+3.  **General questions**: Ask free-form scientific questions with `@labnote [your prompt]`.
+4.  **Cancel task**: Enter `/cancel` at any time to stop the current chat task.
 
-### ⌨️ 명령어 팔레트
+### ⌨️ Command Palette
 
-`Ctrl+Shift+P`를 눌러 명령어 팔레트를 열고 `LabNote:`를 입력하여 개별 기능을 직접 실행할 수도 있습니다.
+Press `Ctrl+Shift+P` to open the Command Palette and type `LabNote:` to run any command directly.
 
-| 명령어 | 설명 |
+| Command | Description |
 | --- | --- |
-| `LabNote: 새 연구노트 생성` | AI를 사용하여 새로운 실험 폴더와 연구노트 구조를 생성합니다. (대화형이 아닌 입력창 방식) |
-| `LabNote (AI): 섹션 내용 채우기`| (텍스트 에디터) 현재 커서가 위치한 섹션의 플레이스홀더를 AI로 채웁니다. |
-| `LabNote: 새 워크플로우 추가` | 현재 연구노트(`README.md`)에 표준화된 워크플로우를 추가합니다. |
-| `LabNote: HW/SW Unit Operation 추가`| 현재 워크플로우 파일에 Unit Operation을 추가합니다. |
-| `LabNote: 템플릿 관리` | 워크플로우 및 Unit Operation 템플릿 파일을 직접 열어 수정합니다. |
-| `LabNote: 표 삽입` | 마크다운 표를 쉽게 삽입합니다. |
-| `LabNote: 워크플로우 번호 재정렬` | 현재 실험 폴더 내의 워크플로우 파일 번호(`001_`, `002_`...)를 순서대로 재정렬합니다. |
-| `LabNote: 현재 워크플로우 완료` | 현재 워크플로우를 완료 상태로 변경하고 종료일을 기록합니다. (모든 유닛 오퍼레이션이 완료되어야 함) |
-| `LabNote: 현재 유닛오퍼레이션 완료` | 현재 커서가 위치한 유닛 오퍼레이션을 완료 상태로 변경하고 종료일을 기록합니다. |
-| `LabNote: 실험 폴더 번호 재정렬` | `labnote` 폴더 내의 모든 실험 폴더 번호를 순서대로 재정렬합니다. |
+| `LabNote: new` | Use AI to generate a new experiment folder and lab note scaffold (form-driven flow rather than chat). |
+| `LabNote (AI): populate Section`| Ask the AI to fill the section that the cursor currently highlights in the text editor. |
+| `LabNote: new workflow` | Insert the standard workflow template into the active lab note (`README.md`). |
+| `LabNote: new HW Unit Operation` / `LabNote: new SW Unit Operation`| Add a hardware or software unit operation to the current workflow file. |
+| `LabNote: Add templates manager` | Open the workflow and unit operation template files for direct editing. |
+| `LabNote: Add insert Table` | Quickly insert a Markdown table. |
+| `LabNote: reorder workflows` | Resequence workflow file numbers (`001_`, `002_`, …) inside the current experiment folder. |
+| `LabNote: complete workflow` | Mark the current workflow complete and record its completion date (all unit operations must already be complete). |
+| `LabNote: complete unit operation` | Mark the unit operation at the cursor location complete and record its completion date. |
+| `LabNote: reorder labnotes` | Resequence every experiment folder number within the `labnote` directory. |
 
-## 9. VS Code Continue 연동 가이드 (서버리스)
+## 9. VS Code Continue 연동 가이드
 
-서버리스로 전환된 백엔드 서버를 VS Code의 **Continue** 확장 프로그램과 연동하여, IDE 내에서 직접 코드 자동 완성, 채팅, 그리고 LabNote 전용 Slash 명령을 활용할 수 있습니다.
+이 백엔드 서버를 VS Code의 **Continue** 확장 프로그램과 연동하면, IDE 내에서 직접 코드 자동 완성, 채팅, 그리고 LabNote 전용 Slash 명령(DPO 피드백, RAG 검색, Supervisor 기반 Agents)을 활용할 수 있습니다.
 
-### 1단계: RunPod 엔드포인트 URL 확인
+### 사전 준비
+1.  Visual Studio Code를 엽니다.
+2.  `Ctrl+Shift+X`를 눌러 확장 프로그램 마켓플레이스를 엽니다.
+3.  `Continue`를 검색하여 **Continue.dev**에서 게시한 공식 확장을 설치합니다.
 
-RunPod에서 서버리스 엔드포인트를 배포하면, 고유한 공개 URL이 생성됩니다. (예: `https://<your-unique-id>.runpod.run`) 이 URL이 모든 AI 기능에 접근하기 위한 단일 진입점(Single Entry Point)이 됩니다.
-
-- **중요**: 이전과 달리, FastAPI 백엔드(8000)와 Ollama(11434) 포트를 직접 사용하지 않습니다. 모든 요청은 이 단일 URL로 보내야 합니다.
-
-### 2단계: Continue 설정 파일 (`config.yaml`) 수정
+### 1단계: Continue 설정 파일 (`config.yaml`) 수정
 
 1.  사용자 PC의 Continue 설정 파일을 엽니다.
-    *   **Windows**: `C:\Users\<사용자 이름>\.continue\config.yaml`
-    *   **macOS / Linux**: `~/.continue/config.yaml`
+    * **Windows**: `C:\Users\<사용자 이름>\.continue\config.yaml`
+    * **macOS / Linux**: `~/.continue/config.yaml`
 
-2.  아래 예시를 참고하여 `models` 섹션을 업데이트합니다. **모든 `apiBase` 항목에 1단계에서 확인한 동일한 RunPod 엔드포인트 URL**을 입력해야 합니다.
+2.  아래 예시를 참고하여 `models` 섹션을 업데이트합니다. `apiBase`에는 RunPod Serverless에서 생성된 **단일 엔드포인트 URL**을 입력합니다.
+```
+name: "labnote-default"
+version: "1.0.0"
+schema: "v1"
 
-    ```yaml
-    models:
-      # 1. LabNote 백엔드의 특수 기능(RAG, Agents) 호출을 위한 모델
-      - name: "LabNote Backend Logic"
-        provider: openai
-        model: "labnote-backend"
-        apiBase: "https://<your-runpod-endpoint-id>.runpod.run/v1" # ⭐️ RunPod URL
-        apiKey: "labnote"
-        title: "LabNote Backend"
+models:
+  - name: "LabNote Backend" 
+    provider: openai
+    model: "labnote-backend"
+    # RunPod Serverless Endpoint (동기 실행)
+    apiBase: "https://api.runpod.ai/v2/[YOUR_SERVERLESS_ENDPOINT_ID]/runsync"
+    apiKey: "YOUR_RUNPOD_API_KEY"
+    title: "LabNote Backend"
 
-      # 2. 일반 대화를 위한 Ollama 모델들
-      # apiBase는 백엔드 로직 모델과 동일한 RunPod URL을 사용합니다.
-      - name: "LabNote AI (Llama3.1 70B)"
-        provider: openai
-        model: "llama3.1:70b"
-        apiBase: "https://<your-runpod-endpoint-id>.runpod.run/v1" # ⭐️ 동일한 RunPod URL
-        apiKey: "ollama"
-        title: "Ollama Llama3.1 70B"
-    ```
 
-### 3단계: VS Code 확장 프로그램 설정
+contextProviders:
+  - name: "active_file_content"
+    class: "FileContextProvider"
+    params:
+      filepath: "{{active_file_filepath}}"
 
-`Ctrl+,`를 눌러 VS Code 설정을 열고 `labnote.ai.backendUrl`을 검색하여 **1단계에서 확인한 동일한 RunPod 엔드포인트 URL**로 설정합니다.
+slashCommands:
+  - name: "populate"
+    description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
+    prompt: |
+      /populate {{user_input}}
+      ```markdown
+      {{active_file_content}}
+      ```
 
-| 설정 | 설명 | 예시 (서버리스) |
-| --- | --- | --- |
-| `labnote.ai.backendUrl` | LabNote AI 백엔드 서버의 URL입니다. | `https://<your-runpod-endpoint-id>.runpod.run` |
+    model: "LabNote Backend"
+```    
+### 3단계: Continue에서 활용 가능한 LabNote 전용 기능
 
----
+- **Populate & DPO 피드백 연동**: `/populate <UO_ID> <Section>` 명령으로 초안을 생성하고, 원하는 번호를 답하면 DPO 데이터가 백엔드로 기록됩니다. 응답에는 섹션에 바로 적용 가능한 `diff` 코드블록이 함께 제공되며, 동일한 옵션을 반복 선택하면 중복 학습을 방지하기 위해 경고만 출력됩니다.
+- **RAG + Supervisor Agents**: `LabNote Backend Logic` 모델은 랩노트 전체 문서를 분석하여 RAG 검색과 Supervisor 기반 에이전트 팀을 조합해 고품질 섹션 초안을 제공합니다.
+- **일반 대화/코딩 보조**: `/populate` 명령 없이 대화하면 Ollama에 등록된 LLM(8B, 70B, Mixtral 등)이 일반적인 Q&A나 코드 생성을 담당합니다. 
+
+1.  내용을 채우고 싶은 연구노트 마크다운 파일을 엽니다.
+
+2.  Continue 채팅창에서 `/populate`를 입력하고, **"UO_ID Section"** 형식으로 요청합니다.
+
+    *   **예시**: `/populate UHW010 Method`
+
+3.  AI가 파일 컨텍스트를 기반으로 해당 섹션의 내용을 생성하여 제안합니다.
+
+    
 
 ## ⚙️ 설정
 
@@ -236,8 +268,8 @@ RunPod에서 서버리스 엔드포인트를 배포하면, 고유한 공개 URL�
 
 | 설정 | 설명 | 기본값 |
 | --- | --- | --- |
-| `labnote.ai.backendUrl` | LabNote AI 백엔드 서버의 기본 URL입니다. | `http://127.0.0.1:8000` |
-| `labnote.ai.vesslApiToken`| (더 이상 사용되지 않음) VESSL.ai 서비스 엔드포인트 인증을 위한 API 토큰입니다. | `""` |
+| `labnote.ai.backendUrl` | RunPod Serverless 엔드포인트를 지정합니다. (`runpod://<ID>` 또는 `https://<ID>.runpod.run`) | `runpod://t8z31me8m865sl` |
+| `labnote.ai.vesslApiToken`| RunPod API Key를 저장합니다. | `rp_sk_********` |
 | `labnote.manager.workflowsPath` | 사용자 정의 워크플로우 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.hwUnitOperationsPath`| 사용자 정의 하드웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.swUnitOperationsPath`| 사용자 정의 소프트웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |

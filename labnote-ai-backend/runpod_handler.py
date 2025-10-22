@@ -1,31 +1,54 @@
+import os
 import subprocess
 import time
-import httpx
+from typing import Any, Dict
+
 import runpod
+from fastapi.testclient import TestClient
+from main import app  # FastAPI 앱 객체를 직접 임포트
 
-# FastAPI 서버를 백그라운드에서 실행
-subprocess.Popen(["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"])
+LABNOTE_BACKEND_URL = os.getenv("LABNOTE_BACKEND_URL", "http://127.0.0.1:8000")
+REQUEST_TIMEOUT = int(os.getenv("LABNOTE_RUNPOD_TIMEOUT", "600"))
 
-# 서버가 시작될 때까지 잠시 대기
-time.sleep(10)
 
-client = httpx.AsyncClient()
+def _normalize_path(path: str) -> str:
+    return path if path.startswith('/') else f'/{path}'
+ 
+# Uvicorn을 별도로 실행할 필요 없이, TestClient가 앱을 직접 로드합니다.
+# FastAPI의 lifespan 컨텍스트 매니저가 TestClient에 의해 자동으로 관리됩니다.
+client = TestClient(app)
 
-def handler(job):
-    """
-    RunPod 서버리스 핸들러 함수.
-    job['input']에는 API 요청에 대한 모든 정보가 포함됩니다.
-    """
-    # RunPod에서 받은 요청 페이로드를 추출합니다.
-    request_payload = job['input']
 
-    # FastAPI 애플리케이션의 해당 엔드포인트로 요청을 전달합니다.
-    # 여기서는 '/v1/chat/completions'를 예시로 사용합니다.
-    # 실제 운영 시에는 job input에 따라 엔드포인트를 동적으로 결정해야 할 수 있습니다.
-    response = httpx.post("http://127.0.0.1:8000/v1/chat/completions", json=request_payload, timeout=600)
+def handler(job: Dict[str, Any]) -> Dict[str, Any]:
+    """RunPod 서버리스 핸들러 함수."""
+    request_payload: Dict[str, Any] = job.get("input") or {}
 
-    # FastAPI 서버의 응답을 그대로 반환합니다.
-    return response.json()
+    print(f"[RunPod Handler] Incoming payload: {request_payload}")
+
+    method = str(request_payload.get("method", "POST")).upper()
+    path = request_payload.get("path")
+    body = request_payload.get("body")
+
+    if not path:
+        # path가 없는 요청은 명시적으로 에러 처리
+        raise ValueError("Request payload must include a 'path' key (e.g., '/api/chat', '/populate_note').")
+
+    normalized_path = _normalize_path(path)
+
+    try:
+        if method == "GET":
+            response = client.get(normalized_path, params=body or {})
+        else:
+            response = client.request(method, normalized_path, json=body or {})
+
+        response.raise_for_status()
+        return response.json()
+    except Exception as exc:
+        # TestClient는 HTTP 에러를 직접 발생시키므로 httpx.HTTPStatusError가 필요 없습니다.
+        error_detail = getattr(exc, 'detail', str(exc))
+        raise RuntimeError(
+            f"Error processing request for {method} {normalized_path}: {error_detail}"
+        ) from exc
 
 
 if __name__ == "__main__":

@@ -4,15 +4,16 @@
 
 ## 목차
 
+  - [0. RunPod Serverless 배포 빠른 시작]
   - [1. 시스템 아키텍처]
   - [2. 핵심 기능]
   - [3. 작동 방식 (데이터 흐름)]
   - [4. 프로젝트 구조]
-  - [5. 설치 및 설정]
+  - [5. 로컬 개발 환경 (선택 사항)]
   - [6. 실행 방법]
   - [7. 주요 기술 스택]
   - [8. API 엔드포인트]
-  - [9. VS Code Continue 연동 가이드]
+  - [9. VS Code Continue 연동 가이드 (RunPod Serverless)]
 ----- 
 
 ## 최근 업데이트 (2025-10-13)
@@ -26,6 +27,45 @@
 - DPO 학습 파이프라인이 gradient checkpointing 환경에서 안전하게 동작하도록 `run_dpo_training.py`를 보강했습니다. (`model.config.use_cache=False`, `model.gradient_checkpointing_enable()` 적용)
 - 기준 모델을 중복 로드하지 않도록 `precompute_ref_log_probs=True`를 사용하고, 기본 옵티마이저를 8bit AdamW(`paged_adamw_8bit`)로 전환해 A100 40GB에서도 학습이 OOM 없이 진행됩니다.
 - `run_full_dpo_pipeline.sh` 실행 시 Step 2의 배포 스크립트가 llama.cpp 최신 구조(언더스코어 스크립트명, `llama-quantize` 바이너리)에 맞춰 동작하도록 조정했습니다. 자세한 내용은 `labnote-llm-server/README.md` 참고.
+
+## 0. RunPod Serverless 배포 빠른 시작
+
+1. **컨테이너 이미지 빌드 및 푸시**
+   - `./build_and_push.sh <TAG>`를 실행하면 Step 1에서 베이스 이미지(`mimikyou0607/labnote-ai-base`)를, Step 2에서 최종 애플리케이션 이미지(`mimikyou0607/labnote-ai-app`)를 빌드하고 Docker Hub로 푸시합니다.
+   - 베이스 이미지는 LLM/Redis/Ollama 같은 무거운 의존성을 포함하므로 자주 바뀌지 않습니다. 코드 변경만 있다면 Step 2만 다시 실행하면 됩니다.
+
+2. **RunPod Serverless 엔드포인트 구성**
+   - *Container Image*: `mimikyou0607/labnote-ai-app:<TAG>`
+   - *Container Start Command*: 기본값(`./start.sh`)을 그대로 사용합니다. 이 스크립트가 Redis · Ollama · FastAPI 런타임을 모두 기동합니다.
+   - *Volume Mount*: `/runpod-volume` (영속 모델 캐시 `ollama_models`가 저장됩니다.)
+   - *Secrets*: GitHub 저장소를 클론하기 위한 토큰을 `github_token` 이름으로 등록하고, Serverless 옵션에서 `--secret id=github_token`과 동일한 이름을 사용합니다.
+
+3. **런타임 환경 변수**
+   - `LABNOTE_BACKEND_URL` (기본값 `http://127.0.0.1:8000`) : 컨테이너 내부 FastAPI URL입니다. 특별한 경우가 아니면 수정이 필요 없습니다.
+   - `LABNOTE_RUNPOD_TIMEOUT` : RunPod 작업 실행 최대 대기 시간(초). 기본 600초이며, 긴 DPO 요청 시 필요에 따라 조정할 수 있습니다.
+   - Redis/Ollama 설정은 `start.sh`가 자동으로 구성하므로 별도 환경 변수는 필요하지 않습니다.
+
+4. **API 호출 패턴**
+   - RunPod Serverless는 HTTP 포트를 직접 노출하지 않고, `https://api.runpod.ai/v2/<ENDPOINT_ID>/run`(비동기) 또는 `/runsync`(동기) 엔드포인트를 통해 요청을 트리거합니다.
+   - 요청 본문은 백엔드 경로 정보를 포함하는 다음 형태를 따릅니다.
+
+```bash
+curl "https://api.runpod.ai/v2/<ENDPOINT_ID>/run" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_RUNPOD_API_KEY>" \
+  -d '{
+    "input": {
+      "method": "POST",
+      "path": "/api/chat",
+      "body": {
+        "messages": [{"role": "user", "content": "Hello LabNote AI"}]
+      }
+    }
+  }'
+```
+
+   - 응답에는 `id`가 포함되며, `https://api.runpod.ai/v2/<ENDPOINT_ID>/status/<id>`를 폴링해서 결과를 수신할 수 있습니다. VS Code 확장과 RunPod 연동 스크립트는 이 패턴을 그대로 사용합니다.
+
 
 ## 1\. 시스템 아키텍처
 
@@ -184,7 +224,9 @@ sequenceDiagram
 
 -----
 
-## 5\. 설치 및 설정
+## 5\. 로컬 개발 환경 (선택 사항)
+
+> RunPod Serverless에서 서비스를 운영하는 경우 이 절은 건너뛰어도 됩니다. 아래 절차는 로컬에서 기능을 개발하거나 디버깅해야 할 때만 사용하세요.
 
 ### 사전 요구사항
 
@@ -262,6 +304,8 @@ sequenceDiagram
 -----
 
 ## 6\. 실행 방법
+
+> RunPod Serverless에서는 컨테이너가 부팅되면 `start.sh`가 Redis, Ollama, FastAPI를 자동으로 기동합니다. 아래 단계는 로컬 개발 환경에서만 필요합니다.
 
 ### sop 연결
 sop의 경우 데이터만 받기 때문에
@@ -342,66 +386,71 @@ sh run_full_dpo_pipeline.sh
   - `GET /constants`: 시스템에 사전 정의된 모든 워크플로우 및 단위 공정 목록을 반환합니다.
   - `GET /`: API 서버의 상태를 확인하는 Health Check 엔드포인트입니다.
 
-## 9\. VS Code Continue 연동 가이드
+## 9\. VS Code Continue 연동 가이드 (RunPod Serverless)
 
-이 백엔드 서버에서 실행 중인 LLM을 VS Code의 **Continue** 확장 프로그램과 연동하여 코드 자동 완성, 채팅, 컨텍스트 기반 질문 등 강력한 AI 기능을 IDE 내에서 직접 사용할 수 있습니다.
+RunPod Serverless 엔드포인트는 모든 AI 요청을 수용하는 단일 진입점입니다. VS Code의 **Continue** 확장에서 RunPod API를 호출하도록 설정하면, 백엔드가 자동으로 FastAPI 경로(`/api/chat`, `/populate_note` 등)를 실행합니다.
 
-### 1단계: 서버의 Ollama 포트 외부 노출
+### 1단계: RunPod 엔드포인트 ID와 API 키 확보
 
-Continue가 서버에 접속하려면 서버의 \*\*Ollama 포트(`11434`)\*\*가 외부에서 접근 가능해야 합니다. Vessl.ai와 같은 클라우드 환경에서는 해당 포트를 외부에 노출(Expose)하고, 생성된 외부 접속 URL을 확인해야 합니다.
+1. RunPod 콘솔에서 Serverless Endpoint를 생성한 뒤, **Endpoint ID** (예: `t8z31me8m865sl`)를 확인합니다.
+2. `RunPod API Key`를 발급하여 안전한 곳에 보관합니다. 이 키는 Continue와 VS Code 확장에서 모두 사용됩니다.
+3. (선택) 영속 스토리지를 사용한다면 Endpoint 설정의 Volume Mount Path가 컨테이너의 `/runpod-volume`와 일치하는지 확인합니다.
 
-### 2단계: Continue 설정 파일 (`config.yaml`) 수정
+### 2단계: Continue 설정 파일 (`~/.continue/config.yaml`) 업데이트
 
-1.  사용자 PC의 Continue 설정 파일을 엽니다.
+아래 예시는 RunPod의 동기 실행 엔드포인트(`/runsync`)를 사용해 LabNote 백엔드를 호출하는 방법입니다. 비동기 모드를 원한다면 `/run` + `/status/<jobId>` 조합을 사용할 수도 있습니다.
 
-      * **Windows**: `C:\Users\<사용자 이름>\.continue\config.yaml`
-      * **macOS / Linux**: `~/.continue/config.yaml`
+```yaml
+name: "labnote-runpod"
+version: "1.0.0"
+schema: "v1"
 
-2.  `models` 섹션에 아래와 같이 서버 정보를 추가합니다. 파일이 없다면 새로 생성하고 아래 내용을 붙여넣으세요.
+models:
+  - name: "LabNote Backend Logic"
+    provider: openai
+    model: "labnote-backend"
+    apiBase: "https://api.runpod.ai/v2/<ENDPOINT_ID>/runsync"
+    apiKey: "<YOUR_RUNPOD_API_KEY>"
+    title: "LabNote Backend"
 
-    ```yaml
-    # ~/.continue/config.yaml
+  - name: "LabNote Llama3.1 70B"
+    provider: openai
+    model: "llama3.1:70b"
+    apiBase: "https://api.runpod.ai/v2/<ENDPOINT_ID>/runsync"
+    apiKey: "<YOUR_RUNPOD_API_KEY>"
+    title: "LabNote Llama3.1 70B"
 
-    # Continue 확장의 기본 설정을 정의합니다.
-    name: "default"
-    version: "1.0.0"
-    schema: "v1"
+contextProviders:
+  - name: "active_file_content"
+    class: "FileContextProvider"
+    params:
+      filepath: "{{active_file_filepath}}"
 
-    # 이 에이전트가 사용할 수 있는 AI 모델 목록을 정의합니다.
-    models:
-      # 1. Llama3.1 Instruct 모델 (기본)
-      - name: "LabNote AI (Llama3.1 Instruct)" # Continue UI에 표시될 이름
-        provider: openai              # Ollama는 OpenAI와 호환되는 API를 제공합니다.
-        model: "llama3.1:8b"       # 서버의 .env 파일에 설정된 LLM_MODEL과 일치
-        apiBase: "http://<서버_IP_주소>:<11434_외부_포트>/v1" # 1단계에서 확인한 외부 접속 URL
-        apiKey: "ollama"
-        title: "LabNote Llama3.1 Instruct"
-        
-      # 2. Llama3 70b 모델
-      - name: "LabNote AI (Llama3 70B)"
-        provider: openai
-        model: "llama3.1:70b"
-        apiBase: "http://<서버_IP_주소>:<11434_외부_포트>/v1"
-        apiKey: "ollama"
-        title: "LabNote Llama3 70B"
+slashCommands:
+  - name: "populate"
+    description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
+    prompt: |
+      /populate {{user_input}}
+      ```markdown
+      {{active_file_content}}
+      ```
+    model: "LabNote Backend Logic"
+```
 
-      # 3. Mixtral 모델
-      - name: "LabNote AI (Mixtral)"
-        provider: openai
-        model: "mixtral:latest"
-        apiBase: "http://<서버_IP_주소>:<11434_외부_포트>/v1"
-        apiKey: "ollama"
-        title: "LabNote Mixtral"
+### 3단계: VS Code 확장 프로그램 설정
 
-      # 4. GPT-OSS 120B 모델
-      - name: "LabNote AI (GPT-OSS 120B)"
-        provider: openai
-        model: "gpt-oss:120b"
-        apiBase: "http://<서버_IP_주소>:<11434_외부_포트>/v1"
-        apiKey: "ollama"
-        title: "LabNote GPT-OSS 120B"
-        ```
+LabNote AI VS Code 확장은 RunPod API 호출을 위해 다음 설정 값을 사용합니다.
 
-### 3단계: VS Code 새로고침
+| 설정 | 설명 | 예시 |
+| --- | --- | --- |
+| `labnote.ai.backendUrl` | RunPod 엔드포인트를 지정합니다. `runpod://<ENDPOINT_ID>` 또는 `https://<ENDPOINT_ID>.runpod.run` 형태를 모두 지원합니다. | `runpod://t8z31me8m865sl` |
+| `labnote.ai.vesslApiToken` | RunPod API Key를 입력합니다. (과거 VESSL 토큰 설정을 재활용합니다.) | `rp_sk_********` |
 
-`config.yaml` 파일을 저장한 후, VS Code 창을 새로고침합니다. (`Ctrl+Shift+P` \> `Developer: Reload Window`). 이제 Continue 사이드바의 모델 선택 메뉴에서 "LabNote AI Server"를 선택하여 사용할 수 있습니다.
+설정을 저장하면 확장이 자동으로 RunPod `/run` + `/status` API를 호출하여 `/api/chat`, `/populate_note`, `/record_preference` 등 백엔드 엔드포인트를 실행합니다.
+
+### 4단계: 요청 속도 및 비용 주의
+
+- RunPod Serverless는 호출당 과금되며, 모델 로딩/오래 걸리는 요청은 `LABNOTE_RUNPOD_TIMEOUT`(기본 600초)을 넘지 않도록 관리해야 합니다.
+- VS Code 확장은 작업 진행 상황을 Output 패널에 로그로 남기므로, 장기 실행 작업의 상태를 쉽게 추적할 수 있습니다.
+
+RunPod API 호출 예시는 [0. RunPod Serverless 배포 빠른 시작](#0-runpod-serverless-배포-빠른-시작)을 참고하세요.

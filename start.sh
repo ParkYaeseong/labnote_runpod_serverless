@@ -27,14 +27,26 @@ export REDIS_URL="redis://localhost:6379/0"
 # 모델 저장 디렉토리 생성
 mkdir -p $OLLAMA_MODELS
 
+# Redis 권장 설정: vm.overcommit_memory=1 적용 시도 (권한 부족 시 경고만 출력)
+if command -v sysctl >/dev/null 2>&1; then
+    current_overcommit=$(sysctl -n vm.overcommit_memory 2>/dev/null || echo "")
+    if [ "$current_overcommit" != "1" ] && [ -n "$current_overcommit" ]; then
+        if sysctl -w vm.overcommit_memory=1 >/dev/null 2>&1; then
+            echo ">>> vm.overcommit_memory set to 1 for Redis stability."
+        else
+            echo ">>> WARNING: Could not set vm.overcommit_memory=1. Continuing with existing configuration."
+        fi
+    fi
+fi
+
 # --- 3. 핵심 서비스 시작 ---
 echo ">>> Starting core services..."
 
 # Redis 서버 시작 (백그라운드)
+REDIS_CONF="/opt/redis-stack/etc/redis-stack.conf"
 if ! pgrep -f redis-stack-server > /dev/null; then
-    # Runpod 환경에서는 로그를 stdout으로 보내는 것이 디버깅에 유리할 수 있습니다.
-    # --daemonize yes 대신 백그라운드 실행(&)을 사용합니다.
-    redis-stack-server &
+    # Runpod 환경에서는 로그를 stdout으로 보내는 것이 디버깅에 유리하므로 백그라운드 실행을 사용합니다.
+    redis-stack-server "${REDIS_CONF}" &
     echo ">>> Redis Stack Server started."
 else
     echo ">>> Redis Stack Server is already running."

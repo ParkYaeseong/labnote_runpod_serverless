@@ -5,6 +5,9 @@
 # 스크립트 실행 중 오류가 발생하면 즉시 중단합니다.
 set -e
 
+# TLS 인증서 번들을 명시적으로 지정하여 사설 루트 인증서가 있는 환경에서도 curl이 실패하지 않도록 합니다.
+export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
 # --- 변수 설정 ---
 # Docker Hub 사용자 이름 또는 조직 이름
 DOCKER_USERNAME="mimikyou0607"
@@ -40,12 +43,12 @@ fi
 echo "🚀 이미지 빌드 및 푸시를 시작합니다..."
 
 # --- 1. 베이스 이미지 빌드 및 푸시 ---
-echo "--- Step 1/2: 베이스 이미지(${FULL_BASE_IMAGE_NAME}) 빌드 및 푸시 ---"
-DOCKER_BUILDKIT=1 docker buildx build \
-    -f Dockerfile.base \
-    -t "${FULL_BASE_IMAGE_NAME}" \
-    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
-    --push .
+#echo "--- Step 1/2: 베이스 이미지(${FULL_BASE_IMAGE_NAME}) 빌드 및 푸시 ---"
+#DOCKER_BUILDKIT=1 docker buildx build \
+#    -f Dockerfile.base \
+#    -t "${FULL_BASE_IMAGE_NAME}" \
+#    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
+#    --push .
 
 # --- 2. 최종 애플리케이션 이미지 빌드 및 푸시 ---
 echo "--- Step 2/2: 최종 앱 이미지(${FULL_APP_IMAGE_NAME}) 빌드 및 푸시 ---"

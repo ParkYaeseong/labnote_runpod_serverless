@@ -1,37 +1,39 @@
+name: "labnote-default"
+version: "1.0.0"
+schema: "v1"
+
 models:
-  - name: "LabNote Backend Logic"
-    provider: openai
-    model: "labnote-backend"
-    apiBase: "http://127.0.0.1:8000/v1"
-    apiKey: "labnote"
-    title: "LabNote Backend"
+      # 1. LabNote 백엔드의 특수 기능(RAG, Agents) 호출을 위한 모델
+      - name: "LabNote Backend Logic"
+        provider: openai
+        model: "labnote-backend"
+        apiBase: "https://api.runpod.ai/v2/to551an4by0zjv/runsync" # ⭐️ RunPod URL
+        apiKey: "rpa_KDY2Q6WE4GGJZYDQONYNHOVKY3FAVJM84F66NZJLykvysx"
+        title: "LabNote Backend"
 
-  - name: "Ollama Llama3.1 70B"
-    provider: openai
-    model: "llama3.1:70b"
-    apiBase: "http://127.0.0.1:11434/v1"
-    apiKey: "ollama"
-    title: "Ollama Llama3.1 70B"
+      # 2. 일반 대화를 위한 Ollama 모델들
+      # apiBase는 백엔드 로직 모델과 동일한 RunPod URL을 사용합니다.
+      - name: "LabNote AI (Llama3.1 70B)"
+        provider: openai
+        model: "llama3.1:70b"
+        apiBase: "https://api.runpod.ai/v2/to551an4by0zjv/runsync" # ⭐️ 동일한 RunPod URL
+        apiKey: "rpa_KDY2Q6WE4GGJZYDQONYNHOVKY3FAVJM84F66NZJLykvysx"
+        title: "Ollama Llama3.1 70B"
 
-  - name: "Ollama GPT-OSS 120B"
-    provider: openai
-    model: "gpt-oss:120b"
-    apiBase: "http://127.0.0.1:11434/v1"
-    apiKey: "ollama"
-    title: "Ollama GPT-OSS 120B"
 
 contextProviders:
-  - name: "active_file_content"
-    class: "FileContextProvider"
-    params:
-      filepath: "{{active_file_filepath}}"
+ - name: "active_file_content"
+   class: "FileContextProvider"
+   params:
+     filepath: "{{active_file_filepath}}"
 
 slashCommands:
-  - name: "populate"
-    description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
-    prompt: |
-      /populate {{user_input}}
-      ```markdown
-      {{active_file_content}}
-      ```
-    model: "LabNote Backend Logic"
+ - name: "populate"
+   description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
+   prompt: |
+     /populate {{user_input}}
+     ```markdown
+     {{active_file_content}}
+     ```
+   model: "LabNote Backend"
+

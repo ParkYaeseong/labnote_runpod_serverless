@@ -3,10 +3,12 @@
 # 이 파일은 자주 바뀌지 않는 무거운 의존성과 모델을 담는
 # "베이스 이미지"를 생성하기 위한 파일입니다.
 
-# --- Stage 1: Builder (Python 의존성 준비) ---
-FROM runpod/pytorch:2.1.0-cuda12.1.1-devel-ubuntu22.04 AS builder
+FROM redis/redis-stack-server:latest AS redis_stack
 
-RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
+# --- Stage 1: Builder (Python 의존성 준비) ---
+FROM runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404 AS builder
+
+RUN apt-get update && apt-get install -y git curl ca-certificates && update-ca-certificates && rm -rf /var/lib/apt/lists/*
 
 ENV VENV_PATH=/opt/venv
 RUN python3 -m venv ${VENV_PATH}
@@ -17,27 +19,61 @@ COPY ./labnote-ai-backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # --- Stage 2: Final Base Image ---
-FROM runpod/pytorch:2.1.0-cuda12.1.1-devel-ubuntu22.04
+FROM runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404
 
-# 1. 시스템 의존성 설치 (Redis)
+# 강제 캐시 무효화를 위한 인자 (값을 변경하면 이후 레이어가 다시 빌드됨)
+ARG CACHE_BUSTER=3 # 이전 값에서 1 증가
+
+# 1. 시스템 의존성 설치 + CA 인증서 업데이트 + wget 설치
 RUN apt-get update && \
-    apt-get install -y curl gpg lsb-release && \
-    curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb jammy main" | tee /etc/apt/sources.list.d/redis.list && \
-    apt-get update && \
-    apt-get install -y redis-stack-server && \
+    apt-get install -y --no-install-recommends curl gpg lsb-release ca-certificates wget && \
+    update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# 2. Ollama 설치 
-RUN curl -fsSL https://ollama.com/install.sh | sh
+# 1-a. Redis Stack 바이너리 복사
+COPY --from=redis_stack /opt/redis-stack /opt/redis-stack
+RUN mkdir -p /usr/lib/redis && ln -s /opt/redis-stack/lib/modules /usr/lib/redis/modules
+ENV PATH="/opt/redis-stack/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/redis-stack/lib:/usr/local/lib/ollama:${LD_LIBRARY_PATH}"
+
+ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
+# 2. Ollama 수동 설치 (압축 파일 다운로드 및 추출)
+RUN set -euxo pipefail; \
+    OLLAMA_VERSION="v0.12.6"; \
+    OLLAMA_TGZ_URL="https://github.com/ollama/ollama/releases/download/${OLLAMA_VERSION}/ollama-linux-amd64.tgz"; \
+    TEMP_DIR=$(mktemp -d); \
+    echo ">>> Ollama 압축 파일 다운로드 시도..."; \
+    if ! curl -fsSL "${OLLAMA_TGZ_URL}" -o "${TEMP_DIR}/ollama.tgz"; then \
+        curl -fsSL --insecure "${OLLAMA_TGZ_URL}" -o "${TEMP_DIR}/ollama.tgz"; \
+    fi; \
+    tar -xzf "${TEMP_DIR}/ollama.tgz" -C "${TEMP_DIR}"; \
+    INSTALL_ROOT="${TEMP_DIR}"; \
+    if [ -f "${INSTALL_ROOT}/ollama" ]; then \
+        INSTALL_BIN="${INSTALL_ROOT}/ollama"; \
+    elif [ -f "${INSTALL_ROOT}/bin/ollama" ]; then \
+        INSTALL_BIN="${INSTALL_ROOT}/bin/ollama"; \
+    else \
+        INSTALL_BIN=$(find "${INSTALL_ROOT}" -maxdepth 4 -type f -name ollama | head -n 1); \
+    fi; \
+    if [ -z "${INSTALL_BIN}" ]; then \
+        echo "!!! 오류: Ollama 바이너리를 찾을 수 없습니다."; \
+        ls -R "${INSTALL_ROOT}"; \
+        exit 1; \
+    fi; \
+    install -Dm755 "${INSTALL_BIN}" /usr/local/bin/ollama; \
+    if [ -d "${INSTALL_ROOT}/lib" ]; then \
+        rm -rf /usr/local/lib/ollama; \
+        mkdir -p /usr/local/lib/ollama; \
+        cp -r "${INSTALL_ROOT}/lib/." /usr/local/lib/ollama/; \
+    fi; \
+    rm -rf "${TEMP_DIR}"; \
+    ollama --version; \
+    echo ">>> Ollama 수동 설치 완료."
 
 # 3. Python 가상 환경 복사
 ENV VENV_PATH=/opt/venv
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
 ENV PATH="${VENV_PATH}/bin:${PATH}"
 
-# 이 이미지는 애플리케이션 코드를 포함하지 않습니다.
-# 최종 이미지가 이 이미지를 기반으로 빌드될 것입니다.
 WORKDIR /app
-
-# 시작 스크립트나 CMD는 여기에 포함하지 않습니다.

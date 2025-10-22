@@ -89,3 +89,18 @@
 4. **보안 및 운영 고려**
    - [ ] 허용 확장자(`.ppt`, `.pptx`, `.pdf`)와 크기 제한(예: 20MB)을 명시하고, 업로드 실패 시 사용자 친화적 메시지를 반환합니다.
    - [ ] 업로드 파일은 일정 기간 이후 자동 삭제하고, 감사 로그에 파일 접근 내역을 남겨 데이터 보안을 확보합니다.
+
+### 2025-10-22 VSCode Extension 서버리스 대응 계획
+1. VSCode 확장의 서버 호출 계층을 RunPod Serverless API 기반으로 리팩터링한다.
+   - 기존 `labnote.ai.backendUrl` 설정은 RunPod Endpoint ID를 포함한 API Base(`https://api.runpod.ai/v2/<endpoint-id>`)로 변경.
+   - `labnote.ai.vesslApiToken` 설정을 RunPod API Key 용도로 재사용하거나 명시적으로 이름을 변경하는지 결정 후 문서화.
+2. `node-fetch` 요청 경로를 `/run` + `/status/<jobId>` 폴링 구조로 변경해 HTTP 노출 없이 응답을 수신한다.
+   - 공통 헬퍼(`callRunpodServerless`)를 만들어 작업 제출/폴링/에러 처리를 캡슐화.
+   - 채팅, populate, scaffold 등 모든 API 호출이 새 헬퍼를 통하도록 일괄 수정.
+3. 응답 지연 대비 UX 보완
+   - 폴링 상태를 Output Channel에 단계별로 로그하고, 타임아웃/취소 로직을 추가한다.
+   - 기존 컨텍스트 캐시 로직(chatSessions)을 유지하면서도 RunPod 응답 구조(`status`, `output`, `error`)를 파싱해 재사용한다.
+4. README 및 설정 스키마 갱신
+   - 서버리스 모드용으로 변경된 설정 키 설명, RunPod API Key 안내, 사용 예시를 문서화한다.
+   - 필요 시 `/dist` 번들 재빌드 후 테스트 계획을 AGENT.md TODO에 추가한다.
+

@@ -22,6 +22,9 @@ RUN --mount=type=secret,id=github_token,required=true \
     git submodule sync --recursive && \
     git submodule update --init --force --recursive
 
+# RunPod 서버리스 런타임 지원 패키지 설치 (베이스 이미지에 없을 가능성 대비)
+RUN /opt/venv/bin/pip install --no-cache-dir runpod
+
 # 6. 시작 스크립트 복사 및 실행 권한 부여
 COPY start.sh .
 RUN chmod +x ./start.sh

@@ -223,9 +223,6 @@ ALL_UOS_DATA, ALL_WORKFLOWS_DATA = _precompute_data()
 # --- Redis 연결 관리 ---
 redis_pool = None
 
-KEEP_ALIVE_MODELS = ["llama3.1:70b", "gpt-oss:120b"]
-
-
 # FastAPI 앱 초기화
 app = FastAPI(
     title="LabNote AI Assistant Backend",
@@ -301,7 +298,7 @@ class CompletionFeedbackRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-    context: Dict[str, Any]
+    context: Dict[str, Any] # conversation_id 대신 context를 반환
 
 # --- 헬퍼 함수 ---
 def get_seoul_date_string():
@@ -1334,15 +1331,15 @@ def get_constants():
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
-        query = next((msg['content'] for msg in reversed(request.messages) if msg['role'] == 'user'), '')
+        query = next((msg['content'] for msg in reversed(request.messages) if msg['role'] == 'user'), '') if request.messages else ''
 
-        # 상태 비저장으로 변경: 요청에서 직접 context를 가져와 사용합니다.
+        # Stateless: 요청에서 직접 context를 가져와 사용합니다.
         conversation = {
             "messages": request.messages,
             "context": request.context or {}
         }
 
-        # file_path, file_content, experiment_goal을 요청에서 직접 context로 업데이트합니다.
+        # file_path, file_content, experiment_goal을 요청에서 직접 받아 context에 업데이트합니다.
         context = conversation["context"]
         if request.file_path:
             context["file_path"] = request.file_path
@@ -1350,10 +1347,10 @@ async def chat(request: ChatRequest):
             context["file_content"] = request.file_content
         if request.experiment_goal:
             context["experiment_goal"] = request.experiment_goal
-        
+
         generated_text = ""
 
-        # --- Simplified Branching Logic ---
+        # --- 분기 로직 ---
 
         populate_match = re.search(r"^\s*/populate\s+(?P<user_input>[^\n`]+)", query, re.IGNORECASE | re.MULTILINE) if query else None
         populate_triggered = re.search(r"^\s*/populate\b", query, re.IGNORECASE | re.MULTILINE) is not None if query else False
@@ -1366,7 +1363,7 @@ async def chat(request: ChatRequest):
                 populate_triggered,
                 bool(populate_match)
             )
-        dpo_feedback_response = await _handle_dpo_feedback(query, request, conversation, request.messages)
+        dpo_feedback_response = await _handle_dpo_feedback(query, request, conversation, request.messages or [])
 
         if dpo_feedback_response is not None:
             generated_text = dpo_feedback_response
@@ -1374,7 +1371,7 @@ async def chat(request: ChatRequest):
             generated_text = interactive_response
         elif request.model == "labnote-backend" and populate_match:
             # 1. Dedicated flow for the "labnote-backend" model (Section Population)
-            logger.info("Labnote Backend Logic model selected. Executing section population flow.")
+            logger.info("Labnote Backend Logic model selected. Executing section population flow...")
             logger.info("Raw user query for population flow: %s", query)
 
             user_input = populate_match.group('user_input').strip()
@@ -1423,13 +1420,13 @@ async def chat(request: ChatRequest):
                 }
                 messages.insert(0, system_prompt)
 
-            response = await ollama.AsyncClient().chat(
+            response = await ollama.AsyncClient(timeout=60).chat(
                 model=llm_model_name,
                 messages=messages,
                 options={'temperature': 0.1}
             )
             raw_text = response['message']['content'].strip()
-            logger.info(f"DIAGNOSIS: Raw text from LLM: '{raw_text}'")
+            logger.info(f"DIAGNOSIS: Raw text from LLM: '{raw_text[:300]}'")
 
             generated_text = _post_process_content(raw_text)
             logger.info(f"DIAGNOSIS: Processed text: '{generated_text}'")
@@ -1437,14 +1434,11 @@ async def chat(request: ChatRequest):
         # Final response preparation
         # 상태 비저장으로 변경: 업데이트된 context를 응답에 포함하여 반환합니다.
         conversation["messages"].append({"role": "assistant", "content": generated_text})
-        return ChatResponse(response=generated_text, context=conversation["context"])
+        return ChatResponse(response=generated_text, context=conversation.get("context", {}))
 
     except Exception as e:
         logger.error(f"Error during chat: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
 
 @app.get("/", summary="Health Check")
 def health_check():
@@ -1518,130 +1512,3 @@ def get_feedback_metrics(start_date: Optional[str] = None, end_date: Optional[st
     except Exception as e:
         logger.error(f"Error fetching feedback metrics from DB: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to fetch feedback metrics.")
-
-@app.post("/v1/chat/completions")
-async def openai_compat(request: dict):
-    messages = request.get("messages", [])
-    stream = bool(request.get("stream"))
-    stream_options = request.get("stream_options") or {}
-    if not isinstance(stream_options, dict):
-        stream_options = {}
-    include_usage = bool(stream_options.get("include_usage"))
-
-    # 상태 비저장으로 변경: 요청에서 context를 직접 받습니다.
-    context = request.get("context")
-
-    logger.info(
-        "OpenAI compatibility handler invoked: model=%s, messages=%d, stream=%s",
-        request.get("model"),
-        len(messages) if messages else 0,
-        stream,
-    )
-    if messages:
-        last_message = messages[-1]
-        last_content = _normalize_message_content(last_message.get("content"))
-        logger.info(
-            "Last message role=%s, content_preview=%s",
-            last_message.get("role"),
-            (last_content[:200] + "...") if last_content and len(last_content) > 200 else last_content,
-        )
-
-    file_content = request.get("file_content") or _extract_file_content_from_messages(messages)
-    experiment_goal = request.get("experiment_goal")
-    file_path = request.get("file_path")
-
-    if not file_path:
-        file_path = _extract_file_path_from_messages(messages)
-
-    if not experiment_goal and file_content:
-        experiment_goal = _infer_experiment_goal(file_content)
-    if not experiment_goal and file_content:
-        experiment_goal = "Experiment goal not provided."
-    logger.info(
-        "Inferred context for Continue: file_content_len=%s, experiment_goal_preview=%s",
-        len(file_content) if file_content else 0,
-        (experiment_goal[:120] + "...") if experiment_goal and len(experiment_goal) > 120 else experiment_goal,
-    )
-    if file_path:
-        logger.info("Detected active file path for Continue context: %s", file_path)
-
-    labnote_response = await chat(
-        ChatRequest(
-            model=request.get("model"),
-            messages=messages,
-            context=context, # context 전달
-            file_content=file_content,
-            experiment_goal=experiment_goal,
-            file_path=file_path,
-        )
-    )
-    logger.info(
-        "OpenAI compatibility returning response_preview=%s",
-        (labnote_response.response[:200] + "...") if labnote_response.response and len(labnote_response.response) > 200 else labnote_response.response,
-    )
-    response_model_name = request.get("model") or os.getenv("LLM_MODEL", "labnote-backend")
-    response_id = f"chatcmpl-{uuid.uuid4().hex}"
-    created_ts = int(time.time())
-    assistant_content = labnote_response.response or ""
-    usage_payload = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0,
-        }
-
-    if stream:
-        content_chunks = _chunk_text_for_stream(assistant_content)
-
-        async def event_generator():
-            for idx, chunk_text in enumerate(content_chunks):
-                delta_payload = {"content": chunk_text}
-                if idx == 0:
-                    delta_payload["role"] = "assistant"
-
-                chunk = {
-                    "id": response_id,
-                    "object": "chat.completion.chunk",
-                    "created": created_ts,
-                    "model": response_model_name,
-                    "choices": [{
-                        "index": 0,
-                        "delta": delta_payload,
-                        "logprobs": None,
-                        "finish_reason": None,
-                    }],
-                }
-                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
-
-            final_chunk = {
-                "id": response_id,
-                "object": "chat.completion.chunk",
-                "created": created_ts,
-                "model": response_model_name,
-                "choices": [{
-                    "index": 0,
-                    "delta": {},
-                    "logprobs": None,
-                    "finish_reason": "stop",
-                }],
-                "context": labnote_response.context # 업데이트된 context 추가
-            }
-            if include_usage:
-                final_chunk["usage"] = usage_payload
-            yield f"data: {json.dumps(final_chunk, ensure_ascii=False)}\n\n"
-            yield "data: [DONE]\n\n"
-
-        return StreamingResponse(event_generator(), media_type="text/event-stream")
-
-    return {
-        "id": response_id,
-        "object": "chat.completion",
-        "created": created_ts,
-        "model": response_model_name,
-        "choices": [{
-            "index": 0,
-            "message": {"role": "assistant", "content": assistant_content},
-            "finish_reason": "stop",
-        }],
-        "context": labnote_response.context, # 업데이트된 context 추가
-        "usage": usage_payload,
-    }
