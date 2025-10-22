@@ -39,6 +39,13 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# --- 서버리스 환경을 위한 전역 초기화 ---
+# main.py가 TestClient에 의해 로드될 때 RAG 파이프라인을 초기화합니다.
+if os.getenv("RUNPOD_SERVERLESS", "false").lower() == "true":
+    logger.info("Initializing RAG pipeline within main.py for serverless environment...")
+    rag_module.rag_pipeline = rag_module.RAGPipeline()
+    logger.info("RAG pipeline initialized successfully from main.py.")
+
 # --- [DIAGNOSIS] Unexpected Shutdown Signal Handler ---
 def handle_shutdown_signal(signum, frame):
     logger.warning(f"SHUTDOWN-DIAGNOSIS: Server received signal {signal.Signals(signum).name}. This is the likely cause of the unexpected shutdown.")
