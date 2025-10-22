@@ -1,0 +1,9 @@
+# Ignore everything by default to ensure a clean context
+**
+
+# Allow specific files and directories required for the build
+!/start.sh
+!/labnote-ai-backend/requirements.txt
+
+# Do not ignore the root directory itself, but ignore its contents
+!/

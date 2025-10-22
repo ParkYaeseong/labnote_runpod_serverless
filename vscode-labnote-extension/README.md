@@ -154,7 +154,7 @@ VS Code의 채팅 뷰에서 `@labnote`를 입력하여 AI 어시스턴트를 호
 
 1.  **시작**: 채팅창에 `@labnote`를 입력하면 시작 메뉴가 나타납니다.
 2.  **기능 선택**: 버튼을 클릭하여 원하는 기능을 대화형으로 실행합니다.
-      * **🔬 새 연구노트 생성**: AI의 질문에 따라 '주제 -\> 워크플로우 -\> Unit Operation' 순서로 답변하며 연구노트를 생성합니다.
+      * **🔬 새 연구노트 생성**: AI의 질문에 따라 '주제 -> 워크플로우 -> Unit Operation' 순서로 답변하며 연구노트를 생성합니다.
       * **✍️ 섹션 내용 채우기 (AI)**: 현재 열린 파일에서 채우고 싶은 섹션을 버튼으로 선택하여 AI 제안을 받습니다.
       * **➕ 워크플로우 추가**: 현재 연구노트에 표준 워크플로우를 추가합니다.
       * **➕ 유닛 오퍼레이션 추가**: 현재 워크플로우 파일에 HW 또는 SW 유닛 오퍼레이션을 추가합니다.
@@ -182,101 +182,53 @@ VS Code의 채팅 뷰에서 `@labnote`를 입력하여 AI 어시스턴트를 호
 | `LabNote: 현재 유닛오퍼레이션 완료` | 현재 커서가 위치한 유닛 오퍼레이션을 완료 상태로 변경하고 종료일을 기록합니다. |
 | `LabNote: 실험 폴더 번호 재정렬` | `labnote` 폴더 내의 모든 실험 폴더 번호를 순서대로 재정렬합니다. |
 
-## 9. VS Code Continue 연동 가이드
+## 9. VS Code Continue 연동 가이드 (서버리스)
 
+서버리스로 전환된 백엔드 서버를 VS Code의 **Continue** 확장 프로그램과 연동하여, IDE 내에서 직접 코드 자동 완성, 채팅, 그리고 LabNote 전용 Slash 명령을 활용할 수 있습니다.
 
+### 1단계: RunPod 엔드포인트 URL 확인
 
-이 백엔드 서버를 VS Code의 **Continue** 확장 프로그램과 연동하면, IDE 내에서 직접 코드 자동 완성, 채팅, 그리고 LabNote 전용 Slash 명령(DPO 피드백, RAG 검색, Supervisor 기반 Agents)을 활용할 수 있습니다.
+RunPod에서 서버리스 엔드포인트를 배포하면, 고유한 공개 URL이 생성됩니다. (예: `https://<your-unique-id>.runpod.run`) 이 URL이 모든 AI 기능에 접근하기 위한 단일 진입점(Single Entry Point)이 됩니다.
 
-
-
-### 1단계: 서버 포트 외부 노출
-
-
-
-Continue가 서버에 접속하려면 다음 두 포트가 외부에서 접근 가능해야 합니다.
-
-- **Ollama 포트 (`11434`)**: 일반적인 LLM 모델(Llama3, Mixtral 등)을 직접 호출할 때 사용합니다.
-
-- **FastAPI 백엔드 포트 (`8000`)**: `/populate` 등 LabNote AI 백엔드의 특수 기능(RAG, Agent)을 사용할 때 필요합니다.
-
-
-
-Vessl.ai와 같은 클라우드 환경에서는 각 포트를 외부에 노출(Expose)하고, 생성된 외부 접속 URL을 확인해야 합니다.
+- **중요**: 이전과 달리, FastAPI 백엔드(8000)와 Ollama(11434) 포트를 직접 사용하지 않습니다. 모든 요청은 이 단일 URL로 보내야 합니다.
 
 ### 2단계: Continue 설정 파일 (`config.yaml`) 수정
 
 1.  사용자 PC의 Continue 설정 파일을 엽니다.
-    * **Windows**: `C:\Users\<사용자 이름>\.continue\config.yaml`
-    * **macOS / Linux**: `~/.continue/config.yaml`
+    *   **Windows**: `C:\Users\<사용자 이름>\.continue\config.yaml`
+    *   **macOS / Linux**: `~/.continue/config.yaml`
 
-2.  아래 예시를 참고하여 설정을 업데이트합니다. `apiBase`는 사용 중인 서버 주소/포트에 맞춰 수정하세요.
+2.  아래 예시를 참고하여 `models` 섹션을 업데이트합니다. **모든 `apiBase` 항목에 1단계에서 확인한 동일한 RunPod 엔드포인트 URL**을 입력해야 합니다.
 
     ```yaml
-    name: "default"
-    version: "1.0.0"
-    schema: "v1"
-
     models:
+      # 1. LabNote 백엔드의 특수 기능(RAG, Agents) 호출을 위한 모델
       - name: "LabNote Backend Logic"
         provider: openai
         model: "labnote-backend"
-        apiBase: "http://<BACKEND_HOST>:30711/v1"
+        apiBase: "https://<your-runpod-endpoint-id>.runpod.run/v1" # ⭐️ RunPod URL
         apiKey: "labnote"
         title: "LabNote Backend"
 
+      # 2. 일반 대화를 위한 Ollama 모델들
+      # apiBase는 백엔드 로직 모델과 동일한 RunPod URL을 사용합니다.
       - name: "LabNote AI (Llama3.1 70B)"
         provider: openai
         model: "llama3.1:70b"
-        apiBase: "http://<OLLAMA_HOST>:31429/v1"
+        apiBase: "https://<your-runpod-endpoint-id>.runpod.run/v1" # ⭐️ 동일한 RunPod URL
         apiKey: "ollama"
         title: "Ollama Llama3.1 70B"
-      
-      - name: "LabNote AI (Llama3.1 8B)"
-        provider: openai
-        model: "llama3.1:8b"
-        apiBase: "http://<OLLAMA_HOST>:31429/v1"
-        apiKey: "ollama"
-        title: "Llama3.1 8B"
-
-      - name: "LabNote AI (Mixtral)"
-        provider: openai
-        model: "mixtral:latest"
-        apiBase: "http://<OLLAMA_HOST>:31429/v1"
-        apiKey: "ollama"
-        title: "Mixtral"
-
-    contextProviders:
-      - name: "active_file_content"
-        class: "FileContextProvider"
-        params:
-          filepath: "{{active_file_filepath}}"
-
-    slashCommands:
-      - name: "populate"
-        description: "Populate a section in the current lab note (e.g., /populate UHW010 Method)"
-        prompt: |
-          /populate {{user_input}}
-          ```markdown
-          {{active_file_content}}
-          ```
-        model: "LabNote Backend Logic"
     ```
 
-### 3단계: Continue에서 활용 가능한 LabNote 전용 기능
+### 3단계: VS Code 확장 프로그램 설정
 
-- **Populate & DPO 피드백 연동**: `/populate <UO_ID> <Section>` 명령으로 초안을 생성하고, 원하는 번호를 답하면 DPO 데이터가 백엔드로 기록됩니다. 응답에는 섹션에 바로 적용 가능한 `diff` 코드블록이 함께 제공되며, 동일한 옵션을 반복 선택하면 중복 학습을 방지하기 위해 경고만 출력됩니다.
-- **RAG + Supervisor Agents**: `LabNote Backend Logic` 모델은 랩노트 전체 문서를 분석하여 RAG 검색과 Supervisor 기반 에이전트 팀을 조합해 고품질 섹션 초안을 제공합니다.
-- **일반 대화/코딩 보조**: `/populate` 명령 없이 대화하면 Ollama에 등록된 LLM(8B, 70B, Mixtral 등)이 일반적인 Q&A나 코드 생성을 담당합니다. 필요에 따라 Continue 사이드바에서 사용할 모델을 선택하세요.
-2.  내용을 채우고 싶은 연구노트 마크다운 파일을 엽니다.
+`Ctrl+,`를 눌러 VS Code 설정을 열고 `labnote.ai.backendUrl`을 검색하여 **1단계에서 확인한 동일한 RunPod 엔드포인트 URL**로 설정합니다.
 
-3.  Continue 채팅창에서 `/populate`를 입력하고, **"UO_ID Section"** 형식으로 요청합니다.
+| 설정 | 설명 | 예시 (서버리스) |
+| --- | --- | --- |
+| `labnote.ai.backendUrl` | LabNote AI 백엔드 서버의 URL입니다. | `https://<your-runpod-endpoint-id>.runpod.run` |
 
-    *   **예시**: `/populate UHW010 Method`
-
-4.  AI가 파일 컨텍스트를 기반으로 해당 섹션의 내용을 생성하여 제안합니다.
-
-    
+---
 
 ## ⚙️ 설정
 
@@ -285,7 +237,7 @@ Vessl.ai와 같은 클라우드 환경에서는 각 포트를 외부에 노출(E
 | 설정 | 설명 | 기본값 |
 | --- | --- | --- |
 | `labnote.ai.backendUrl` | LabNote AI 백엔드 서버의 기본 URL입니다. | `http://127.0.0.1:8000` |
-| `labnote.ai.vesslApiToken`| VESSL.ai 서비스 엔드포인트 인증을 위한 API 토큰입니다. | `""` |
+| `labnote.ai.vesslApiToken`| (더 이상 사용되지 않음) VESSL.ai 서비스 엔드포인트 인증을 위한 API 토큰입니다. | `""` |
 | `labnote.manager.workflowsPath` | 사용자 정의 워크플로우 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.hwUnitOperationsPath`| 사용자 정의 하드웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.swUnitOperationsPath`| 사용자 정의 소프트웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |

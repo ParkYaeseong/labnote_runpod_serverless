@@ -15,11 +15,15 @@ interface ChatSession {
     flow: ChatFlow;
     state: string;
     data: { [key: string]: any };
+    context: { [key: string]: any }; // 백엔드와의 대화 상태 저장
 }
 
 const chatSessions = new Map<string, ChatSession>();
 
-interface ChatResponse { response: string; conversation_id: string; }
+interface ChatResponse { 
+    response: string; 
+    context: { [key: string]: any }; // 업데이트된 컨텍스트
+}
 interface PopulateResponse {
     uo_id: string;
     section: string;
@@ -501,7 +505,7 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
         token: vscode.CancellationToken
     ): Promise<vscode.ChatResult> => {
 
-        const sessionId = "default_session";
+        const sessionId = "default_session"; // 단일 세션 관리를 위해 고정 ID 사용
         let session = chatSessions.get(sessionId);
 
         // --- 명시적 대화 시작 명령어 처리 ---
@@ -511,7 +515,8 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
                 chatSessions.set(sessionId, {
                     flow: 'generate_labnote',
                     state: 'awaiting_topic',
-                    data: {}
+                    data: {},
+                    context: {} // 새 context 초기화
                 });
                 stream.markdown("🔬 Okay. What is the main topic of the lab note to be generated?"); // This is already in English, no change needed.
                 return {};
@@ -533,7 +538,8 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
                 chatSessions.set(sessionId, {
                     flow: 'populate_section',
                     state: 'awaiting_section_choice',
-                    data: { documentUri: editor.document.uri }
+                    data: { documentUri: editor.document.uri },
+                    context: {}
                 });
 
                 stream.markdown("✍️ Please select a section to populate with AI."); // This is already in English, no change needed.
@@ -581,8 +587,16 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
             return {};
         }
 
-        // 일반 채팅 API 호출
-        await callChatApi(request.prompt, outputChannel, stream, null);
+        // 일반 채팅 API 호출 (상태 관리 포함)
+        const currentSession = chatSessions.get(sessionId) || { flow: 'generate_labnote', state: 'init', data: {}, context: {} };
+        const chatResult = await callChatApi(request.prompt, outputChannel, stream, currentSession.context);
+        
+        if (chatResult) {
+            // 새로운 context로 세션 업데이트
+            currentSession.context = chatResult.context;
+            chatSessions.set(sessionId, currentSession);
+        }
+
         return {};
     };
 
@@ -1229,31 +1243,41 @@ async function sendCompletionFeedback(
     }
 }
 
-async function callChatApi(userInput: string, outputChannel: vscode.OutputChannel, stream: vscode.ChatResponseStream, conversationId: string | null = null) {
+async function callChatApi(userInput: string, outputChannel: vscode.OutputChannel, stream: vscode.ChatResponseStream, context: { [key: string]: any } | null = null): Promise<{ response: string, context: { [key: string]: any } } | null> {
     try {
         stream.progress("Requesting from LabNote AI backend..."); // This is already in English, no change needed.
         const baseUrl = getBaseUrl();
         if (!baseUrl) {
             stream.markdown("Error: Backend URL is not set."); // This is already in English, no change needed.
-            return;
+            return null;
         }
-        const response = await fetch(`${baseUrl}/chat`, {
+
+        // 백엔드로 보낼 메시지 배열 구성. 여기서는 간단히 마지막 사용자 입력만 보냅니다.
+        // 실제 애플리케이션에서는 전체 대화 기록을 보내야 할 수 있습니다.
+        const messages = [{ role: 'user', content: userInput }];
+
+        const response = await fetch(`${baseUrl}/api/chat`, {
             method: 'POST',
             headers: getApiHeaders(),
             body: JSON.stringify({
-                query: userInput,
-                conversation_id: conversationId
+                messages: messages,
+                context: context // 현재 context 전달
             }),
         });
+
         if (!response.ok) {
              const errorText = await response.text();
              throw new Error(`Chat failed (HTTP ${response.status}): ${errorText}`);
         }
+        
         const chatData = await response.json() as ChatResponse;
         stream.markdown(chatData.response);
+        return { response: chatData.response, context: chatData.context }; // 응답과 함께 새로운 context 반환
+
     } catch (error: any) {
         stream.markdown(`An error occurred while chatting with the AI: ${error.message}`);
         outputChannel.appendLine(`[ERROR] callChatApi: ${error.stack}`);
+        return null;
     }
 }
 

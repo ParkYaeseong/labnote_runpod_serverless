@@ -223,18 +223,22 @@ ALL_UOS_DATA, ALL_WORKFLOWS_DATA = _precompute_data()
 # --- Redis 연결 관리 ---
 redis_pool = None
 
+KEEP_ALIVE_MODELS = ["llama3.1:70b", "gpt-oss:120b"]
+
+
 async def keep_gpu_warm():
     while True:
-        try:
-            logger.info("[Keep-Alive] Running scheduled GPU health check...")
-            await ollama.AsyncClient().chat(
-                model='llama3.1:70b',
-                messages=[{'role': 'user', 'content': 'Health check. Respond with "OK".'}],
-                options={'num_predict': 1}
-            )
-            logger.info("[Keep-Alive] Successfully kept llama3.1:70b model warm.")
-        except Exception as e:
-            logger.error(f"[Keep-Alive] Error during GPU health check: {e}", exc_info=True)
+        for model_name in KEEP_ALIVE_MODELS:
+            try:
+                logger.info("[Keep-Alive] Running scheduled GPU health check for %s...", model_name)
+                await ollama.AsyncClient().chat(
+                    model=model_name,
+                    messages=[{'role': 'user', 'content': 'Health check. Respond with \"OK\".'}],
+                    options={'num_predict': 1}
+                )
+                logger.info("[Keep-Alive] Successfully kept %s model warm.", model_name)
+            except Exception as exc:
+                logger.error("[Keep-Alive] Error during GPU health check for %s: %s", model_name, exc, exc_info=True)
         await asyncio.sleep(300)
 
 @asynccontextmanager
@@ -401,7 +405,8 @@ def _extract_file_content_from_messages(messages: List[Dict[str, Any]]) -> Optio
     best_score = -1
 
     for message in reversed(messages or []):
-        if message.get("role") != "user":
+        role = (message.get("role") or "").lower()
+        if role not in ("user", "system", "context"):
             continue
         content = _normalize_message_content(message.get("content"))
         if not content:
@@ -438,6 +443,34 @@ def _extract_file_content_from_messages(messages: List[Dict[str, Any]]) -> Optio
             break
 
     return best_block
+
+def _sanitize_option_text(option: str, section: str) -> Tuple[str, Optional[str]]:
+    """
+    Remove helper metadata (model name, quality score, trailing prompts) so the text that
+    gets inserted into the lab note contains only the section body. Returns the cleaned
+    content together with the metadata line, if any.
+    """
+    if not option:
+        return "", None
+
+    text = option.strip()
+    meta_line = None
+
+    if text.startswith("---"):
+        first_line, _, remainder = text.partition("\n")
+        meta_line = first_line.strip()
+        text = remainder.lstrip()
+
+    heading_pattern = re.compile(rf"^###\s*{re.escape(section)}\s*\n", re.IGNORECASE)
+    text = heading_pattern.sub("", text, count=1)
+
+    text = re.sub(r"\n*어느 번호.*$", "", text, flags=re.IGNORECASE).strip()
+    text = re.sub(r"\n*Which option.*$", "", text, flags=re.IGNORECASE).strip()
+
+    if not text:
+        return option.strip(), meta_line
+
+    return text, meta_line
 
 def _infer_experiment_goal(file_content: str) -> Optional[str]:
     if not file_content:
@@ -785,8 +818,8 @@ async def _handle_interactive_populate_flow(
     if populate_triggered and not has_arguments:
         context["interactive_populate"] = {"uo_id": None, "section": None}
         return (
-            "어느 유닛 오퍼레이션을 채울까요? 예: `USW070`\n"
-            "가능하다면 섹션 이름도 함께 적어주세요. 예: `USW070 Method`"
+            "어느 유닛 오퍼레이션을 채울까요? 예: `/populate USW070 Method`\n"
+            "`/populate <UO_ID> <Section>` 형식 그대로 입력해주세요."
         )
 
     if not interactive_ctx:
@@ -942,20 +975,6 @@ async def _handle_dpo_feedback(
     if edit_match:
         edit_instruction = edit_match.group(1).strip()
 
-    chosen_original = options[chosen_index]
-    chosen_edited = chosen_original
-
-    if edit_instruction:
-        edit_prompt = (
-            f"Apply the following edit to the text below: '{edit_instruction}'\n\nTEXT:\n{chosen_original}"
-        )
-        chosen_edited = await call_llm_api(
-            "You are a text editor.",
-            edit_prompt,
-            "llama3.1:70b"
-        )
-
-    rejected_options = [opt for i, opt in enumerate(options) if i != chosen_index]
     uo_id = context.get("uo_id")
     section = context.get("section")
 
@@ -965,6 +984,26 @@ async def _handle_dpo_feedback(
     if not uo_id or not section:
         logger.error("Unable to determine UO ID or section while processing DPO feedback.")
         return "선택을 반영할 수 없습니다. '/populate <UO_ID> <Section>' 형식으로 다시 시도해주세요."
+
+    chosen_original = options[chosen_index]
+    cleaned_text, metadata_line = _sanitize_option_text(chosen_original, section or "")
+    chosen_edited = cleaned_text
+
+    if edit_instruction:
+        edit_prompt = (
+            f"Apply the following edit to the text below: '{edit_instruction}'\n\nTEXT:\n{chosen_edited}"
+        )
+        chosen_edited = await call_llm_api(
+            "You are a text editor.",
+            edit_prompt,
+            "llama3.1:70b"
+        )
+        chosen_edited = (chosen_edited or "").strip()
+        chosen_edited, _ = _sanitize_option_text(chosen_edited, section or "")
+
+    chosen_edited = (chosen_edited or "").strip()
+
+    rejected_options = [opt for i, opt in enumerate(options) if i != chosen_index]
 
     experiment_goal = context.get("experiment_goal") or request_obj.experiment_goal
     file_content = context.get("file_content") or request_obj.file_content
@@ -979,7 +1018,7 @@ async def _handle_dpo_feedback(
         uo_id,
         section,
         chosen_index,
-        chosen_edited.strip()
+        chosen_edited
     )
 
     if context.get("last_selection_signature") == selection_signature:
@@ -1026,11 +1065,15 @@ async def _handle_dpo_feedback(
         "file_path": file_path
     })
 
+    selection_label = metadata_line.strip("- ").strip() if metadata_line else f"{chosen_index + 1}번 옵션"
     response_lines = [
         "✅ 피드백을 성공적으로 기록하고 AI 모델 학습에 반영했습니다.",
         "",
-        "--- 최종 선택된 답변 ---",
-        chosen_edited.strip()
+        f"선택된 초안: {selection_label}",
+        "",
+        "```markdown",
+        chosen_edited.strip(),
+        "```"
     ]
 
     if diff_text:
@@ -1393,12 +1436,16 @@ async def chat(request: ChatRequest):
                     context = conversation.setdefault("context", {})
                     context["interactive_populate"] = {"uo_id": uo_id, "section": None}
                     generated_text = (
-                        f"`{uo_id}`의 어떤 섹션을 채울까요? 문서에 있는 `####` 헤더와 동일한 이름을 알려주세요. 예: `Method`, `Reagent`"
+                        f"`/populate {uo_id} Method`처럼 `/populate <UO_ID> <Section>` 형식으로 입력해주세요. "
+                        "문서의 `####` 헤더와 같은 섹션명을 사용해야 합니다."
                     )
                 else:
                     generated_text = await _execute_populate_flow(conversation, request, uo_id, section)
         elif request.model == "labnote-backend" and populate_triggered:
-            generated_text = "어느 유닛 오퍼레이션을 채울까요? 예: `USW070`"
+            generated_text = (
+                "어느 유닛 오퍼레이션을 채울까요? `/populate USW070 Method`처럼 "
+                "`/populate <UO_ID> <Section>` 형식으로 입력해주세요."
+            )
         else:
             # 2. General Conversation
             logger.info(f"Running general chat flow for model: {request.model}")

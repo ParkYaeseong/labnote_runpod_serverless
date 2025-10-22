@@ -226,45 +226,11 @@ redis_pool = None
 KEEP_ALIVE_MODELS = ["llama3.1:70b", "gpt-oss:120b"]
 
 
-async def keep_gpu_warm():
-    while True:
-        for model_name in KEEP_ALIVE_MODELS:
-            try:
-                logger.info("[Keep-Alive] Running scheduled GPU health check for %s...", model_name)
-                await ollama.AsyncClient().chat(
-                    model=model_name,
-                    messages=[{'role': 'user', 'content': 'Health check. Respond with \"OK\".'}],
-                    options={'num_predict': 1}
-                )
-                logger.info("[Keep-Alive] Successfully kept %s model warm.", model_name)
-            except Exception as exc:
-                logger.error("[Keep-Alive] Error during GPU health check for %s: %s", model_name, exc, exc_info=True)
-        await asyncio.sleep(300)
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global redis_pool
-    redis_url = os.getenv("REDIS_URL")
-    if not redis_url:
-        raise ValueError("REDIS_URL environment variable is not set.")
-    logger.info(f"Creating Redis connection pool for {redis_url}")
-    
-    logger.info("Initializing RAG pipeline...")
-    rag_module.rag_pipeline = rag_module.RAGPipeline()
-    
-    redis_pool = redis.ConnectionPool.from_url(redis_url, decode_responses=True)
-    logger.info("Starting background task to keep GPU warm...")
-    asyncio.create_task(keep_gpu_warm())
-    yield
-    logger.info("Closing Redis connection pool.")
-    await redis_pool.disconnect()
-
 # FastAPI 앱 초기화
 app = FastAPI(
     title="LabNote AI Assistant Backend",
     version="2.8.2", # Final Refactored version
     description="Interactive lab note generation with user-edit DPO feedback loop and consent management.",
-    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -279,7 +245,7 @@ templates_dir = Path(__file__).parent
 templates = Jinja2Templates(directory=str(templates_dir))
 
 # --- Pydantic 모델 정의 ---
-conversation_histories: Dict[str, Dict[str, Any]] = {}
+
 
 class CreateScaffoldRequest(BaseModel):
     query: str
@@ -322,7 +288,7 @@ class PreferenceRequest(BaseModel):
 class ChatRequest(BaseModel):
     model: Optional[str] = None
     messages: List[Dict[str, str]]
-    conversation_id: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
     file_content: Optional[str] = None
     experiment_goal: Optional[str] = None
     file_path: Optional[str] = None
@@ -335,7 +301,7 @@ class CompletionFeedbackRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-    conversation_id: str
+    context: Dict[str, Any]
 
 # --- 헬퍼 함수 ---
 def get_seoul_date_string():
@@ -1368,27 +1334,23 @@ def get_constants():
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
-        conversation_id = request.conversation_id
         query = next((msg['content'] for msg in reversed(request.messages) if msg['role'] == 'user'), '')
 
-        # --- Conversation History Management ---
-        if not conversation_id or conversation_id not in conversation_histories:
-            conversation_id = str(uuid.uuid4())
-            logger.info(f"Starting new conversation with ID: {conversation_id}")
-            conversation_histories[conversation_id] = { "messages": request.messages, "context": {} }
-        else:
-            conv = conversation_histories[conversation_id]
-            if query and (not conv["messages"] or conv["messages"][-1]['content'] != query):
-                conv["messages"].append({"role": "user", "content": query})
-        
-        conversation = conversation_histories[conversation_id]
-        context = conversation.setdefault("context", {})
+        # 상태 비저장으로 변경: 요청에서 직접 context를 가져와 사용합니다.
+        conversation = {
+            "messages": request.messages,
+            "context": request.context or {}
+        }
+
+        # file_path, file_content, experiment_goal을 요청에서 직접 context로 업데이트합니다.
+        context = conversation["context"]
         if request.file_path:
             context["file_path"] = request.file_path
         if request.file_content:
             context["file_content"] = request.file_content
         if request.experiment_goal:
             context["experiment_goal"] = request.experiment_goal
+        
         generated_text = ""
 
         # --- Simplified Branching Logic ---
@@ -1473,24 +1435,16 @@ async def chat(request: ChatRequest):
             logger.info(f"DIAGNOSIS: Processed text: '{generated_text}'")
 
         # Final response preparation
+        # 상태 비저장으로 변경: 업데이트된 context를 응답에 포함하여 반환합니다.
         conversation["messages"].append({"role": "assistant", "content": generated_text})
-        return ChatResponse(response=generated_text, conversation_id=conversation_id)
+        return ChatResponse(response=generated_text, context=conversation["context"])
 
     except Exception as e:
         logger.error(f"Error during chat: {e}", exc_info=True)
-        if 'conversation_id' in locals() and conversation_id in conversation_histories:
-            del conversation_histories[conversation_id]
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/clear_history/{conversation_id}", summary="Clear Conversation History")
-def clear_history(conversation_id: str):
-    if conversation_id in conversation_histories:
-        del conversation_histories[conversation_id]
-        logger.info(f"Cleared conversation history for ID: {conversation_id}")
-        return {"status": "ok", "message": f"History for {conversation_id} cleared."}
-    else:
-        raise HTTPException(status_code=404, detail="Conversation ID not found.")
+
 
 @app.get("/", summary="Health Check")
 def health_check():
@@ -1574,12 +1528,13 @@ async def openai_compat(request: dict):
         stream_options = {}
     include_usage = bool(stream_options.get("include_usage"))
 
-    conversation_id = request.get("conversation_id")
+    # 상태 비저장으로 변경: 요청에서 context를 직접 받습니다.
+    context = request.get("context")
+
     logger.info(
-        "OpenAI compatibility handler invoked: model=%s, messages=%d, conversation_id=%s, stream=%s",
+        "OpenAI compatibility handler invoked: model=%s, messages=%d, stream=%s",
         request.get("model"),
         len(messages) if messages else 0,
-        conversation_id,
         stream,
     )
     if messages:
@@ -1614,15 +1569,14 @@ async def openai_compat(request: dict):
         ChatRequest(
             model=request.get("model"),
             messages=messages,
-            conversation_id=conversation_id,
+            context=context, # context 전달
             file_content=file_content,
             experiment_goal=experiment_goal,
             file_path=file_path,
         )
     )
     logger.info(
-        "OpenAI compatibility returning conversation_id=%s, response_preview=%s",
-        labnote_response.conversation_id,
+        "OpenAI compatibility returning response_preview=%s",
         (labnote_response.response[:200] + "...") if labnote_response.response and len(labnote_response.response) > 200 else labnote_response.response,
     )
     response_model_name = request.get("model") or os.getenv("LLM_MODEL", "labnote-backend")
@@ -1656,8 +1610,6 @@ async def openai_compat(request: dict):
                         "finish_reason": None,
                     }],
                 }
-                if idx == len(content_chunks) - 1 and labnote_response.conversation_id:
-                    chunk["conversation_id"] = labnote_response.conversation_id
                 yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
 
             final_chunk = {
@@ -1671,9 +1623,8 @@ async def openai_compat(request: dict):
                     "logprobs": None,
                     "finish_reason": "stop",
                 }],
+                "context": labnote_response.context # 업데이트된 context 추가
             }
-            if labnote_response.conversation_id:
-                final_chunk["conversation_id"] = labnote_response.conversation_id
             if include_usage:
                 final_chunk["usage"] = usage_payload
             yield f"data: {json.dumps(final_chunk, ensure_ascii=False)}\n\n"
@@ -1691,6 +1642,6 @@ async def openai_compat(request: dict):
             "message": {"role": "assistant", "content": assistant_content},
             "finish_reason": "stop",
         }],
-        "conversation_id": labnote_response.conversation_id,
+        "context": labnote_response.context, # 업데이트된 context 추가
         "usage": usage_payload,
     }
