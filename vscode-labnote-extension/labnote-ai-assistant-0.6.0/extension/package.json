@@ -1,0 +1,152 @@
+{
+  "name": "labnote-ai-assistant",
+  "displayName": "LabNote AI Assistant",
+  "description": "An AI assistant to help with writing lab notes in VS Code.",
+  "version": "2.5.0",
+  "publisher": "BiofoundryLabs",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onChatParticipant:labnote.participant",
+    "onCommand:labnote.ai.generate",
+    "onCommand:labnote.manager.newWorkflow",
+    "onCommand:labnote.manager.newHwUnitOperation",
+    "onCommand:labnote.manager.newSwUnitOperation",
+    "onCommand:labnote.manager.manageTemplates",
+    "onCommand:labnote.ai.populateSection",
+    "onCommand:labnote.manager.insertTable",
+    "onCommand:labnote.manager.reorderWorkflows",
+    "onCommand:labnote.manager.reorderLabnotes",
+    "onCommand:labnote.manager.completeUnitOperation",
+    "onCommand:labnote.ai.populateSectionFromVisualEditor",
+    "onCommand:labnote.manager.completeUnitOperation.chat",
+    "onCommand:labnote.manager.completeWorkflow.chat"
+  ],
+  "extensionDependencies": [
+    "quarto.quarto"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "labnote.participant",
+        "name": "labnote",
+        "description": "Chat with the LabNote AI Assistant to write and manage your lab notes."
+      }
+    ],
+    "commands": [
+      {
+        "command": "labnote.ai.generate",
+        "title": "LabNote: new"
+      },
+      {
+        "command": "labnote.manager.newWorkflow",
+        "title": "LabNote: new workflow"
+      },
+      {
+        "command": "labnote.manager.newHwUnitOperation",
+        "title": "LabNote: new HW Unit Operation"
+      },
+      {
+        "command": "labnote.manager.newSwUnitOperation",
+        "title": "LabNote: new SW Unit Operation"
+      },
+      {
+        "command": "labnote.manager.manageTemplates",
+        "title": "Add: templates manager"
+      },
+      {
+        "command": "labnote.ai.populateSection",
+        "title": "LabNote (AI): populate Section"
+      },
+      {
+        "command": "labnote.manager.insertTable",
+        "title": "Add: insert Table"
+      },
+      {
+        "command": "labnote.manager.reorderWorkflows",
+        "title": "LabNote: reorder workflows"
+      },
+      {
+        "command": "labnote.manager.reorderLabnotes",
+        "title": "LabNote: reorder labnotes"
+      },
+      {
+        "command": "labnote.manager.completeWorkflow",
+        "title": "LabNote: complete workflow"
+      },
+      {
+        "command": "labnote.manager.completeUnitOperation",
+        "title": "LabNote: complete unit operation"
+      },
+      {
+        "command": "labnote.ai.populateSectionFromVisualEditor",
+        "title": "LabNote (AI): populate Section from Visual Editor"
+      }
+    ],
+    "configuration": {
+      "title": "LabNote AI Assistant",
+      "properties": {
+        "labnote.ai.backendUrl": {
+          "type": "string",
+          "default": "http://123.37.6.117:31371",
+          "description": "The base URL of the LabNote AI backend server (e.g., http://127.0.0.1:8000)."
+        },
+        "labnote.ai.vesslApiToken": {
+          "type": "string",
+          "default": "",
+          "description": "The API token for authenticating with the VESSL.ai service endpoint."
+        },
+        "labnote.manager.workflowsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to your custom workflows markdown file. Leave empty to use the default."
+        },
+        "labnote.manager.hwUnitOperationsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to your custom hardware unit operations markdown file. Leave empty to use the default."
+        },
+        "labnote.manager.swUnitOperationsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to your custom software unit operations markdown file. Leave empty to use the default."
+        }
+      }
+    }
+  },
+  "configurationDefaults": {
+    "[markdown]": {
+      "markdown.copyFiles.destination": {
+        "**/*.{png,jpg,jpeg,gif,svg,webp}": "images/${documentBaseName.substring(0, 3)}/",
+        "**/*": "resources/${documentBaseName.substring(0, 3)}/"
+      },
+      "markdown.updateLinksOnFileMove.enabled": "always"
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && node ./copy-resources.js",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/glob": "8.1.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "18.x",
+    "@types/node-fetch": "^2.6.11",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}

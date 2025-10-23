@@ -1,4 +1,9 @@
 import os
+
+# RunPod 환경에서 main 모듈이 로드되기 전에 서버리스 플래그를 설정해
+# FastAPI 앱 초기화 시 RAG 파이프라인이 반드시 구성되도록 한다.
+os.environ.setdefault("RUNPOD_SERVERLESS", "true")
+
 from typing import Any, Dict
 
 import runpod
@@ -12,7 +17,6 @@ REQUEST_TIMEOUT = int(os.getenv("LABNOTE_RUNPOD_TIMEOUT", "600"))
 # --- 서버리스 환경을 위한 전역 초기화 ---
 # RunPod 워커가 처음 시작될 때 RAG 파이프라인을 초기화합니다.
 # 이 객체는 워커가 살아있는 동안 재사용됩니다.
-os.environ["RUNPOD_SERVERLESS"] = "true"
 
 def _normalize_path(path: str) -> str:
     return path if path.startswith('/') else f'/{path}'

@@ -96,6 +96,15 @@ async def _generate_drafts(state: AgentState) -> AgentState:
 6. 코드, 의사코드, 템플릿 플레이스홀더(`def ...`, `{{ ... }}`, `if (...) {{`, `Changes:` 등)를 출력하지 말고, 반드시 실험 절차 또는 자원 설명으로만 작성합니다.
 """
 
+    prompt_preview = base_user_prompt[:400].replace("\n", " ")
+    logger.info(
+        "Draft prompt prepared | uo=%s | section=%s | chars=%d",
+        uo_id,
+        section,
+        len(base_user_prompt)
+    )
+    logger.debug("Draft prompt preview: %s%s", prompt_preview, "..." if len(base_user_prompt) > 400 else "")
+
 
     system_prompt = "You are a specialized scientific assistant. Your task is to generate a comprehensive and well-structured response for a specific section of a lab note, using the provided context. The response should be clear, detailed, and directly applicable to the experiment. Your answer MUST be only the list or method itself, without any extra conversation or explanation."
 
@@ -195,7 +204,7 @@ You are a highly experienced principal investigator reviewing lab notes. Evaluat
     highest_score = best_draft_eval.get('score', 0)
     
     # 품질 기준(8.5점)을 통과했는지 확인
-    if highest_score >= 8.5:
+    if highest_score >= 8.0:
         logger.info(f"Supervisor: Quality threshold passed with score {highest_score}. Finalizing options.")
         # 고품질 초안들만 필터링하여 사용자에게 제공
         high_quality_drafts = [
@@ -299,5 +308,6 @@ async def run_agent_team(
     return {
         "uo_id": uo_id,
         "section": section,
-        "options": final_state.get('final_options', [])
+        "options": final_state.get('final_options', []),
+        "feedback": final_state.get('feedback')
     }

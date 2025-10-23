@@ -6,6 +6,12 @@ import { FileSystemProvider } from './fileSystemProvider';
 import { Response } from 'node-fetch';
 const fetch = require('node-fetch');
 
+const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg']);
+
+function toPosixPath(p: string): string {
+    return p.split(path.sep).join('/');
+}
+
 // --- 타입 정의 ---
 
 // 대화의 흐름(어떤 기능)과 상태(어떤 단계)를 관리하기 위한 인터페이스
@@ -23,12 +29,14 @@ const chatSessions = new Map<string, ChatSession>();
 interface ChatResponse { 
     response: string; 
     context: { [key: string]: any }; // 업데이트된 컨텍스트
+    conversation_id?: string;
 }
 interface PopulateResponse {
     uo_id: string;
     section: string;
     options: string[];
     supervisor_evaluations?: any[];
+    feedback?: string;
 }
 interface SectionContext {
     uoId: string;
@@ -695,6 +703,15 @@ function registerEventListeners(context: vscode.ExtensionContext) {
                 await updateReadmeOnWorkflowSave(document);
             }
         }),
+        vscode.workspace.onDidCreateFiles(async (event) => {
+            for (const fileUri of event.files) {
+                try {
+                    await handleNewAssetPlacement(fileUri);
+                } catch (assetError: any) {
+                    console.warn('Failed to relocate new asset:', assetError);
+                }
+            }
+        }),
         vscode.workspace.onDidDeleteFiles(async (e) => {
             for (const fileUri of e.files) {
                 if (logic.isValidWorkflowPath(fileUri.fsPath)) {
@@ -703,6 +720,146 @@ function registerEventListeners(context: vscode.ExtensionContext) {
             }
         })
     );
+}
+
+async function handleNewAssetPlacement(fileUri: vscode.Uri) {
+    const ext = path.extname(fileUri.fsPath).toLowerCase();
+    if (!ext) {
+        return;
+    }
+
+    const isImage = IMAGE_EXTENSIONS.has(ext);
+    const isResource = !isImage && ext !== '.md';
+
+    if (!isImage && !isResource) {
+        return;
+    }
+
+    const experimentRoot = findExperimentRootDir(fileUri.fsPath);
+    if (!experimentRoot) {
+        return;
+    }
+
+    const imagesDir = path.join(experimentRoot, 'images');
+    const resourcesDir = path.join(experimentRoot, 'resources');
+
+    if (isImage && isPathInside(fileUri.fsPath, imagesDir)) {
+        return;
+    }
+    if (isResource && isPathInside(fileUri.fsPath, resourcesDir)) {
+        return;
+    }
+
+    const targetDir = isImage ? imagesDir : resourcesDir;
+    ensureDirectory(targetDir);
+
+    const targetPath = ensureUniqueFilePath(targetDir, path.basename(fileUri.fsPath));
+    const targetUri = vscode.Uri.file(targetPath);
+
+    await vscode.workspace.fs.rename(fileUri, targetUri, { overwrite: false });
+    await updateReferencesAfterMove(fileUri, targetUri, experimentRoot);
+}
+
+function findExperimentRootDir(startPath: string): string | null {
+    let current = path.dirname(startPath);
+    while (true) {
+        const readmeCandidate = path.join(current, 'README.md');
+        const parent = path.dirname(current);
+
+        if (fs.existsSync(readmeCandidate) && path.basename(parent).toLowerCase() === 'labnote') {
+            return current;
+        }
+
+        if (parent === current) {
+            break;
+        }
+        current = parent;
+    }
+    return null;
+}
+
+function ensureDirectory(dirPath: string) {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+}
+
+function isPathInside(child: string, parent: string): boolean {
+    const relative = path.relative(parent, child);
+    return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
+function ensureUniqueFilePath(dir: string, fileName: string): string {
+    let candidate = path.join(dir, fileName);
+    if (!fs.existsSync(candidate)) {
+        return candidate;
+    }
+    const parsed = path.parse(fileName);
+    let counter = 1;
+    while (true) {
+        candidate = path.join(dir, `${parsed.name}_${counter}${parsed.ext}`);
+        if (!fs.existsSync(candidate)) {
+            return candidate;
+        }
+        counter++;
+    }
+}
+
+async function updateReferencesAfterMove(originalUri: vscode.Uri, targetUri: vscode.Uri, experimentRoot: string) {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    const document = editor.document;
+    if (document.languageId !== 'markdown') {
+        return;
+    }
+    const docPath = document.uri.fsPath;
+    if (!isPathInside(docPath, experimentRoot)) {
+        return;
+    }
+
+    const docDir = path.dirname(docPath);
+    const originalText = document.getText();
+    let updatedText = originalText;
+
+    const newRelativeRaw = toPosixPath(path.relative(docDir, targetUri.fsPath));
+    const newRelative = newRelativeRaw.startsWith('.') || newRelativeRaw.startsWith('..')
+        ? newRelativeRaw
+        : `./${newRelativeRaw}`;
+
+    const originalRelativeRaw = toPosixPath(path.relative(docDir, originalUri.fsPath));
+    const searchTokens = new Set<string>();
+    if (originalRelativeRaw) {
+        searchTokens.add(originalRelativeRaw);
+        if (!originalRelativeRaw.startsWith('.') && !originalRelativeRaw.startsWith('..')) {
+            searchTokens.add(`./${originalRelativeRaw}`);
+        }
+    }
+    searchTokens.add(path.basename(originalUri.fsPath));
+
+    let replaced = false;
+    for (const token of searchTokens) {
+        const needle = `](${token})`;
+        if (updatedText.includes(needle)) {
+            updatedText = updatedText.split(needle).join(`](${newRelative})`);
+            replaced = true;
+        }
+    }
+
+    if (replaced && updatedText !== originalText) {
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(
+            document.uri,
+            new vscode.Range(
+                document.positionAt(0),
+                document.positionAt(originalText.length)
+            ),
+            updatedText
+        );
+        await vscode.workspace.applyEdit(edit);
+    }
 }
 
 function registerChatParticipant(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
@@ -1280,32 +1437,51 @@ async function reorderWorkflowFiles(readmePath: string) {
             const readmeDoc = await vscode.workspace.openTextDocument(readmeUri);
             const originalContent = readmeDoc.getText();
 
-            const workflowListRegex = /(## 🗂️ Related Workflows\s*>.*?\n>.*?\n>.*?\n\n)([\s\S]*?)(\n\n\n)/;
-            const match = originalContent.match(workflowListRegex);
+            const workflowSectionRegex = /(## 🗂️ Related Workflows[\s\S]*?>.*?\n>.*?\n>.*?\n\n)([\s\S]*?)(?=\n## |\n?$)/;
+            const sectionMatch = workflowSectionRegex.exec(originalContent);
 
-            if (!match) {
+            if (!sectionMatch || sectionMatch.index === undefined) {
                 vscode.window.showWarningMessage("Could not find the 'Related Workflows' section in README.md to update links.");
                 return;
             }
 
-            const prefix = match[1];
-            const suffix = match[3];
+            const sectionStart = sectionMatch.index + sectionMatch[1].length;
+            const sectionEnd = sectionMatch.index + sectionMatch[0].length;
 
-            // 새로 정렬된 파일 목록을 기반으로 새로운 링크 목록을 생성합니다.
-            const reorderedFiles = fs.readdirSync(dir).filter(f => /^\d{3}_.+\.md$/.test(f) && f.toLowerCase() !== 'readme.md').sort();
+            const reorderedFiles = fs.readdirSync(dir)
+                .filter(f => /^\d{3}_.+\.md$/i.test(f) && f.toLowerCase() !== 'readme.md')
+                .sort();
+
             const newLinkLines = reorderedFiles.map(fileName => {
-                const fileContent = fs.readFileSync(path.join(dir, fileName), 'utf-8');
-                const frontMatter = logic.parseWorkflowFrontMatter(fileContent);
-                const isDone = frontMatter && frontMatter.end_date;
-                const checkbox = isDone ? '[x]' : '[ ]';
-                const title = frontMatter?.title || path.basename(fileName, '.md').substring(4).replace(/_/g, ' ');
-                return `${checkbox} ${title}`;
+                const filePath = path.join(dir, fileName);
+                let frontMatter = null;
+                try {
+                    const fileContent = fs.readFileSync(filePath, 'utf-8');
+                    frontMatter = logic.parseWorkflowFrontMatter(fileContent);
+                } catch (err) {
+                    frontMatter = null;
+                }
+
+                const seq = fileName.substring(0, 3);
+                const humanReadableName = frontMatter?.title
+                    ? `${seq} ${frontMatter.title}`
+                    : `${seq} ${path.basename(fileName, '.md').substring(4).replace(/_/g, ' ')}`;
+
+                const completed = Boolean(frontMatter?.end_date && frontMatter.end_date.trim() !== '');
+                const checkbox = completed ? '[x]' : '[ ]';
+                return `${checkbox} [${humanReadableName}](./${fileName})`;
             });
 
-            const newContent = prefix + newLinkLines.join('\n') + suffix;
-            const fullRange = new vscode.Range(readmeDoc.positionAt(0), readmeDoc.positionAt(originalContent.length));
+            const replacement = newLinkLines.length > 0 ? `${newLinkLines.join('\n')}\n\n` : '\n\n';
             const readmeEdit = new vscode.WorkspaceEdit();
-            readmeEdit.replace(readmeUri, fullRange, newContent);
+            readmeEdit.replace(
+                readmeUri,
+                new vscode.Range(
+                    readmeDoc.positionAt(sectionStart),
+                    readmeDoc.positionAt(sectionEnd)
+                ),
+                replacement
+            );
             await vscode.workspace.applyEdit(readmeEdit);
             await readmeDoc.save();
 

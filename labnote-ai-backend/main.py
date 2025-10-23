@@ -39,12 +39,17 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+ROUTER_MODEL_NAME = os.getenv("LLM_ROUTER_MODEL") or os.getenv("LLM_ROUTER_MODEL_NAME") or "llama3.1:70b"
+
 # --- 서버리스 환경을 위한 전역 초기화 ---
 # main.py가 TestClient에 의해 로드될 때 RAG 파이프라인을 초기화합니다.
 if os.getenv("RUNPOD_SERVERLESS", "false").lower() == "true":
     logger.info("Initializing RAG pipeline within main.py for serverless environment...")
-    rag_module.rag_pipeline = rag_module.RAGPipeline()
-    logger.info("RAG pipeline initialized successfully from main.py.")
+    if rag_module.rag_pipeline is None:
+        rag_module.rag_pipeline = rag_module.RAGPipeline()
+        logger.info("RAG pipeline initialized successfully from main.py.")
+    else:
+        logger.info("RAG pipeline already initialized; reusing existing instance.")
 
 # --- [DIAGNOSIS] Unexpected Shutdown Signal Handler ---
 def handle_shutdown_signal(signum, frame):
@@ -271,6 +276,7 @@ class PopulateNoteResponse(BaseModel):
     uo_id: str
     section: str
     options: List[str]
+    feedback: Optional[str] = None
 
 class GitFeedbackRequest(BaseModel):
     prompt: str
@@ -293,6 +299,7 @@ class ChatRequest(BaseModel):
     model: Optional[str] = None
     messages: List[Dict[str, str]]
     context: Optional[Dict[str, Any]] = None
+    conversation_id: Optional[str] = None
     file_content: Optional[str] = None
     experiment_goal: Optional[str] = None
     file_path: Optional[str] = None
@@ -305,7 +312,8 @@ class CompletionFeedbackRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-    context: Dict[str, Any] # conversation_id 대신 context를 반환
+    context: Dict[str, Any]  # 상태 비저장 컨텍스트 (대화 힌트)
+    conversation_id: str
 
 # --- 헬퍼 함수 ---
 def get_seoul_date_string():
@@ -656,6 +664,91 @@ def _collect_related_workflow_context(
     return ""
 
 
+def _summarize_uo_sections(file_content: Optional[str], max_uos: int = 5, max_sections: int = 6) -> str:
+    if not file_content:
+        return "No lab note content available."
+
+    summary_parts: List[str] = []
+    pattern = re.compile(
+        r"###\s*\[(?P<uo>[A-Z]{2,3}\d{3})(?P<label>[^\]]*)\](?P<body>[\s\S]*?)(?=\n###\s*\[U[A-Z]{2,3}\d{3}|\Z)",
+        re.MULTILINE
+    )
+
+    for idx, match in enumerate(pattern.finditer(file_content)):
+        if idx >= max_uos:
+            summary_parts.append("…")
+            break
+        uo_id = match.group("uo")
+        label = (match.group("label") or "").strip()
+        body = match.group("body") or ""
+        section_titles = re.findall(r"^####\s+([^\n]+)", body, flags=re.MULTILINE)
+        if section_titles:
+            section_titles = section_titles[:max_sections]
+        section_list = ", ".join(section_titles) if section_titles else "(no sections)"
+        if label:
+            summary_parts.append(f"{uo_id} ({label}): {section_list}")
+        else:
+            summary_parts.append(f"{uo_id}: {section_list}")
+
+    return " | ".join(summary_parts) if summary_parts else "No unit operations detected."
+
+
+async def _call_router_model(system_prompt: str, user_prompt: str, model_name: str) -> str:
+    client = ollama.AsyncClient(timeout=45)
+    response = await client.chat(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        options={"temperature": 0.1, "top_p": 0.8}
+    )
+    return (response.get("message", {}).get("content") or "").strip()
+
+
+async def _route_user_intent(query: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    router_model = ROUTER_MODEL_NAME
+    if not query or not router_model or router_model.lower() in {"disabled", "none"}:
+        return {"action": "chat", "reason": "Router disabled or query empty."}
+
+    file_content = context.get("file_content")
+    experiment_goal = context.get("experiment_goal")
+    available_summary = _summarize_uo_sections(file_content)
+
+    system_prompt = (
+        "You route user requests for a lab note assistant. "
+        "Decide whether the user wants to populate a specific Unit Operation section or engage in general chat. "
+        "Respond strictly with a JSON object."
+    )
+
+    user_prompt = (
+        "User message:" + "\n" + query.strip() + "\n\n"
+        f"Experiment goal: {experiment_goal or '(unknown)'}\n"
+        f"Available unit operations and sections: {available_summary}\n"
+        "If the user explicitly requests filling/updating a section, set action to \"populate\" and include inferred 'uo_id' and 'section'. "
+        "Otherwise set action to \"chat\".\n"
+        "Return JSON: {\"action\": \"populate|chat\", \"uo_id\": <string or null>, \"section\": <string or null>, \"confidence\": <0-1>, \"reason\": <short text>}"
+    )
+
+    try:
+        raw_response = await _call_router_model(system_prompt, user_prompt, router_model)
+        json_match = re.search(r"\{[\s\S]*\}", raw_response)
+        if not json_match:
+            raise ValueError("Router did not produce JSON")
+        decision = json.loads(json_match.group(0))
+        logger.info(
+            "Router decision: action=%s, uo=%s, section=%s, confidence=%s",
+            decision.get("action"),
+            decision.get("uo_id"),
+            decision.get("section"),
+            decision.get("confidence")
+        )
+        return decision
+    except Exception as exc:
+        logger.warning("Router fallback: %s", exc)
+        return {"action": "chat", "reason": f"router_failed: {exc}"}
+
+
 def _normalize_section_name(raw_section: str) -> str:
     """Normalize user-provided section names by trimming particles and 'section' markers."""
     if not raw_section:
@@ -746,7 +839,7 @@ async def _execute_populate_flow(
 
     if agent_result and agent_result.get("options"):
         options = agent_result["options"]
-        conversation["context"] = {
+        context.update({
             "state": "awaiting_dpo_feedback",
             "options": options,
             "uo_id": uo_id,
@@ -756,7 +849,7 @@ async def _execute_populate_flow(
             "file_path": file_path or context.get("file_path") or "continue_populate_refactored",
             "last_selection_signature": None,
             "last_selected_index": None
-        }
+        })
         formatted_options = [f"{i + 1}.\n---\n{opt}" for i, opt in enumerate(options)]
         options_text = "\n\n".join(formatted_options)
         return (
@@ -1288,10 +1381,27 @@ async def populate_note(request: PopulateNoteRequest):
             request.uo_id,
             related_context=related_context
         )
-        
-        if not agent_result or not agent_result.get("options"):
-            raise HTTPException(status_code=500, detail="Agent team failed to generate options.")
-        
+
+        if not agent_result:
+            logger.warning("Populate endpoint received empty agent result; returning fallback message.")
+            return PopulateNoteResponse(
+                uo_id=request.uo_id,
+                section=request.section,
+                options=["AI 에이전트가 응답을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요."],
+                feedback="AI 에이전트가 응답을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요."
+            )
+
+        options = agent_result.get("options") or []
+        if not options:
+            feedback_msg = agent_result.get("feedback") or "AI 에이전트가 유의미한 초안을 만들지 못했습니다. 다시 시도해 주세요."
+            logger.warning("Agent team returned no options; sending feedback-only response.")
+            return PopulateNoteResponse(
+                uo_id=request.uo_id,
+                section=request.section,
+                options=[feedback_msg],
+                feedback=feedback_msg
+            )
+
         return PopulateNoteResponse(**agent_result)
     except Exception as e:
         logger.error(f"Error populating note: {e}", exc_info=True)
@@ -1341,13 +1451,19 @@ async def chat(request: ChatRequest):
         query = next((msg['content'] for msg in reversed(request.messages) if msg['role'] == 'user'), '') if request.messages else ''
 
         # Stateless: 요청에서 직접 context를 가져와 사용합니다.
+        incoming_context = request.context.copy() if isinstance(request.context, dict) else {}
         conversation = {
             "messages": request.messages,
-            "context": request.context or {}
+            "context": incoming_context
         }
 
+        conversation_id = request.conversation_id or incoming_context.get("conversation_id")
+        if not conversation_id:
+            conversation_id = f"labnote-{uuid.uuid4().hex}"
+
         # file_path, file_content, experiment_goal을 요청에서 직접 받아 context에 업데이트합니다.
-        context = conversation["context"]
+        context = conversation.setdefault("context", {})
+        context["conversation_id"] = conversation_id
         if request.file_path:
             context["file_path"] = request.file_path
         if request.file_content:
@@ -1362,7 +1478,9 @@ async def chat(request: ChatRequest):
         populate_match = re.search(r"^\s*/populate\s+(?P<user_input>[^\n`]+)", query, re.IGNORECASE | re.MULTILINE) if query else None
         populate_triggered = re.search(r"^\s*/populate\b", query, re.IGNORECASE | re.MULTILINE) is not None if query else False
         interactive_response = None
-        if request.model == "labnote-backend":
+        effective_model = request.model or "labnote-backend"
+
+        if effective_model == "labnote-backend":
             interactive_response = await _handle_interactive_populate_flow(
                 conversation,
                 request,
@@ -1374,9 +1492,9 @@ async def chat(request: ChatRequest):
 
         if dpo_feedback_response is not None:
             generated_text = dpo_feedback_response
-        elif request.model == "labnote-backend" and interactive_response is not None:
+        elif effective_model == "labnote-backend" and interactive_response is not None:
             generated_text = interactive_response
-        elif request.model == "labnote-backend" and populate_match:
+        elif populate_match and effective_model == "labnote-backend":
             # 1. Dedicated flow for the "labnote-backend" model (Section Population)
             logger.info("Labnote Backend Logic model selected. Executing section population flow...")
             logger.info("Raw user query for population flow: %s", query)
@@ -1407,49 +1525,236 @@ async def chat(request: ChatRequest):
                     )
                 else:
                     generated_text = await _execute_populate_flow(conversation, request, uo_id, section)
-        elif request.model == "labnote-backend" and populate_triggered:
+        elif populate_triggered and effective_model == "labnote-backend":
             generated_text = (
                 "어느 유닛 오퍼레이션을 채울까요? `/populate USW070 Method`처럼 "
                 "`/populate <UO_ID> <Section>` 형식으로 입력해주세요."
             )
         else:
-            # 2. General Conversation
-            logger.info(f"Running general chat flow for model: {request.model}")
-            llm_model_name = os.getenv("LLM_MODEL", "llama3.1:8b")
-            if request.model and request.model != "labnote-backend":
-                llm_model_name = request.model
+            router_used = False
+            router_decision: Optional[Dict[str, Any]] = None
 
-            messages = conversation["messages"]
-            if not any(msg.get('role') == 'system' for msg in messages):
-                system_prompt = {
-                    "role": "system",
-                    "content": "You are a professional scientific assistant. Your response should be helpful and informative."
-                }
-                messages.insert(0, system_prompt)
+            if effective_model == "labnote-backend" and query:
+                router_decision = await _route_user_intent(query, context)
+                if router_decision.get("action") == "populate":
+                    candidate_uo = router_decision.get("uo_id")
+                    candidate_section = router_decision.get("section")
 
-            response = await ollama.AsyncClient(timeout=60).chat(
-                model=llm_model_name,
-                messages=messages,
-                options={'temperature': 0.1}
-            )
-            raw_text = response['message']['content'].strip()
-            logger.info(f"DIAGNOSIS: Raw text from LLM: '{raw_text[:300]}'")
+                    if not candidate_uo or not candidate_section:
+                        heuristic_uo, heuristic_section = _extract_uo_and_section_from_text(query)
+                        candidate_uo = candidate_uo or heuristic_uo
+                        candidate_section = candidate_section or heuristic_section
 
-            generated_text = _post_process_content(raw_text)
-            logger.info(f"DIAGNOSIS: Processed text: '{generated_text}'")
+                    if candidate_uo and candidate_section:
+                        generated_text = await _execute_populate_flow(conversation, request, candidate_uo, candidate_section)
+                        router_used = True
+                    else:
+                        logger.info("Router suggested populate but details were insufficient; requesting clarification.")
+                        generated_text = (
+                            "어느 유닛 오퍼레이션과 섹션을 채워야 할지 정확히 알려주세요. "
+                            "예: `/populate USW070 Method`"
+                        )
+                        router_used = True
+
+            if not router_used:
+                # 2. General Conversation
+                logger.info(f"Running general chat flow for model: {request.model}")
+                llm_model_name = os.getenv("LLM_MODEL", "llama3.1:8b")
+                if request.model and request.model != "labnote-backend":
+                    llm_model_name = request.model
+
+                messages = conversation["messages"]
+                if not any(msg.get('role') == 'system' for msg in messages):
+                    system_prompt = {
+                        "role": "system",
+                        "content": "You are a professional scientific assistant. Your response should be helpful and informative."
+                    }
+                    messages.insert(0, system_prompt)
+
+                response = await ollama.AsyncClient(timeout=60).chat(
+                    model=llm_model_name,
+                    messages=messages,
+                    options={'temperature': 0.1}
+                )
+                raw_text = response['message']['content'].strip()
+                logger.info(f"DIAGNOSIS: Raw text from LLM: '{raw_text[:300]}'")
+
+                generated_text = _post_process_content(raw_text)
+                logger.info(f"DIAGNOSIS: Processed text: '{generated_text}'")
 
         # Final response preparation
         # 상태 비저장으로 변경: 업데이트된 context를 응답에 포함하여 반환합니다.
         conversation["messages"].append({"role": "assistant", "content": generated_text})
-        return ChatResponse(response=generated_text, context=conversation.get("context", {}))
+        return ChatResponse(
+            response=generated_text,
+            context=conversation.get("context", {}),
+            conversation_id=conversation_id
+        )
 
     except Exception as e:
         logger.error(f"Error during chat: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/v1/chat/completions")
+async def openai_compat(request: Dict[str, Any]):
+    """OpenAI 호환 엔드포인트 (VSCode Continue 등에서 사용)."""
+    messages = request.get("messages") or []
+    stream = bool(request.get("stream"))
+    stream_options = request.get("stream_options") or {}
+    if not isinstance(stream_options, dict):
+        stream_options = {}
+    include_usage = bool(stream_options.get("include_usage"))
+
+    model_name = request.get("model") or "labnote-backend"
+    conversation_id = request.get("conversation_id") or f"labnote-{uuid.uuid4().hex}"
+
+    logger.info(
+        "OpenAI compatibility handler invoked: model=%s, messages=%d, conversation_id=%s, stream=%s",
+        model_name,
+        len(messages) if isinstance(messages, list) else 0,
+        conversation_id,
+        stream,
+    )
+
+    if messages:
+        last_message = messages[-1]
+        last_content = _normalize_message_content(last_message.get("content"))
+        logger.info(
+            "Last message role=%s, content_preview=%s",
+            last_message.get("role"),
+            (last_content[:200] + "...") if last_content and len(last_content) > 200 else last_content,
+        )
+
+    file_content = request.get("file_content") or _extract_file_content_from_messages(messages)
+    experiment_goal = request.get("experiment_goal")
+    if not experiment_goal and file_content:
+        experiment_goal = _infer_experiment_goal(file_content)
+    if not experiment_goal and file_content:
+        experiment_goal = "Experiment goal not provided."
+
+    logger.info(
+        "Inferred context for Continue: file_content_len=%s, experiment_goal_preview=%s",
+        len(file_content) if file_content else 0,
+        (experiment_goal[:120] + "...") if experiment_goal and len(experiment_goal) > 120 else experiment_goal,
+    )
+
+    context_payload = request.get("context") if isinstance(request.get("context"), dict) else {}
+    context_payload.setdefault("conversation_id", conversation_id)
+
+    chat_request = ChatRequest(
+        model=model_name,
+        messages=messages,
+        context=context_payload,
+        conversation_id=conversation_id,
+        file_content=file_content,
+        experiment_goal=experiment_goal,
+        file_path=request.get("file_path"),
+    )
+
+    labnote_response = await chat(chat_request)
+    assistant_content = labnote_response.response or ""
+    context_return = labnote_response.context or {}
+    conversation_id = labnote_response.conversation_id or conversation_id
+
+    logger.info(
+        "OpenAI compatibility returning response_preview=%s",
+        (assistant_content[:200] + "...") if len(assistant_content) > 200 else assistant_content,
+    )
+
+    response_model_name = model_name or os.getenv("LLM_MODEL", "labnote-backend")
+    response_id = f"chatcmpl-{uuid.uuid4().hex}"
+    created_ts = int(time.time())
+    usage_payload = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+    }
+
+    if stream:
+        content_chunks = _chunk_text_for_stream(assistant_content)
+
+        async def event_generator():
+            for idx, chunk_text in enumerate(content_chunks):
+                delta_payload = {"content": chunk_text}
+                if idx == 0:
+                    delta_payload["role"] = "assistant"
+
+                chunk = {
+                    "id": response_id,
+                    "object": "chat.completion.chunk",
+                    "created": created_ts,
+                    "model": response_model_name,
+                    "choices": [{
+                        "index": 0,
+                        "delta": delta_payload,
+                        "logprobs": None,
+                        "finish_reason": None,
+                    }],
+                    "conversation_id": conversation_id,
+                }
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+
+            final_chunk = {
+                "id": response_id,
+                "object": "chat.completion.chunk",
+                "created": created_ts,
+                "model": response_model_name,
+                "choices": [{
+                    "index": 0,
+                    "delta": {},
+                    "logprobs": None,
+                    "finish_reason": "stop",
+                }],
+                "conversation_id": conversation_id,
+            }
+            if include_usage:
+                final_chunk["usage"] = usage_payload
+            yield f"data: {json.dumps(final_chunk, ensure_ascii=False)}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+    return {
+        "id": response_id,
+        "object": "chat.completion",
+        "created": created_ts,
+        "model": response_model_name,
+        "choices": [{
+            "index": 0,
+            "message": {"role": "assistant", "content": assistant_content},
+            "finish_reason": "stop",
+        }],
+        "conversation_id": conversation_id,
+        "usage": usage_payload,
+    }
+
+
 @app.get("/", summary="Health Check")
 def health_check():
     return {"status": "ok", "version": app.version}
+
+
+@app.get("/debug/ollama", summary="Test Ollama chat response")
+async def debug_ollama():
+    model_name = os.getenv("LLM_MODEL", "llama3.1:8b")
+    try:
+        logger.info("Debug Ollama endpoint invoked for model %s", model_name)
+        response = await ollama.AsyncClient(timeout=30).chat(
+            model=model_name,
+            messages=[{"role": "user", "content": "Say a short hello from LabNote AI."}],
+            options={"temperature": 0.3, "top_p": 0.9}
+        )
+        content = (response.get("message", {}).get("content") or "").strip()
+        return {
+            "model": model_name,
+            "content_preview": content[:200],
+            "content_length": len(content)
+        }
+    except Exception as exc:
+        logger.error("Debug Ollama endpoint failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Ollama debug failed: {exc}")
+
 
 @app.get("/health", summary="GPU Health Check")
 def health_check_gpu():
