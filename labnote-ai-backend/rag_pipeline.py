@@ -1,5 +1,6 @@
 import os
 import logging
+from threading import Lock
 from typing import List, Optional
 from dotenv import load_dotenv
 import redis
@@ -110,14 +111,27 @@ class RAGPipeline:
             context_parts.append(f"--- CONTEXT FROM: {source} ---\n{doc.page_content}")
         return "\n\n".join(context_parts)
 
-# ⭐️ [수정] 모듈 로드 시 객체가 바로 생성되지 않도록 변경합니다.
-# 대신, main.py의 lifespan에서 필요할 때 생성합니다.
 rag_pipeline: Optional[RAGPipeline] = None
+_pipeline_lock: Lock = Lock()
+
+def get_rag_pipeline() -> RAGPipeline:
+    """
+    Lazily initialize the shared RAG pipeline so serverless workers can recover
+    from partial startup or missing warmup stages.
+    """
+    global rag_pipeline
+    if rag_pipeline is None:
+        with _pipeline_lock:
+            if rag_pipeline is None:
+                logging.info("Lazy-initializing RAG pipeline on first access.")
+                rag_pipeline = RAGPipeline()
+    return rag_pipeline
 
 def get_embeddings():
     """
     초기화된 RAGPipeline 인스턴스에서 임베딩 모델 객체를 반환합니다.
     """
-    if rag_pipeline is None or rag_pipeline.embeddings is None:
+    pipeline = get_rag_pipeline()
+    if pipeline.embeddings is None:
         raise RuntimeError("RAG pipeline or embeddings not initialized.")
-    return rag_pipeline.embeddings    
+    return pipeline.embeddings    

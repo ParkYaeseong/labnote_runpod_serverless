@@ -1,0 +1,197 @@
+2025-10-23T12:36:24.598497718Z ==========
+2025-10-23T12:36:24.598512902Z == CUDA ==
+2025-10-23T12:36:24.598538841Z ==========
+2025-10-23T12:36:24.602585485Z CUDA Version 12.8.1
+2025-10-23T12:36:24.603794899Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2025-10-23T12:36:24.606909498Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+2025-10-23T12:36:24.606911942Z By pulling and using the container, you accept the terms and conditions of this license:
+2025-10-23T12:36:24.606914105Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+2025-10-23T12:36:24.606918271Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+2025-10-23T12:36:24.624428187Z /app/start.sh: line 1: ﻿#!/bin/bash: No such file or directory
+2025-10-23T12:36:24.624596271Z --- [DIAGNOSIS] Verifying storage mounts ---
+2025-10-23T12:36:24.624606396Z >>> Displaying mounted filesystems (df -h):
+2025-10-23T12:36:24.627970251Z Filesystem                    Size  Used Avail Use% Mounted on
+2025-10-23T12:36:24.627981037Z overlay                       5.0G   15M  5.0G   1% /
+2025-10-23T12:36:24.627983160Z tmpfs                          64M     0   64M   0% /dev
+2025-10-23T12:36:24.627985063Z mfs#ca-mtl-3.runpod.net:9421  503T  377T  127T  75% /runpod-volume
+2025-10-23T12:36:24.627987436Z shm                           110G     0  110G   0% /dev/shm
+2025-10-23T12:36:24.627989329Z /dev/vdb                      6.4T  2.3T  4.1T  36% /etc/hosts
+2025-10-23T12:36:24.627991282Z /dev/vda1                      97G   22G   75G  23% /usr/bin/nvidia-smi
+2025-10-23T12:36:24.627994157Z tmpfs                         945G     0  945G   0% /sys/fs/cgroup
+2025-10-23T12:36:24.627996230Z tmpfs                         945G   12K  945G   1% /proc/driver/nvidia
+2025-10-23T12:36:24.627998172Z tmpfs                         945G  4.0K  945G   1% /etc/nvidia/nvidia-application-profiles-rc.d
+2025-10-23T12:36:24.628000346Z tmpfs                         189G  3.1M  189G   1% /run/nvidia-persistenced/socket
+2025-10-23T12:36:24.628002259Z tmpfs                         945G     0  945G   0% /proc/acpi
+2025-10-23T12:36:24.628004612Z tmpfs                         945G     0  945G   0% /proc/scsi
+2025-10-23T12:36:24.628006625Z tmpfs                         945G     0  945G   0% /sys/firmware
+2025-10-23T12:36:24.628111394Z ---
+2025-10-23T12:36:24.628131584Z >>> Listing root directory contents (ls -la /):
+2025-10-23T12:36:24.632288475Z total 2967
+2025-10-23T12:36:24.632298760Z drwxr-xr-x    1 root   root         95 Oct 23 12:36 .
+2025-10-23T12:36:24.632301525Z drwxr-xr-x    1 root   root         95 Oct 23 12:36 ..
+2025-10-23T12:36:24.632303498Z -rwxr-xr-x    1 root   root          0 Oct 23 12:36 .dockerenv
+2025-10-23T12:36:24.632305430Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
+2025-10-23T12:36:24.632307784Z drwxr-xr-x    1 root   root         30 Oct 23 12:31 app
+2025-10-23T12:36:24.632309787Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
+2025-10-23T12:36:24.632311650Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
+2025-10-23T12:36:24.632313493Z drwxr-xr-x    2 root   root          6 Apr 22  2024 boot
+2025-10-23T12:36:24.632315385Z drwxr-xr-x    6 root   root        460 Oct 23 12:36 dev
+2025-10-23T12:36:24.632317660Z drwxr-xr-x    1 root   root         69 Oct 23 12:36 etc
+2025-10-23T12:36:24.632319473Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
+2025-10-23T12:36:24.632321275Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
+2025-10-23T12:36:24.632323098Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
+2025-10-23T12:36:24.632324911Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
+2025-10-23T12:36:24.632326723Z drwxr-xr-x    2 root   root          6 Jan 27  2025 media
+2025-10-23T12:36:24.632328546Z drwxr-xr-x    2 root   root          6 Jan 27  2025 mnt
+2025-10-23T12:36:24.632330369Z drwxr-xr-x    1 root   root         26 Oct 22 15:01 opt
+2025-10-23T12:36:24.632339212Z dr-xr-xr-x 2942 nobody nogroup       0 Oct 23 12:36 proc
+2025-10-23T12:36:24.632341256Z drwx------    1 root   root         32 Oct 22 15:31 root
+2025-10-23T12:36:24.632343328Z drwxr-xr-x    1 root   root         41 Oct 23 12:36 run
+2025-10-23T12:36:24.632345171Z drwxrwxrwx    5 root   root    3012995 Oct 21 07:36 runpod-volume
+2025-10-23T12:36:24.632347325Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
+2025-10-23T12:36:24.632349147Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
+2025-10-23T12:36:24.632350970Z drwxr-xr-x    2 root   root          6 Jan 27  2025 srv
+2025-10-23T12:36:24.632352823Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
+2025-10-23T12:36:24.632355066Z dr-xr-xr-x   13 nobody nogroup       0 Oct 19 00:09 sys
+2025-10-23T12:36:24.632356909Z drwxrwxrwt    2 root   root          6 Jan 27  2025 tmp
+2025-10-23T12:36:24.632358751Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
+2025-10-23T12:36:24.632360554Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
+2025-10-23T12:36:24.632362377Z drwxr-xr-x    1 root   root         28 Oct  9 05:11 workspace
+2025-10-23T12:36:24.632473985Z ---
+2025-10-23T12:36:24.632483420Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
+2025-10-23T12:36:24.638423671Z total 8876
+2025-10-23T12:36:24.638430882Z drwxrwxrwx 5 root root 3012995 Oct 21 07:36 .
+2025-10-23T12:36:24.638433175Z drwxr-xr-x 1 root root      95 Oct 23 12:36 ..
+2025-10-23T12:36:24.638435308Z drwxrwxrwx 3 root root 2000397 Oct 21 07:36 .cache
+2025-10-23T12:36:24.638437432Z drwxrwxrwx 6 root root 1061195 Oct 21 07:34 labnote-Docker
+2025-10-23T12:36:24.638439424Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
+2025-10-23T12:36:24.638749613Z --- [DIAGNOSIS] Verification complete ---
+2025-10-23T12:36:24.645019311Z >>> vm.overcommit_memory set to 1 for Redis stability.
+2025-10-23T12:36:24.645043428Z >>> Starting core services...
+2025-10-23T12:36:24.648857672Z >>> Redis Stack Server started.
+2025-10-23T12:36:24.649121480Z >>> Waiting for Ollama server to be ready...
+2025-10-23T12:36:24.657332978Z     - Ollama not ready yet. Retrying in 2 seconds... (1/30)
+2025-10-23T12:36:24.659790245Z Starting redis-stack-server, database path /var/lib/redis-stack
+2025-10-23T12:36:24.671015320Z 68:C 23 Oct 2025 12:36:24.670 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+2025-10-23T12:36:24.673272054Z 68:C 23 Oct 2025 12:36:24.671 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+2025-10-23T12:36:24.673285484Z 68:C 23 Oct 2025 12:36:24.671 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=68, just started
+2025-10-23T12:36:24.673288198Z 68:C 23 Oct 2025 12:36:24.671 * Configuration loaded
+2025-10-23T12:36:24.673290982Z 68:M 23 Oct 2025 12:36:24.671 * monotonic clock: POSIX clock_gettime
+2025-10-23T12:36:24.675513045Z 68:M 23 Oct 2025 12:36:24.675 * Running mode=standalone, port=6379.
+2025-10-23T12:36:24.675833929Z 68:M 23 Oct 2025 12:36:24.675 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
+2025-10-23T12:36:24.676508467Z Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+2025-10-23T12:36:24.677253711Z 68:M 23 Oct 2025 12:36:24.677 * <search> Redis version found by RedisSearch : 7.4.6 - oss
+2025-10-23T12:36:24.677268233Z 68:M 23 Oct 2025 12:36:24.677 * <search> RediSearch version 2.10.20 (Git=5c09b69)
+2025-10-23T12:36:24.677765363Z 68:M 23 Oct 2025 12:36:24.677 * <search> Low level api version 1 initialized successfully
+2025-10-23T12:36:24.677772524Z 68:M 23 Oct 2025 12:36:24.677 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
+2025-10-23T12:36:24.677784191Z 68:M 23 Oct 2025 12:36:24.677 * <search> Initialized thread pools!
+2025-10-23T12:36:24.677786725Z 68:M 23 Oct 2025 12:36:24.677 * <search> Subscribe to config changes
+2025-10-23T12:36:24.677788838Z 68:M 23 Oct 2025 12:36:24.677 * <search> Enabled role change notification
+2025-10-23T12:36:24.677790791Z 68:M 23 Oct 2025 12:36:24.677 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
+2025-10-23T12:36:24.678114839Z Your new public key is:
+2025-10-23T12:36:24.678125015Z ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfF+lswAbwASt/6OR6bsgkbgSjv43tWFTJ9zvH2+q9I
+2025-10-23T12:36:24.678470476Z time=2025-10-23T12:36:24.678Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:INFO OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+2025-10-23T12:36:24.678738060Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
+2025-10-23T12:36:24.678788287Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
+2025-10-23T12:36:24.678790760Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
+2025-10-23T12:36:24.678803610Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded server DUPLICATE_POLICY: block
+2025-10-23T12:36:24.678830199Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
+2025-10-23T12:36:24.678842337Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
+2025-10-23T12:36:24.678851441Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Setting default series ENCODING to: compressed
+2025-10-23T12:36:24.678917421Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Detected redis oss
+2025-10-23T12:36:24.679048829Z 68:M 23 Oct 2025 12:36:24.679 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
+2025-10-23T12:36:24.679449023Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Created new data type 'ReJSON-RL'
+2025-10-23T12:36:24.679528753Z 68:M 23 Oct 2025 12:36:24.679 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
+2025-10-23T12:36:24.679552328Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> version: 20809 git sha: unknown branch: unknown
+2025-10-23T12:36:24.679600692Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V1 API
+2025-10-23T12:36:24.679608513Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V2 API
+2025-10-23T12:36:24.679611067Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V3 API
+2025-10-23T12:36:24.679613030Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V4 API
+2025-10-23T12:36:24.679620952Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V5 API
+2025-10-23T12:36:24.679628173Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Enabled diskless replication
+2025-10-23T12:36:24.679677597Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Initialized shared string cache, thread safe: false.
+2025-10-23T12:36:24.679684467Z 68:M 23 Oct 2025 12:36:24.679 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
+2025-10-23T12:36:24.679691798Z 68:M 23 Oct 2025 12:36:24.679 * <search> Acquired RedisJSON_V5 API
+2025-10-23T12:36:24.679895807Z 68:M 23 Oct 2025 12:36:24.679 * <bf> RedisBloom version 2.8.7 (Git=unknown)
+2025-10-23T12:36:24.679990410Z 68:M 23 Oct 2025 12:36:24.679 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
+2025-10-23T12:36:24.680515642Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Created new data type 'GearsType'
+2025-10-23T12:36:24.680589082Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Detected redis oss
+2025-10-23T12:36:24.680672639Z 68:M 23 Oct 2025 12:36:24.680 # <redisgears_2> could not initialize RedisAI_InitError
+2025-10-23T12:36:24.680709173Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Failed loading RedisAI API.
+2025-10-23T12:36:24.680720861Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
+2025-10-23T12:36:24.681489070Z 68:M 23 Oct 2025 12:36:24.681 * <redisgears_2> Registered backend: js.
+2025-10-23T12:36:24.681801041Z 68:M 23 Oct 2025 12:36:24.681 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
+2025-10-23T12:36:24.682177509Z 68:M 23 Oct 2025 12:36:24.682 * Server initialized
+2025-10-23T12:36:24.682251641Z 68:M 23 Oct 2025 12:36:24.682 * Ready to accept connections tcp
+2025-10-23T12:36:24.715508753Z time=2025-10-23T12:36:24.715Z level=INFO source=images.go:522 msg="total blobs: 21"
+2025-10-23T12:36:24.726615719Z time=2025-10-23T12:36:24.726Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
+2025-10-23T12:36:24.734868329Z time=2025-10-23T12:36:24.734Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
+2025-10-23T12:36:24.735318639Z time=2025-10-23T12:36:24.735Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
+2025-10-23T12:36:24.779429475Z time=2025-10-23T12:36:24.779Z level=INFO source=types.go:129 msg="inference compute" id=cpu library=cpu compute="" name=cpu description=cpu libdirs=ollama driver="" pci_id="" type="" total="1889.8 GiB" available="1817.0 GiB"
+2025-10-23T12:36:24.779443016Z time=2025-10-23T12:36:24.779Z level=INFO source=routes.go:1605 msg="entering low vram mode" "total vram"="0 B" threshold="20.0 GiB"
+2025-10-23T12:36:26.669972880Z [GIN] 2025/10/23 - 12:36:26 | 200 |      83.346µs |       127.0.0.1 | GET      "/"
+2025-10-23T12:36:26.672566002Z ✅ Ollama server is ready.
+2025-10-23T12:36:26.672608467Z >>> Checking for required models in persistent storage...
+2025-10-23T12:36:26.701432470Z [GIN] 2025/10/23 - 12:36:26 | 200 |      37.356µs |       127.0.0.1 | HEAD     "/"
+2025-10-23T12:36:26.724606262Z [GIN] 2025/10/23 - 12:36:26 | 200 |   21.218031ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-23T12:36:26.728536681Z     - Model 'nomic-embed-text' already exists.
+2025-10-23T12:36:26.752377919Z [GIN] 2025/10/23 - 12:36:26 | 200 |      44.518µs |       127.0.0.1 | HEAD     "/"
+2025-10-23T12:36:26.778700979Z [GIN] 2025/10/23 - 12:36:26 | 200 |   25.981777ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-23T12:36:26.782328282Z     - Model 'llama3.1:8b' already exists.
+2025-10-23T12:36:26.807624895Z [GIN] 2025/10/23 - 12:36:26 | 200 |      29.736µs |       127.0.0.1 | HEAD     "/"
+2025-10-23T12:36:26.819603256Z [GIN] 2025/10/23 - 12:36:26 | 200 |   11.700012ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-23T12:36:26.823129115Z     - Model 'mixtral' already exists.
+2025-10-23T12:36:26.844952618Z [GIN] 2025/10/23 - 12:36:26 | 200 |      21.633µs |       127.0.0.1 | HEAD     "/"
+2025-10-23T12:36:26.858438272Z [GIN] 2025/10/23 - 12:36:26 | 200 |   12.747881ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-23T12:36:26.865219473Z     - Model 'llama3.1:70b' already exists.
+2025-10-23T12:36:26.892895445Z [GIN] 2025/10/23 - 12:36:26 | 200 |      25.599µs |       127.0.0.1 | HEAD     "/"
+2025-10-23T12:36:26.909608549Z [GIN] 2025/10/23 - 12:36:26 | 200 |   16.424769ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-23T12:36:26.913092996Z     - Model 'gpt-oss:120b' already exists.
+2025-10-23T12:36:26.913106136Z ✅ All required models are available.
+2025-10-23T12:36:26.913108259Z Starting LabNote AI Backend server on port 8000 (foreground)...
+2025-10-23T12:36:31.452400241Z main.py             :49   2025-10-23 12:36:31,452 SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
+2025-10-23T12:36:31.452421693Z main.py             :215  2025-10-23 12:36:31,452 Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
+2025-10-23T12:36:31.452633994Z main.py             :218  2025-10-23 12:36:31,452 Loaded 64 workflows and 83 unit operations.
+2025-10-23T12:36:31.461323883Z --- Starting Serverless Worker |  Version 1.7.13 ---
+2025-10-23T12:36:31.696876112Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
+2025-10-23T12:36:31.696898916Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
+2025-10-23T12:36:31.696973167Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Started.", "level": "INFO"}
+2025-10-23T12:36:31.696978236Z [RunPod Handler] Incoming payload: {'body': {'file_content': "---\ntitle: WD010 General Design of Experiment - 1\nexperimenter: ''\ncreated_date: '2025-10-23'\nend_date: 2025-10-23 20:44\nlast_updated_date: '2025-10-23'\n---\n\n## [WD010 General Design of Experiment] 1\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose)\n> This workflow provides a general-purpose approach for experimental design using the Design of Experiment methodology. It allows for the independent design of variables from various domains to optimize experimental conditions.\n\n## 🗂️ Related Unit Operations\n> Enter the list of related unit operations between the markers below.\n> When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n\n\n\n\n---\n\n### [UHW060 Colony Picking new]\n\n- **Description**: The process of isolating individual bacterial or yeast colonies from an agar plate and transferring them to a liquid culture or multi-well plate for downstream applications. This unit operation is essential for microbial strain selection and screening.\n\n#### Meta\n- Experimenter: \n- Start_date: '2025-10-23 20:44'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n- (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n- (e.g. filter, well-plate, etc.)\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n\n![alt text](./images/image.png)", 'file_path': 'c:\\Users\\Administrator\\Desktop\\bfworkflow_template\\labnote\\006_new\\001_WD010_General_Design_of_Experiment--1.md', 'query': 'WD010 General Design of Experiment - 1', 'section': 'Method', 'uo_id': 'UHW060'}, 'method': 'POST', 'path': '/populate_note'}
+2025-10-23T12:36:31.706593922Z main.py             :1251 2025-10-23 12:36:31,706 Phase 2: Populating section 'Method' for UO 'UHW060'
+2025-10-23T12:36:31.710222606Z agents.py           :254  2025-10-23 12:36:31,710 Supervisor-led agent graph compiled successfully.
+2025-10-23T12:36:31.888761703Z agents.py           :57   2025-10-23 12:36:31,888 Generating drafts for UO 'UHW060' - Section 'Method'
+2025-10-23T12:36:31.890872578Z main.py             :1290 2025-10-23 12:36:31,888 Error populating note: 'NoneType' object has no attribute 'retrieve_context'
+2025-10-23T12:36:31.890887770Z Traceback (most recent call last):
+2025-10-23T12:36:31.890890545Z   File "/app/labnote-ai-backend/main.py", line 1277, in populate_note
+2025-10-23T12:36:31.890892768Z     agent_result = await run_agent_team(
+2025-10-23T12:36:31.890894641Z                    ^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890896464Z   File "/app/labnote-ai-backend/agents.py", line 297, in run_agent_team
+2025-10-23T12:36:31.890898346Z     final_state = await graph.ainvoke(initial_state)
+2025-10-23T12:36:31.890900680Z                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890902783Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3182, in ainvoke
+2025-10-23T12:36:31.890905007Z     async for chunk in self.astream(
+2025-10-23T12:36:31.890913279Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3000, in astream
+2025-10-23T12:36:31.890915282Z     async for _ in runner.atick(
+2025-10-23T12:36:31.890917816Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+2025-10-23T12:36:31.890919799Z     await arun_with_retry(
+2025-10-23T12:36:31.890921701Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+2025-10-23T12:36:31.890924385Z     return await task.proc.ainvoke(task.input, config)
+2025-10-23T12:36:31.890926679Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890928662Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+2025-10-23T12:36:31.890930535Z     input = await asyncio.create_task(
+2025-10-23T12:36:31.890932468Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890934291Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+2025-10-23T12:36:31.890936203Z     ret = await self.afunc(*args, **kwargs)
+2025-10-23T12:36:31.890938046Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890939899Z   File "/app/labnote-ai-backend/agents.py", line 219, in specialist_agent_node
+2025-10-23T12:36:31.890954652Z     return await _generate_drafts(state)
+2025-10-23T12:36:31.890956595Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890958448Z   File "/app/labnote-ai-backend/agents.py", line 61, in _generate_drafts
+2025-10-23T12:36:31.890960300Z     context_docs = rag_module.rag_pipeline.retrieve_context(rag_query, k=3)
+2025-10-23T12:36:31.890962194Z                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-10-23T12:36:31.890964066Z AttributeError: 'NoneType' object has no attribute 'retrieve_context'
+2025-10-23T12:36:31.890965939Z During task with name 'specialist_agents' and id '1f420981-443e-fc5e-6180-1d6662e30d59'
+2025-10-23T12:36:31.892322706Z _client.py          :1025 2025-10-23 12:36:31,892 HTTP Request: POST http://testserver/populate_note "HTTP/1.1 500 Internal Server Error"
+2025-10-23T12:36:31.893244716Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Captured Handler Exception", "level": "ERROR"}
+2025-10-23T12:36:31.893259328Z {"requestId": null, "message": "{\n    \"error_type\": \"<class 'RuntimeError'>\",\n    \"error_message\": \"Error processing request for POST /populate_note: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\",\n    \"error_traceback\": \"Traceback (most recent call last):\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 44, in handler\\n    response.raise_for_status()\\n  File \\\"/opt/venv/lib/python3.12/site-packages/httpx/_models.py\\\", line 829, in raise_for_status\\n    raise HTTPStatusError(message, request=request, response=self)\\nhttpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\\nThe above exception was the direct cause of the following exception:\\n\\nTraceback (most recent call last):\\n  File \\\"/opt/venv/lib/python3.12/site-packages/runpod/serverless/modules/rp_job.py\\\", line 182, in run_job\\n    handler_return = handler(job)\\n                     ^^^^^^^^^^^^\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 49, in handler\\n    raise RuntimeError(\\nRuntimeError: Error processing request for POST /populate_note: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\",\n    \"hostname\": \"88alojcxr7nzje-64410cb1\",\n    \"worker_id\": \"88alojcxr7nzje\",\n    \"runpod_version\": \"1.7.13\"\n}", "level": "ERROR"}
+2025-10-23T12:36:32.152177377Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Finished.", "level": "INFO"}

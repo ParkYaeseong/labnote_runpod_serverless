@@ -45,11 +45,11 @@ ROUTER_MODEL_NAME = os.getenv("LLM_ROUTER_MODEL") or os.getenv("LLM_ROUTER_MODEL
 # main.py가 TestClient에 의해 로드될 때 RAG 파이프라인을 초기화합니다.
 if os.getenv("RUNPOD_SERVERLESS", "false").lower() == "true":
     logger.info("Initializing RAG pipeline within main.py for serverless environment...")
-    if rag_module.rag_pipeline is None:
-        rag_module.rag_pipeline = rag_module.RAGPipeline()
+    try:
+        rag_module.get_rag_pipeline()
         logger.info("RAG pipeline initialized successfully from main.py.")
-    else:
-        logger.info("RAG pipeline already initialized; reusing existing instance.")
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception("Failed to initialize RAG pipeline during serverless warmup: %s", exc)
 
 # --- [DIAGNOSIS] Unexpected Shutdown Signal Handler ---
 def handle_shutdown_signal(signum, frame):
