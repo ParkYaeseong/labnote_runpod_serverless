@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # 스크립트 실행 중 오류가 발생하면 즉시 중단합니다.
 set -e
 
@@ -17,6 +17,9 @@ echo "--- [DIAGNOSIS] Verification complete ---"
 # 환경 변수 설정
 export LABNOTE_BACKEND_URL="http://127.0.0.1:8000"
 export OLLAMA_HOST=0.0.0.0
+export OLLAMA_BASE_URL="http://127.0.0.1:11434"
+export EMBEDDING_MODEL="nomic-embed-text"
+
 # Runpod의 Network Storage 경로를 OLLAMA_MODELS로 지정합니다.
 # 이 경로는 Runpod Serverless Endpoint 설정의 Volume Mount Path와 일치해야 합니다. (예: /runpod-volume)
 export OLLAMA_MODELS=/runpod-volume/ollama_models
