@@ -14,6 +14,13 @@ echo ">>> Listing /runpod-volume contents (ls -la /runpod-volume):"
 ls -la /runpod-volume || echo "    - /runpod-volume does not exist or is empty."
 echo "--- [DIAGNOSIS] Verification complete ---"
 
+if command -v nvidia-smi >/dev/null 2>&1; then
+    echo ">>> GPU Diagnostics (nvidia-smi)"
+    nvidia-smi
+else
+    echo ">>> WARNING: nvidia-smi not found. GPU may not be visible inside the container."
+fi
+
 # 환경 변수 설정
 export LABNOTE_BACKEND_URL="http://127.0.0.1:8000"
 export OLLAMA_HOST=0.0.0.0
@@ -29,6 +36,10 @@ export OLLAMA_FLASH_ATTENTION="${OLLAMA_FLASH_ATTENTION:-true}"
 export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-2}"
 export OLLAMA_KEEP_ALIVE="${OLLAMA_KEEP_ALIVE:-5m}"
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
+export NVIDIA_VISIBLE_DEVICES="${NVIDIA_VISIBLE_DEVICES:-all}"
+export NVIDIA_DRIVER_CAPABILITIES="${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+export OLLAMA_ACCELERATE="${OLLAMA_ACCELERATE:-1}"
 
 # Runpod의 Network Storage 경로를 OLLAMA_MODELS로 지정합니다.
 # 이 경로는 Runpod Serverless Endpoint 설정의 Volume Mount Path와 일치해야 합니다. (예: /runpod-volume)
@@ -36,6 +47,16 @@ export OLLAMA_MODELS=/runpod-volume/ollama_models
 
 # Redis 서버 연결을 위한 환경 변수 설정
 export REDIS_URL="redis://localhost:6379/0"
+
+REDIS_DATA_DIR="/runpod-volume/redis-data"
+mkdir -p "${REDIS_DATA_DIR}"
+mkdir -p /var/lib/redis-stack
+
+# 기존 Redis 스냅샷이 존재하면 복원합니다.
+if [ -f "${REDIS_DATA_DIR}/dump.rdb" ]; then
+    echo ">>> Restoring Redis snapshot from persistent storage."
+    cp "${REDIS_DATA_DIR}/dump.rdb" /var/lib/redis-stack/dump.rdb
+fi
 
 # 모델 저장 디렉토리 생성
 mkdir -p $OLLAMA_MODELS
@@ -118,7 +139,6 @@ REQUIRED_MODELS=(
     "llama3.1:8b"
     "mixtral"
     "llama3.1:70b"
-    "gpt-oss:120b"
 )
 
 for model in "${REQUIRED_MODELS[@]}"; do
@@ -155,5 +175,18 @@ fi
 # 이 프로세스가 컨테이너의 메인 프로세스가 되어 요청을 처리합니다.
 echo "Starting LabNote AI Backend server on port 8000 (foreground)..."
 cd /app/labnote-ai-backend
+
+backup_redis_snapshot() {
+    echo ">>> Saving Redis snapshot to persistent storage..."
+    if redis-cli SAVE >/dev/null 2>&1; then
+        cp /var/lib/redis-stack/dump.rdb "${REDIS_DATA_DIR}/dump.rdb"
+        echo ">>> Redis snapshot saved to ${REDIS_DATA_DIR}/dump.rdb."
+    else
+        echo ">>> WARNING: redis-cli SAVE failed; snapshot not updated."
+    fi
+}
+
+trap backup_redis_snapshot EXIT
+
 # Runpod Serverless 환경에서는 uvicorn을 직접 실행하는 대신, runpod_handler.py를 실행합니다.
 python -u runpod_handler.py

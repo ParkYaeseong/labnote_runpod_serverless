@@ -75,8 +75,12 @@ class RAGPipeline:
                 redis_url=self.redis_url
             )
             
-        except Exception: # 인덱스가 없거나 Redis 연결 실패 시
-            logging.warning(f"Index '{self.index_name}' not found or Redis connection failed. Attempting to create a new index.")
+        except Exception as exc: # 인덱스가 없거나 Redis 연결 실패 시
+            logging.warning(
+                "Index '%s' not found or Redis connection failed. Attempting to create a new index. Reason: %s",
+                self.index_name,
+                exc,
+            )
             splits = self._load_and_split_documents()
             
             if not splits:

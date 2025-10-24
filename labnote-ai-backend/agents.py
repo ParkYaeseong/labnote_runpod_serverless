@@ -180,7 +180,7 @@ You are a highly experienced principal investigator reviewing lab notes. Evaluat
     draft_texts = "\n\n---\n\n".join([f"**Draft {i} (from {d['model']})**:\n{d['content']}" for i, d in enumerate(drafts)])
     
     # gpt-oss:120b를 채점자로 사용하고, 실패 시 llama3.1:70b로 폴백합니다.
-    scoring_llms = ["gpt-oss:120b", "llama3.1:70b"]
+    scoring_llms = ["llama3.1:70b"]
     response_str = None
     last_error: Optional[Exception] = None
     for scoring_llm in scoring_llms:
