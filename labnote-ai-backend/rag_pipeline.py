@@ -1,7 +1,7 @@
 import os
 import logging
 from threading import Lock
-from typing import List, Optional
+from typing import List, Optional, Union
 from dotenv import load_dotenv
 import redis
 
@@ -111,10 +111,44 @@ class RAGPipeline:
             context_parts.append(f"--- CONTEXT FROM: {source} ---\n{doc.page_content}")
         return "\n\n".join(context_parts)
 
-rag_pipeline: Optional[RAGPipeline] = None
+
+class NullRAGPipeline:
+    """
+    Lightweight fallback pipeline used when the real RAG pipeline cannot be
+    initialised (e.g. missing environment variables or Redis/Ollama failures).
+    It preserves the public interface so that existing call-sites do not need
+    additional guards and the application can continue to serve requests with
+    degraded functionality instead of crashing.
+    """
+
+    def __init__(self, error: Optional[Exception] = None):
+        self.vector_store = None
+        self.embeddings = None
+        self._error = error
+        self._warned = False
+
+    def _log_once(self, query: Optional[str] = None) -> None:
+        if not self._warned:
+            details = f" ({self._error})" if self._error else ""
+            logging.warning(
+                "RAG pipeline unavailable%s; returning no SOP context%s.",
+                details,
+                f" for query '{query}'" if query else ""
+            )
+            self._warned = True
+
+    def retrieve_context(self, query: str, k: int = 5) -> List[Document]:
+        self._log_once(query)
+        return []
+
+    def format_context_for_prompt(self, documents: List[Document]) -> str:
+        self._log_once()
+        return "No relevant context found in the SOPs."
+
+rag_pipeline: Optional[Union[RAGPipeline, NullRAGPipeline]] = None
 _pipeline_lock: Lock = Lock()
 
-def get_rag_pipeline() -> RAGPipeline:
+def get_rag_pipeline() -> Union[RAGPipeline, NullRAGPipeline]:
     """
     Lazily initialize the shared RAG pipeline so serverless workers can recover
     from partial startup or missing warmup stages.
@@ -124,7 +158,11 @@ def get_rag_pipeline() -> RAGPipeline:
         with _pipeline_lock:
             if rag_pipeline is None:
                 logging.info("Lazy-initializing RAG pipeline on first access.")
-                rag_pipeline = RAGPipeline()
+                try:
+                    rag_pipeline = RAGPipeline()
+                except Exception as exc:  # pylint: disable=broad-except
+                    logging.exception("Unable to initialise RAG pipeline: %s", exc)
+                    rag_pipeline = NullRAGPipeline(exc)
     return rag_pipeline
 
 def get_embeddings():
@@ -132,6 +170,6 @@ def get_embeddings():
     초기화된 RAGPipeline 인스턴스에서 임베딩 모델 객체를 반환합니다.
     """
     pipeline = get_rag_pipeline()
-    if pipeline.embeddings is None:
+    if getattr(pipeline, "embeddings", None) is None:
         raise RuntimeError("RAG pipeline or embeddings not initialized.")
     return pipeline.embeddings    

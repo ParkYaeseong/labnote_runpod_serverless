@@ -13,8 +13,7 @@ FROM ${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS final
 # 작업 디렉토리를 베이스 이미지와 동일하게 설정합니다.
 WORKDIR /app
 
-# 4. Git 저장소 복제 및 서브모듈 초기화 (보안 마운트 사용)
-# git clone과 submodule 업데이트 모두 인증이 필요하므로, secret을 마운트한 단일 RUN 명령으로 처리합니다.
+# 4. 원격 리포지토리 clone 및 서브모듈 초기화
 RUN --mount=type=secret,id=github_token,required=true \
     git config --global url."https://oauth2:$(cat /run/secrets/github_token)@github.com/".insteadOf "https://github.com/" && \
     git clone https://github.com/sblabkribb/labnote-ai-backend.git /app/labnote-ai-backend && \
@@ -22,15 +21,24 @@ RUN --mount=type=secret,id=github_token,required=true \
     git submodule sync --recursive && \
     git submodule update --init --force --recursive
 
-# RunPod 서버리스 런타임 지원 패키지 설치 (베이스 이미지에 없을 가능성 대비)
+# 5. 로컬 수정사항이 있다면 clone된 리포지토리에 덮어씌웁니다.
+COPY labnote-ai-backend /tmp/labnote-ai-backend-local
+RUN set -eux; \
+    if [ -d /tmp/labnote-ai-backend-local ]; then \
+        find /tmp/labnote-ai-backend-local -name ".git" -type d -prune -exec rm -rf {} +; \
+        cp -a /tmp/labnote-ai-backend-local/. /app/labnote-ai-backend/; \
+        rm -rf /tmp/labnote-ai-backend-local; \
+    fi
+
+# 6. RunPod 서버리스 런타임 지원 패키지 설치 (베이스 이미지에 없을 가능성 대비)
 RUN /opt/venv/bin/pip install --no-cache-dir runpod
 
-# 6. 시작 스크립트 복사 및 실행 권한 부여
+# 7. 시작 스크립트 복사 및 실행 권한 부여
 COPY start.sh .
 RUN chmod +x ./start.sh
 
-# 7. 포트 노출 (FastAPI 백엔드 포트)
+# 8. 포트 노출 (FastAPI 백엔드 포트)
 EXPOSE 8000
 
-# 8. 컨테이너 시작 명령어 설정
+# 9. 컨테이너 시작 명령어 설정
 CMD ["./start.sh"]

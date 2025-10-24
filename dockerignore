@@ -1,9 +1,13 @@
-# Ignore everything by default to ensure a clean context
+# 기본적으로 전체를 무시하지만, 빌드에 필요한 파일은 포함합니다.
 **
 
-# Allow specific files and directories required for the build
 !/start.sh
-!/labnote-ai-backend/requirements.txt
+!/labnote-ai-backend
+!/labnote-ai-backend/**
 
-# Do not ignore the root directory itself, but ignore its contents
-!/
+# Git 메타데이터와 캐시는 제외
+labnote-ai-backend/.git
+labnote-ai-backend/.git/**
+**/.pytest_cache
+**/__pycache__
+**/*.pyc

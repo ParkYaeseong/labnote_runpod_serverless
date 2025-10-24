@@ -1,197 +1,1294 @@
-2025-10-23T12:36:24.598497718Z ==========
-2025-10-23T12:36:24.598512902Z == CUDA ==
-2025-10-23T12:36:24.598538841Z ==========
-2025-10-23T12:36:24.602585485Z CUDA Version 12.8.1
-2025-10-23T12:36:24.603794899Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-2025-10-23T12:36:24.606909498Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
-2025-10-23T12:36:24.606911942Z By pulling and using the container, you accept the terms and conditions of this license:
-2025-10-23T12:36:24.606914105Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
-2025-10-23T12:36:24.606918271Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
-2025-10-23T12:36:24.624428187Z /app/start.sh: line 1: ﻿#!/bin/bash: No such file or directory
-2025-10-23T12:36:24.624596271Z --- [DIAGNOSIS] Verifying storage mounts ---
-2025-10-23T12:36:24.624606396Z >>> Displaying mounted filesystems (df -h):
-2025-10-23T12:36:24.627970251Z Filesystem                    Size  Used Avail Use% Mounted on
-2025-10-23T12:36:24.627981037Z overlay                       5.0G   15M  5.0G   1% /
-2025-10-23T12:36:24.627983160Z tmpfs                          64M     0   64M   0% /dev
-2025-10-23T12:36:24.627985063Z mfs#ca-mtl-3.runpod.net:9421  503T  377T  127T  75% /runpod-volume
-2025-10-23T12:36:24.627987436Z shm                           110G     0  110G   0% /dev/shm
-2025-10-23T12:36:24.627989329Z /dev/vdb                      6.4T  2.3T  4.1T  36% /etc/hosts
-2025-10-23T12:36:24.627991282Z /dev/vda1                      97G   22G   75G  23% /usr/bin/nvidia-smi
-2025-10-23T12:36:24.627994157Z tmpfs                         945G     0  945G   0% /sys/fs/cgroup
-2025-10-23T12:36:24.627996230Z tmpfs                         945G   12K  945G   1% /proc/driver/nvidia
-2025-10-23T12:36:24.627998172Z tmpfs                         945G  4.0K  945G   1% /etc/nvidia/nvidia-application-profiles-rc.d
-2025-10-23T12:36:24.628000346Z tmpfs                         189G  3.1M  189G   1% /run/nvidia-persistenced/socket
-2025-10-23T12:36:24.628002259Z tmpfs                         945G     0  945G   0% /proc/acpi
-2025-10-23T12:36:24.628004612Z tmpfs                         945G     0  945G   0% /proc/scsi
-2025-10-23T12:36:24.628006625Z tmpfs                         945G     0  945G   0% /sys/firmware
-2025-10-23T12:36:24.628111394Z ---
-2025-10-23T12:36:24.628131584Z >>> Listing root directory contents (ls -la /):
-2025-10-23T12:36:24.632288475Z total 2967
-2025-10-23T12:36:24.632298760Z drwxr-xr-x    1 root   root         95 Oct 23 12:36 .
-2025-10-23T12:36:24.632301525Z drwxr-xr-x    1 root   root         95 Oct 23 12:36 ..
-2025-10-23T12:36:24.632303498Z -rwxr-xr-x    1 root   root          0 Oct 23 12:36 .dockerenv
-2025-10-23T12:36:24.632305430Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
-2025-10-23T12:36:24.632307784Z drwxr-xr-x    1 root   root         30 Oct 23 12:31 app
-2025-10-23T12:36:24.632309787Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
-2025-10-23T12:36:24.632311650Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
-2025-10-23T12:36:24.632313493Z drwxr-xr-x    2 root   root          6 Apr 22  2024 boot
-2025-10-23T12:36:24.632315385Z drwxr-xr-x    6 root   root        460 Oct 23 12:36 dev
-2025-10-23T12:36:24.632317660Z drwxr-xr-x    1 root   root         69 Oct 23 12:36 etc
-2025-10-23T12:36:24.632319473Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
-2025-10-23T12:36:24.632321275Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
-2025-10-23T12:36:24.632323098Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
-2025-10-23T12:36:24.632324911Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
-2025-10-23T12:36:24.632326723Z drwxr-xr-x    2 root   root          6 Jan 27  2025 media
-2025-10-23T12:36:24.632328546Z drwxr-xr-x    2 root   root          6 Jan 27  2025 mnt
-2025-10-23T12:36:24.632330369Z drwxr-xr-x    1 root   root         26 Oct 22 15:01 opt
-2025-10-23T12:36:24.632339212Z dr-xr-xr-x 2942 nobody nogroup       0 Oct 23 12:36 proc
-2025-10-23T12:36:24.632341256Z drwx------    1 root   root         32 Oct 22 15:31 root
-2025-10-23T12:36:24.632343328Z drwxr-xr-x    1 root   root         41 Oct 23 12:36 run
-2025-10-23T12:36:24.632345171Z drwxrwxrwx    5 root   root    3012995 Oct 21 07:36 runpod-volume
-2025-10-23T12:36:24.632347325Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
-2025-10-23T12:36:24.632349147Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
-2025-10-23T12:36:24.632350970Z drwxr-xr-x    2 root   root          6 Jan 27  2025 srv
-2025-10-23T12:36:24.632352823Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
-2025-10-23T12:36:24.632355066Z dr-xr-xr-x   13 nobody nogroup       0 Oct 19 00:09 sys
-2025-10-23T12:36:24.632356909Z drwxrwxrwt    2 root   root          6 Jan 27  2025 tmp
-2025-10-23T12:36:24.632358751Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
-2025-10-23T12:36:24.632360554Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
-2025-10-23T12:36:24.632362377Z drwxr-xr-x    1 root   root         28 Oct  9 05:11 workspace
-2025-10-23T12:36:24.632473985Z ---
-2025-10-23T12:36:24.632483420Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
-2025-10-23T12:36:24.638423671Z total 8876
-2025-10-23T12:36:24.638430882Z drwxrwxrwx 5 root root 3012995 Oct 21 07:36 .
-2025-10-23T12:36:24.638433175Z drwxr-xr-x 1 root root      95 Oct 23 12:36 ..
-2025-10-23T12:36:24.638435308Z drwxrwxrwx 3 root root 2000397 Oct 21 07:36 .cache
-2025-10-23T12:36:24.638437432Z drwxrwxrwx 6 root root 1061195 Oct 21 07:34 labnote-Docker
-2025-10-23T12:36:24.638439424Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
-2025-10-23T12:36:24.638749613Z --- [DIAGNOSIS] Verification complete ---
-2025-10-23T12:36:24.645019311Z >>> vm.overcommit_memory set to 1 for Redis stability.
-2025-10-23T12:36:24.645043428Z >>> Starting core services...
-2025-10-23T12:36:24.648857672Z >>> Redis Stack Server started.
-2025-10-23T12:36:24.649121480Z >>> Waiting for Ollama server to be ready...
-2025-10-23T12:36:24.657332978Z     - Ollama not ready yet. Retrying in 2 seconds... (1/30)
-2025-10-23T12:36:24.659790245Z Starting redis-stack-server, database path /var/lib/redis-stack
-2025-10-23T12:36:24.671015320Z 68:C 23 Oct 2025 12:36:24.670 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
-2025-10-23T12:36:24.673272054Z 68:C 23 Oct 2025 12:36:24.671 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-2025-10-23T12:36:24.673285484Z 68:C 23 Oct 2025 12:36:24.671 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=68, just started
-2025-10-23T12:36:24.673288198Z 68:C 23 Oct 2025 12:36:24.671 * Configuration loaded
-2025-10-23T12:36:24.673290982Z 68:M 23 Oct 2025 12:36:24.671 * monotonic clock: POSIX clock_gettime
-2025-10-23T12:36:24.675513045Z 68:M 23 Oct 2025 12:36:24.675 * Running mode=standalone, port=6379.
-2025-10-23T12:36:24.675833929Z 68:M 23 Oct 2025 12:36:24.675 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
-2025-10-23T12:36:24.676508467Z Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
-2025-10-23T12:36:24.677253711Z 68:M 23 Oct 2025 12:36:24.677 * <search> Redis version found by RedisSearch : 7.4.6 - oss
-2025-10-23T12:36:24.677268233Z 68:M 23 Oct 2025 12:36:24.677 * <search> RediSearch version 2.10.20 (Git=5c09b69)
-2025-10-23T12:36:24.677765363Z 68:M 23 Oct 2025 12:36:24.677 * <search> Low level api version 1 initialized successfully
-2025-10-23T12:36:24.677772524Z 68:M 23 Oct 2025 12:36:24.677 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
-2025-10-23T12:36:24.677784191Z 68:M 23 Oct 2025 12:36:24.677 * <search> Initialized thread pools!
-2025-10-23T12:36:24.677786725Z 68:M 23 Oct 2025 12:36:24.677 * <search> Subscribe to config changes
-2025-10-23T12:36:24.677788838Z 68:M 23 Oct 2025 12:36:24.677 * <search> Enabled role change notification
-2025-10-23T12:36:24.677790791Z 68:M 23 Oct 2025 12:36:24.677 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
-2025-10-23T12:36:24.678114839Z Your new public key is:
-2025-10-23T12:36:24.678125015Z ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfF+lswAbwASt/6OR6bsgkbgSjv43tWFTJ9zvH2+q9I
-2025-10-23T12:36:24.678470476Z time=2025-10-23T12:36:24.678Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:INFO OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
-2025-10-23T12:36:24.678738060Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
-2025-10-23T12:36:24.678788287Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
-2025-10-23T12:36:24.678790760Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
-2025-10-23T12:36:24.678803610Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded server DUPLICATE_POLICY: block
-2025-10-23T12:36:24.678830199Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
-2025-10-23T12:36:24.678842337Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
-2025-10-23T12:36:24.678851441Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Setting default series ENCODING to: compressed
-2025-10-23T12:36:24.678917421Z 68:M 23 Oct 2025 12:36:24.678 * <timeseries> Detected redis oss
-2025-10-23T12:36:24.679048829Z 68:M 23 Oct 2025 12:36:24.679 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
-2025-10-23T12:36:24.679449023Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Created new data type 'ReJSON-RL'
-2025-10-23T12:36:24.679528753Z 68:M 23 Oct 2025 12:36:24.679 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
-2025-10-23T12:36:24.679552328Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> version: 20809 git sha: unknown branch: unknown
-2025-10-23T12:36:24.679600692Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V1 API
-2025-10-23T12:36:24.679608513Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V2 API
-2025-10-23T12:36:24.679611067Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V3 API
-2025-10-23T12:36:24.679613030Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V4 API
-2025-10-23T12:36:24.679620952Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Exported RedisJSON_V5 API
-2025-10-23T12:36:24.679628173Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Enabled diskless replication
-2025-10-23T12:36:24.679677597Z 68:M 23 Oct 2025 12:36:24.679 * <ReJSON> Initialized shared string cache, thread safe: false.
-2025-10-23T12:36:24.679684467Z 68:M 23 Oct 2025 12:36:24.679 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
-2025-10-23T12:36:24.679691798Z 68:M 23 Oct 2025 12:36:24.679 * <search> Acquired RedisJSON_V5 API
-2025-10-23T12:36:24.679895807Z 68:M 23 Oct 2025 12:36:24.679 * <bf> RedisBloom version 2.8.7 (Git=unknown)
-2025-10-23T12:36:24.679990410Z 68:M 23 Oct 2025 12:36:24.679 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
-2025-10-23T12:36:24.680515642Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Created new data type 'GearsType'
-2025-10-23T12:36:24.680589082Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Detected redis oss
-2025-10-23T12:36:24.680672639Z 68:M 23 Oct 2025 12:36:24.680 # <redisgears_2> could not initialize RedisAI_InitError
-2025-10-23T12:36:24.680709173Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> Failed loading RedisAI API.
-2025-10-23T12:36:24.680720861Z 68:M 23 Oct 2025 12:36:24.680 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
-2025-10-23T12:36:24.681489070Z 68:M 23 Oct 2025 12:36:24.681 * <redisgears_2> Registered backend: js.
-2025-10-23T12:36:24.681801041Z 68:M 23 Oct 2025 12:36:24.681 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
-2025-10-23T12:36:24.682177509Z 68:M 23 Oct 2025 12:36:24.682 * Server initialized
-2025-10-23T12:36:24.682251641Z 68:M 23 Oct 2025 12:36:24.682 * Ready to accept connections tcp
-2025-10-23T12:36:24.715508753Z time=2025-10-23T12:36:24.715Z level=INFO source=images.go:522 msg="total blobs: 21"
-2025-10-23T12:36:24.726615719Z time=2025-10-23T12:36:24.726Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
-2025-10-23T12:36:24.734868329Z time=2025-10-23T12:36:24.734Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
-2025-10-23T12:36:24.735318639Z time=2025-10-23T12:36:24.735Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
-2025-10-23T12:36:24.779429475Z time=2025-10-23T12:36:24.779Z level=INFO source=types.go:129 msg="inference compute" id=cpu library=cpu compute="" name=cpu description=cpu libdirs=ollama driver="" pci_id="" type="" total="1889.8 GiB" available="1817.0 GiB"
-2025-10-23T12:36:24.779443016Z time=2025-10-23T12:36:24.779Z level=INFO source=routes.go:1605 msg="entering low vram mode" "total vram"="0 B" threshold="20.0 GiB"
-2025-10-23T12:36:26.669972880Z [GIN] 2025/10/23 - 12:36:26 | 200 |      83.346µs |       127.0.0.1 | GET      "/"
-2025-10-23T12:36:26.672566002Z ✅ Ollama server is ready.
-2025-10-23T12:36:26.672608467Z >>> Checking for required models in persistent storage...
-2025-10-23T12:36:26.701432470Z [GIN] 2025/10/23 - 12:36:26 | 200 |      37.356µs |       127.0.0.1 | HEAD     "/"
-2025-10-23T12:36:26.724606262Z [GIN] 2025/10/23 - 12:36:26 | 200 |   21.218031ms |       127.0.0.1 | GET      "/api/tags"
-2025-10-23T12:36:26.728536681Z     - Model 'nomic-embed-text' already exists.
-2025-10-23T12:36:26.752377919Z [GIN] 2025/10/23 - 12:36:26 | 200 |      44.518µs |       127.0.0.1 | HEAD     "/"
-2025-10-23T12:36:26.778700979Z [GIN] 2025/10/23 - 12:36:26 | 200 |   25.981777ms |       127.0.0.1 | GET      "/api/tags"
-2025-10-23T12:36:26.782328282Z     - Model 'llama3.1:8b' already exists.
-2025-10-23T12:36:26.807624895Z [GIN] 2025/10/23 - 12:36:26 | 200 |      29.736µs |       127.0.0.1 | HEAD     "/"
-2025-10-23T12:36:26.819603256Z [GIN] 2025/10/23 - 12:36:26 | 200 |   11.700012ms |       127.0.0.1 | GET      "/api/tags"
-2025-10-23T12:36:26.823129115Z     - Model 'mixtral' already exists.
-2025-10-23T12:36:26.844952618Z [GIN] 2025/10/23 - 12:36:26 | 200 |      21.633µs |       127.0.0.1 | HEAD     "/"
-2025-10-23T12:36:26.858438272Z [GIN] 2025/10/23 - 12:36:26 | 200 |   12.747881ms |       127.0.0.1 | GET      "/api/tags"
-2025-10-23T12:36:26.865219473Z     - Model 'llama3.1:70b' already exists.
-2025-10-23T12:36:26.892895445Z [GIN] 2025/10/23 - 12:36:26 | 200 |      25.599µs |       127.0.0.1 | HEAD     "/"
-2025-10-23T12:36:26.909608549Z [GIN] 2025/10/23 - 12:36:26 | 200 |   16.424769ms |       127.0.0.1 | GET      "/api/tags"
-2025-10-23T12:36:26.913092996Z     - Model 'gpt-oss:120b' already exists.
-2025-10-23T12:36:26.913106136Z ✅ All required models are available.
-2025-10-23T12:36:26.913108259Z Starting LabNote AI Backend server on port 8000 (foreground)...
-2025-10-23T12:36:31.452400241Z main.py             :49   2025-10-23 12:36:31,452 SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
-2025-10-23T12:36:31.452421693Z main.py             :215  2025-10-23 12:36:31,452 Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
-2025-10-23T12:36:31.452633994Z main.py             :218  2025-10-23 12:36:31,452 Loaded 64 workflows and 83 unit operations.
-2025-10-23T12:36:31.461323883Z --- Starting Serverless Worker |  Version 1.7.13 ---
-2025-10-23T12:36:31.696876112Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
-2025-10-23T12:36:31.696898916Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
-2025-10-23T12:36:31.696973167Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Started.", "level": "INFO"}
-2025-10-23T12:36:31.696978236Z [RunPod Handler] Incoming payload: {'body': {'file_content': "---\ntitle: WD010 General Design of Experiment - 1\nexperimenter: ''\ncreated_date: '2025-10-23'\nend_date: 2025-10-23 20:44\nlast_updated_date: '2025-10-23'\n---\n\n## [WD010 General Design of Experiment] 1\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose)\n> This workflow provides a general-purpose approach for experimental design using the Design of Experiment methodology. It allows for the independent design of variables from various domains to optimize experimental conditions.\n\n## 🗂️ Related Unit Operations\n> Enter the list of related unit operations between the markers below.\n> When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n\n\n\n\n---\n\n### [UHW060 Colony Picking new]\n\n- **Description**: The process of isolating individual bacterial or yeast colonies from an agar plate and transferring them to a liquid culture or multi-well plate for downstream applications. This unit operation is essential for microbial strain selection and screening.\n\n#### Meta\n- Experimenter: \n- Start_date: '2025-10-23 20:44'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n- (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n- (e.g. filter, well-plate, etc.)\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n\n![alt text](./images/image.png)", 'file_path': 'c:\\Users\\Administrator\\Desktop\\bfworkflow_template\\labnote\\006_new\\001_WD010_General_Design_of_Experiment--1.md', 'query': 'WD010 General Design of Experiment - 1', 'section': 'Method', 'uo_id': 'UHW060'}, 'method': 'POST', 'path': '/populate_note'}
-2025-10-23T12:36:31.706593922Z main.py             :1251 2025-10-23 12:36:31,706 Phase 2: Populating section 'Method' for UO 'UHW060'
-2025-10-23T12:36:31.710222606Z agents.py           :254  2025-10-23 12:36:31,710 Supervisor-led agent graph compiled successfully.
-2025-10-23T12:36:31.888761703Z agents.py           :57   2025-10-23 12:36:31,888 Generating drafts for UO 'UHW060' - Section 'Method'
-2025-10-23T12:36:31.890872578Z main.py             :1290 2025-10-23 12:36:31,888 Error populating note: 'NoneType' object has no attribute 'retrieve_context'
-2025-10-23T12:36:31.890887770Z Traceback (most recent call last):
-2025-10-23T12:36:31.890890545Z   File "/app/labnote-ai-backend/main.py", line 1277, in populate_note
-2025-10-23T12:36:31.890892768Z     agent_result = await run_agent_team(
-2025-10-23T12:36:31.890894641Z                    ^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890896464Z   File "/app/labnote-ai-backend/agents.py", line 297, in run_agent_team
-2025-10-23T12:36:31.890898346Z     final_state = await graph.ainvoke(initial_state)
-2025-10-23T12:36:31.890900680Z                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890902783Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3182, in ainvoke
-2025-10-23T12:36:31.890905007Z     async for chunk in self.astream(
-2025-10-23T12:36:31.890913279Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3000, in astream
-2025-10-23T12:36:31.890915282Z     async for _ in runner.atick(
-2025-10-23T12:36:31.890917816Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
-2025-10-23T12:36:31.890919799Z     await arun_with_retry(
-2025-10-23T12:36:31.890921701Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
-2025-10-23T12:36:31.890924385Z     return await task.proc.ainvoke(task.input, config)
-2025-10-23T12:36:31.890926679Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890928662Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
-2025-10-23T12:36:31.890930535Z     input = await asyncio.create_task(
-2025-10-23T12:36:31.890932468Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890934291Z   File "/opt/venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
-2025-10-23T12:36:31.890936203Z     ret = await self.afunc(*args, **kwargs)
-2025-10-23T12:36:31.890938046Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890939899Z   File "/app/labnote-ai-backend/agents.py", line 219, in specialist_agent_node
-2025-10-23T12:36:31.890954652Z     return await _generate_drafts(state)
-2025-10-23T12:36:31.890956595Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890958448Z   File "/app/labnote-ai-backend/agents.py", line 61, in _generate_drafts
-2025-10-23T12:36:31.890960300Z     context_docs = rag_module.rag_pipeline.retrieve_context(rag_query, k=3)
-2025-10-23T12:36:31.890962194Z                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-23T12:36:31.890964066Z AttributeError: 'NoneType' object has no attribute 'retrieve_context'
-2025-10-23T12:36:31.890965939Z During task with name 'specialist_agents' and id '1f420981-443e-fc5e-6180-1d6662e30d59'
-2025-10-23T12:36:31.892322706Z _client.py          :1025 2025-10-23 12:36:31,892 HTTP Request: POST http://testserver/populate_note "HTTP/1.1 500 Internal Server Error"
-2025-10-23T12:36:31.893244716Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Captured Handler Exception", "level": "ERROR"}
-2025-10-23T12:36:31.893259328Z {"requestId": null, "message": "{\n    \"error_type\": \"<class 'RuntimeError'>\",\n    \"error_message\": \"Error processing request for POST /populate_note: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\",\n    \"error_traceback\": \"Traceback (most recent call last):\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 44, in handler\\n    response.raise_for_status()\\n  File \\\"/opt/venv/lib/python3.12/site-packages/httpx/_models.py\\\", line 829, in raise_for_status\\n    raise HTTPStatusError(message, request=request, response=self)\\nhttpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\\nThe above exception was the direct cause of the following exception:\\n\\nTraceback (most recent call last):\\n  File \\\"/opt/venv/lib/python3.12/site-packages/runpod/serverless/modules/rp_job.py\\\", line 182, in run_job\\n    handler_return = handler(job)\\n                     ^^^^^^^^^^^^\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 49, in handler\\n    raise RuntimeError(\\nRuntimeError: Error processing request for POST /populate_note: Server error '500 Internal Server Error' for url 'http://testserver/populate_note'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\",\n    \"hostname\": \"88alojcxr7nzje-64410cb1\",\n    \"worker_id\": \"88alojcxr7nzje\",\n    \"runpod_version\": \"1.7.13\"\n}", "level": "ERROR"}
-2025-10-23T12:36:32.152177377Z {"requestId": "55f98ec3-f520-4efa-bd63-5cfd24c534f5-e1", "message": "Finished.", "level": "INFO"}
+2025-10-24T04:40:21.268485879Z ==========
+2025-10-24T04:40:21.268503515Z == CUDA ==
+2025-10-24T04:40:21.268544517Z ==========
+2025-10-24T04:40:21.273233921Z CUDA Version 12.8.1
+2025-10-24T04:40:21.274459113Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2025-10-24T04:40:21.276006671Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+2025-10-24T04:40:21.276009736Z By pulling and using the container, you accept the terms and conditions of this license:
+2025-10-24T04:40:21.276011879Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+2025-10-24T04:40:21.276016106Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+2025-10-24T04:40:21.291555410Z --- [DIAGNOSIS] Verifying storage mounts ---
+2025-10-24T04:40:21.291566266Z >>> Displaying mounted filesystems (df -h):
+2025-10-24T04:40:21.294293208Z Filesystem                    Size  Used Avail Use% Mounted on
+2025-10-24T04:40:21.294304796Z overlay                       5.0G   16M  5.0G   1% /
+2025-10-24T04:40:21.294306929Z tmpfs                          64M     0   64M   0% /dev
+2025-10-24T04:40:21.294309043Z mfs#ca-mtl-3.runpod.net:9421  503T  375T  129T  75% /runpod-volume
+2025-10-24T04:40:21.294311576Z shm                           110G     0  110G   0% /dev/shm
+2025-10-24T04:40:21.294313479Z /dev/vdb                      6.4T  3.0T  3.4T  48% /etc/hosts
+2025-10-24T04:40:21.294315292Z /dev/vda1                      97G   22G   75G  23% /usr/bin/nvidia-smi
+2025-10-24T04:40:21.294317095Z tmpfs                         945G     0  945G   0% /sys/fs/cgroup
+2025-10-24T04:40:21.294318837Z tmpfs                         945G   12K  945G   1% /proc/driver/nvidia
+2025-10-24T04:40:21.294320610Z tmpfs                         945G  4.0K  945G   1% /etc/nvidia/nvidia-application-profiles-rc.d
+2025-10-24T04:40:21.294323193Z tmpfs                         189G  3.1M  189G   1% /run/nvidia-persistenced/socket
+2025-10-24T04:40:21.294325088Z tmpfs                         945G     0  945G   0% /proc/acpi
+2025-10-24T04:40:21.294326900Z tmpfs                         945G     0  945G   0% /proc/scsi
+2025-10-24T04:40:21.294328623Z tmpfs                         945G     0  945G   0% /sys/firmware
+2025-10-24T04:40:21.294478838Z ---
+2025-10-24T04:40:21.294501613Z >>> Listing root directory contents (ls -la /):
+2025-10-24T04:40:21.298476652Z total 2967
+2025-10-24T04:40:21.298490603Z drwxr-xr-x    1 root   root         95 Oct 24 04:40 .
+2025-10-24T04:40:21.298493077Z drwxr-xr-x    1 root   root         95 Oct 24 04:40 ..
+2025-10-24T04:40:21.298494929Z -rwxr-xr-x    1 root   root          0 Oct 24 04:40 .dockerenv
+2025-10-24T04:40:21.298496772Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
+2025-10-24T04:40:21.298499316Z drwxr-xr-x    1 root   root         30 Oct 24 04:36 app
+2025-10-24T04:40:21.298501049Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
+2025-10-24T04:40:21.298502821Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
+2025-10-24T04:40:21.298504704Z drwxr-xr-x    2 root   root         10 Apr 22  2024 boot
+2025-10-24T04:40:21.298506437Z drwxr-xr-x    6 root   root        460 Oct 24 04:40 dev
+2025-10-24T04:40:21.298508189Z drwxr-xr-x    1 root   root         69 Oct 24 04:40 etc
+2025-10-24T04:40:21.298509882Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
+2025-10-24T04:40:21.298511624Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
+2025-10-24T04:40:21.298513347Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
+2025-10-24T04:40:21.298515030Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
+2025-10-24T04:40:21.298516732Z drwxr-xr-x    2 root   root         10 Jan 27  2025 media
+2025-10-24T04:40:21.298518444Z drwxr-xr-x    2 root   root         10 Jan 27  2025 mnt
+2025-10-24T04:40:21.298520147Z drwxr-xr-x    1 root   root         26 Oct 22 05:00 opt
+2025-10-24T04:40:21.298521849Z dr-xr-xr-x 2890 nobody nogroup       0 Oct 24 04:40 proc
+2025-10-24T04:40:21.298534339Z drwx------    1 root   root         32 Oct 22 05:21 root
+2025-10-24T04:40:21.298536371Z drwxr-xr-x    1 root   root         41 Oct 24 04:40 run
+2025-10-24T04:40:21.298538134Z drwxrwxrwx    5 root   root    3012995 Oct 21 07:36 runpod-volume
+2025-10-24T04:40:21.298539887Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
+2025-10-24T04:40:21.298541609Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
+2025-10-24T04:40:21.298543312Z drwxr-xr-x    2 root   root         10 Jan 27  2025 srv
+2025-10-24T04:40:21.298545035Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
+2025-10-24T04:40:21.298546998Z dr-xr-xr-x   13 nobody nogroup       0 Oct 20 23:46 sys
+2025-10-24T04:40:21.298548770Z drwxrwxrwt    1 root   root          6 Oct 24 04:36 tmp
+2025-10-24T04:40:21.298552967Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
+2025-10-24T04:40:21.298554719Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
+2025-10-24T04:40:21.298556522Z drwxr-xr-x    1 root   root         20 Oct  9 05:11 workspace
+2025-10-24T04:40:21.298635972Z ---
+2025-10-24T04:40:21.298642932Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
+2025-10-24T04:40:21.302387785Z total 8876
+2025-10-24T04:40:21.302395076Z drwxrwxrwx 5 root root 3012995 Oct 21 07:36 .
+2025-10-24T04:40:21.302397420Z drwxr-xr-x 1 root root      95 Oct 24 04:40 ..
+2025-10-24T04:40:21.302399182Z drwxrwxrwx 3 root root 2000397 Oct 21 07:36 .cache
+2025-10-24T04:40:21.302401015Z drwxrwxrwx 6 root root 1061195 Oct 21 07:34 labnote-Docker
+2025-10-24T04:40:21.302402828Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
+2025-10-24T04:40:21.302585133Z --- [DIAGNOSIS] Verification complete ---
+2025-10-24T04:40:21.309891673Z >>> vm.overcommit_memory set to 1 for Redis stability.
+2025-10-24T04:40:21.309974187Z >>> Starting core services...
+2025-10-24T04:40:21.313628474Z >>> Redis Stack Server started.
+2025-10-24T04:40:21.313644969Z >>> Waiting for Redis to accept connections...
+2025-10-24T04:40:21.317430964Z     - Redis not ready yet. Retrying in 2s... (1/30)
+2025-10-24T04:40:21.323817320Z Starting redis-stack-server, database path /var/lib/redis-stack
+2025-10-24T04:40:21.328532043Z 61:C 24 Oct 2025 04:40:21.328 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+2025-10-24T04:40:21.328544442Z 61:C 24 Oct 2025 04:40:21.328 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+2025-10-24T04:40:21.328547616Z 61:C 24 Oct 2025 04:40:21.328 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=61, just started
+2025-10-24T04:40:21.328550290Z 61:C 24 Oct 2025 04:40:21.328 * Configuration loaded
+2025-10-24T04:40:21.328806846Z 61:M 24 Oct 2025 04:40:21.328 * monotonic clock: POSIX clock_gettime
+2025-10-24T04:40:21.331194788Z 61:M 24 Oct 2025 04:40:21.331 * Running mode=standalone, port=6379.
+2025-10-24T04:40:21.331422540Z 61:M 24 Oct 2025 04:40:21.331 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
+2025-10-24T04:40:21.332760033Z 61:M 24 Oct 2025 04:40:21.332 * <search> Redis version found by RedisSearch : 7.4.6 - oss
+2025-10-24T04:40:21.332768065Z 61:M 24 Oct 2025 04:40:21.332 * <search> RediSearch version 2.10.20 (Git=5c09b69)
+2025-10-24T04:40:21.332770218Z 61:M 24 Oct 2025 04:40:21.332 * <search> Low level api version 1 initialized successfully
+2025-10-24T04:40:21.332782667Z 61:M 24 Oct 2025 04:40:21.332 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
+2025-10-24T04:40:21.332787404Z 61:M 24 Oct 2025 04:40:21.332 * <search> Initialized thread pools!
+2025-10-24T04:40:21.332833033Z 61:M 24 Oct 2025 04:40:21.332 * <search> Subscribe to config changes
+2025-10-24T04:40:21.332841575Z 61:M 24 Oct 2025 04:40:21.332 * <search> Enabled role change notification
+2025-10-24T04:40:21.332962166Z 61:M 24 Oct 2025 04:40:21.332 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
+2025-10-24T04:40:21.334418297Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
+2025-10-24T04:40:21.334425858Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
+2025-10-24T04:40:21.334428422Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
+2025-10-24T04:40:21.334430816Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> loaded server DUPLICATE_POLICY: block
+2025-10-24T04:40:21.334432839Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
+2025-10-24T04:40:21.334434611Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
+2025-10-24T04:40:21.334456524Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> Setting default series ENCODING to: compressed
+2025-10-24T04:40:21.334459308Z 61:M 24 Oct 2025 04:40:21.334 * <timeseries> Detected redis oss
+2025-10-24T04:40:21.334954664Z 61:M 24 Oct 2025 04:40:21.334 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
+2025-10-24T04:40:21.334958270Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Created new data type 'ReJSON-RL'
+2025-10-24T04:40:21.334960422Z 61:M 24 Oct 2025 04:40:21.334 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
+2025-10-24T04:40:21.334963126Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> version: 20809 git sha: unknown branch: unknown
+2025-10-24T04:40:21.334969847Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Exported RedisJSON_V1 API
+2025-10-24T04:40:21.334971770Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Exported RedisJSON_V2 API
+2025-10-24T04:40:21.334973762Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Exported RedisJSON_V3 API
+2025-10-24T04:40:21.334975555Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Exported RedisJSON_V4 API
+2025-10-24T04:40:21.334977278Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Exported RedisJSON_V5 API
+2025-10-24T04:40:21.334979231Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Enabled diskless replication
+2025-10-24T04:40:21.335034614Z 61:M 24 Oct 2025 04:40:21.334 * <ReJSON> Initialized shared string cache, thread safe: false.
+2025-10-24T04:40:21.335039581Z 61:M 24 Oct 2025 04:40:21.334 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
+2025-10-24T04:40:21.335041664Z 61:M 24 Oct 2025 04:40:21.334 * <search> Acquired RedisJSON_V5 API
+2025-10-24T04:40:21.335221375Z 61:M 24 Oct 2025 04:40:21.335 * <bf> RedisBloom version 2.8.7 (Git=unknown)
+2025-10-24T04:40:21.335276588Z 61:M 24 Oct 2025 04:40:21.335 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
+2025-10-24T04:40:21.335699124Z 61:M 24 Oct 2025 04:40:21.335 * <redisgears_2> Created new data type 'GearsType'
+2025-10-24T04:40:21.335804543Z 61:M 24 Oct 2025 04:40:21.335 * <redisgears_2> Detected redis oss
+2025-10-24T04:40:21.335874878Z 61:M 24 Oct 2025 04:40:21.335 # <redisgears_2> could not initialize RedisAI_InitError
+2025-10-24T04:40:21.335880607Z 61:M 24 Oct 2025 04:40:21.335 * <redisgears_2> Failed loading RedisAI API.
+2025-10-24T04:40:21.335882690Z 61:M 24 Oct 2025 04:40:21.335 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
+2025-10-24T04:40:21.336669243Z 61:M 24 Oct 2025 04:40:21.336 * <redisgears_2> Registered backend: js.
+2025-10-24T04:40:21.336908092Z 61:M 24 Oct 2025 04:40:21.336 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
+2025-10-24T04:40:21.337244047Z 61:M 24 Oct 2025 04:40:21.337 * Server initialized
+2025-10-24T04:40:21.337248223Z 61:M 24 Oct 2025 04:40:21.337 * Ready to accept connections tcp
+2025-10-24T04:40:23.326661362Z ✅ Redis is ready.
+2025-10-24T04:40:23.326872941Z >>> Waiting for Ollama server (http://127.0.0.1:11434)...
+2025-10-24T04:40:23.336712221Z     - Ollama server not ready yet. Retrying in 2 seconds... (1/30)
+2025-10-24T04:40:23.350225719Z Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+2025-10-24T04:40:23.351594599Z Your new public key is:
+2025-10-24T04:40:23.351606386Z ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIChJnp0auMjowX+RX8qffAKzPxJ6/ehYXONFpoQAGmfh
+2025-10-24T04:40:23.352495634Z time=2025-10-24T04:40:23.351Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:INFO OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+2025-10-24T04:40:23.378175563Z time=2025-10-24T04:40:23.377Z level=INFO source=images.go:522 msg="total blobs: 21"
+2025-10-24T04:40:23.387369893Z time=2025-10-24T04:40:23.387Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
+2025-10-24T04:40:23.395671941Z time=2025-10-24T04:40:23.395Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
+2025-10-24T04:40:23.396211422Z time=2025-10-24T04:40:23.396Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
+2025-10-24T04:40:23.437652079Z time=2025-10-24T04:40:23.437Z level=INFO source=types.go:129 msg="inference compute" id=cpu library=cpu compute="" name=cpu description=cpu libdirs=ollama driver="" pci_id="" type="" total="1889.8 GiB" available="1847.5 GiB"
+2025-10-24T04:40:23.437677528Z time=2025-10-24T04:40:23.437Z level=INFO source=routes.go:1605 msg="entering low vram mode" "total vram"="0 B" threshold="20.0 GiB"
+2025-10-24T04:40:25.346504005Z [GIN] 2025/10/24 - 04:40:25 | 200 |      62.945µs |       127.0.0.1 | GET      "/"
+2025-10-24T04:40:25.348377773Z ✅ Ollama server is ready.
+2025-10-24T04:40:25.348393757Z >>> Checking for required models in persistent storage...
+2025-10-24T04:40:25.373955889Z [GIN] 2025/10/24 - 04:40:25 | 200 |      36.345µs |       127.0.0.1 | HEAD     "/"
+2025-10-24T04:40:25.397714278Z [GIN] 2025/10/24 - 04:40:25 | 200 |   23.369113ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-24T04:40:25.401369056Z     - Model 'nomic-embed-text' already exists.
+2025-10-24T04:40:25.426207007Z [GIN] 2025/10/24 - 04:40:25 | 200 |      31.077µs |       127.0.0.1 | HEAD     "/"
+2025-10-24T04:40:25.441480162Z [GIN] 2025/10/24 - 04:40:25 | 200 |   14.968977ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-24T04:40:25.444432223Z     - Model 'llama3.1:8b' already exists.
+2025-10-24T04:40:25.469286529Z [GIN] 2025/10/24 - 04:40:25 | 200 |      18.938µs |       127.0.0.1 | HEAD     "/"
+2025-10-24T04:40:25.486346762Z [GIN] 2025/10/24 - 04:40:25 | 200 |   16.026088ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-24T04:40:25.489722700Z     - Model 'mixtral' already exists.
+2025-10-24T04:40:25.513550222Z [GIN] 2025/10/24 - 04:40:25 | 200 |      35.834µs |       127.0.0.1 | HEAD     "/"
+2025-10-24T04:40:25.532639257Z [GIN] 2025/10/24 - 04:40:25 | 200 |   16.780001ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-24T04:40:25.536474767Z     - Model 'llama3.1:70b' already exists.
+2025-10-24T04:40:25.562221536Z [GIN] 2025/10/24 - 04:40:25 | 200 |      25.628µs |       127.0.0.1 | HEAD     "/"
+2025-10-24T04:40:25.581002397Z [GIN] 2025/10/24 - 04:40:25 | 200 |   18.598016ms |       127.0.0.1 | GET      "/api/tags"
+2025-10-24T04:40:25.584471235Z     - Model 'gpt-oss:120b' already exists.
+2025-10-24T04:40:25.584494850Z ✅ All required models are available.
+2025-10-24T04:40:25.584591045Z >>> Found existing /app/labnote-ai-backend/.env; keeping current configuration.
+2025-10-24T04:40:25.584598356Z Starting LabNote AI Backend server on port 8000 (foreground)...
+2025-10-24T04:40:30.195375911Z main.py             :47   2025-10-24 04:40:30,195 Initializing RAG pipeline within main.py for serverless environment...
+2025-10-24T04:40:30.195425256Z rag_pipeline.py     :160  2025-10-24 04:40:30,195 Lazy-initializing RAG pipeline on first access.
+2025-10-24T04:40:30.231714793Z rag_pipeline.py     :79   2025-10-24 04:40:30,231 Index 'labnote_index' not found or Redis connection failed. Attempting to create a new index.
+2025-10-24T04:40:30.231748565Z rag_pipeline.py     :41   2025-10-24 04:40:30,231 Loading documents from './sop'...
+2025-10-24T04:40:32.486672667Z 
+  0%|          | 0/34 [00:00<?, ?it/s]lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486694829Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486711174Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486713958Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486757634Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486769572Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486792156Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486831866Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486841020Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486878586Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486906869Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486979969Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486982212Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486984175Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.486989403Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.487063644Z lang.py             :437  2025-10-24 04:40:32,486 Need to load profiles.
+2025-10-24T04:40:32.487066719Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487068702Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487085236Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487098336Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487128522Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487208893Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487212348Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487214191Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487215904Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487217576Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487245318Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487248583Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487274492Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487285609Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487320761Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487332339Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487337947Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487373060Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487456836Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487461884Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487463657Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487465379Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487536887Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487541343Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487548184Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487581303Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487584839Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487618639Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487620753Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487654994Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487659060Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.487691128Z lang.py             :437  2025-10-24 04:40:32,487 Need to load profiles.
+2025-10-24T04:40:32.505482602Z 
+  3%|▎         | 1/34 [00:02<01:14,  2.26s/it]lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505490864Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505502982Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505566087Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505571224Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505641400Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505652877Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505663483Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505700799Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505729923Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505757485Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505800780Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505879488Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505883314Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505899618Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505934230Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505945958Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.505989834Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.506002483Z lang.py             :437  2025-10-24 04:40:32,505 Need to load profiles.
+2025-10-24T04:40:32.506072609Z lang.py             :437  2025-10-24 04:40:32,506 Need to load profiles.
+2025-10-24T04:40:32.506106129Z lang.py             :437  2025-10-24 04:40:32,506 Need to load profiles.
+2025-10-24T04:40:32.506109685Z lang.py             :437  2025-10-24 04:40:32,506 Need to load profiles.
+2025-10-24T04:40:32.506189835Z lang.py             :437  2025-10-24 04:40:32,506 Need to load profiles.
+2025-10-24T04:40:32.506194382Z lang.py             :437  2025-10-24 04:40:32,506 Need to load profiles.
+2025-10-24T04:40:32.554042337Z lang.py             :437  2025-10-24 04:40:32,553 Need to load profiles.
+2025-10-24T04:40:32.554079863Z lang.py             :437  2025-10-24 04:40:32,553 Need to load profiles.
+2025-10-24T04:40:32.554082156Z lang.py             :437  2025-10-24 04:40:32,553 Need to load profiles.
+2025-10-24T04:40:32.554083959Z lang.py             :437  2025-10-24 04:40:32,553 Need to load profiles.
+2025-10-24T04:40:32.554085772Z lang.py             :437  2025-10-24 04:40:32,553 Need to load profiles.
+2025-10-24T04:40:32.554096318Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554098721Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554182988Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554194144Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554199524Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554228087Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554248577Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554309769Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554335828Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554412133Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554414797Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554421827Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.554487646Z lang.py             :437  2025-10-24 04:40:32,554 Need to load profiles.
+2025-10-24T04:40:32.559712917Z lang.py             :437  2025-10-24 04:40:32,559 Need to load profiles.
+2025-10-24T04:40:32.559721640Z lang.py             :437  2025-10-24 04:40:32,559 Need to load profiles.
+2025-10-24T04:40:32.559767248Z lang.py             :437  2025-10-24 04:40:32,559 Need to load profiles.
+2025-10-24T04:40:32.561792655Z lang.py             :437  2025-10-24 04:40:32,561 Need to load profiles.
+2025-10-24T04:40:32.561873337Z lang.py             :437  2025-10-24 04:40:32,561 Need to load profiles.
+2025-10-24T04:40:32.564674560Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564685377Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564687660Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564695812Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564697735Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564793128Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564812477Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564814981Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564817355Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564824526Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564826418Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564922393Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564946229Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564949484Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564951497Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564963595Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564970626Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564973139Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.564979940Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.565001642Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.565108953Z lang.py             :437  2025-10-24 04:40:32,564 Need to load profiles.
+2025-10-24T04:40:32.565144687Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565147181Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565149123Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565150957Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565160691Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565165639Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565168803Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565202685Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565213311Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565219440Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565270887Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565282615Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565329365Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565333111Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565361253Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565410897Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565414302Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565457978Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565533993Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565537779Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565554955Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565605000Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565643658Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565655185Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565699502Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565703608Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565722406Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565739191Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565763948Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565777098Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565807946Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565852513Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565867885Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565909859Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565927325Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.565939633Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.566003088Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.566006393Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.566008376Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.566039073Z lang.py             :437  2025-10-24 04:40:32,565 Need to load profiles.
+2025-10-24T04:40:32.566044530Z lang.py             :437  2025-10-24 04:40:32,566 Need to load profiles.
+2025-10-24T04:40:32.566050620Z lang.py             :437  2025-10-24 04:40:32,566 Need to load profiles.
+2025-10-24T04:40:32.566129138Z lang.py             :437  2025-10-24 04:40:32,566 Need to load profiles.
+2025-10-24T04:40:32.566133565Z lang.py             :437  2025-10-24 04:40:32,566 Need to load profiles.
+2025-10-24T04:40:32.566135428Z lang.py             :437  2025-10-24 04:40:32,566 Need to load profiles.
+2025-10-24T04:40:32.573039553Z lang.py             :437  2025-10-24 04:40:32,572 Need to load profiles.
+2025-10-24T04:40:32.573050529Z lang.py             :437  2025-10-24 04:40:32,572 Need to load profiles.
+2025-10-24T04:40:32.573052783Z lang.py             :437  2025-10-24 04:40:32,572 Need to load profiles.
+2025-10-24T04:40:32.573054746Z lang.py             :437  2025-10-24 04:40:32,572 Need to load profiles.
+2025-10-24T04:40:32.573056408Z lang.py             :437  2025-10-24 04:40:32,572 Need to load profiles.
+2025-10-24T04:40:32.573058231Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573070599Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573110390Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573132493Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573150611Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573163800Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573206344Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573213735Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573245613Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573277882Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573283530Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573304121Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573307446Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573336009Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573337972Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573383931Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573387736Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573417442Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573422890Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573507207Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:32.573516370Z lang.py             :437  2025-10-24 04:40:32,573 Need to load profiles.
+2025-10-24T04:40:33.579944111Z 
+ 15%|█▍        | 5/34 [00:02<00:10,  2.80it/s]
+ 24%|██▎       | 8/34 [00:02<00:05,  4.87it/s]
+ 32%|███▏      | 11/34 [00:02<00:03,  7.00it/s]
+ 44%|████▍     | 15/34 [00:02<00:01, 10.66it/s]
+ 47%|████▋     | 16/34 [00:02<00:01, 15.66it/s]
+ 59%|█████▉    | 20/34 [00:02<00:00, 19.19it/s]
+ 62%|██████▏   | 21/34 [00:02<00:00, 23.50it/s]
+ 74%|███████▎  | 25/34 [00:03<00:00, 23.90it/s]
+ 85%|████████▌ | 29/34 [00:03<00:00, 26.96it/s]
+ 97%|█████████▋| 33/34 [00:03<00:00, 29.10it/s]
+100%|██████████| 34/34 [00:03<00:00, 10.16it/s]
+2025-10-24T04:40:33.583456235Z rag_pipeline.py     :53   2025-10-24 04:40:33,583 Loaded and split 34 documents into 107 chunks.
+2025-10-24T04:40:33.583481522Z rag_pipeline.py     :86   2025-10-24 04:40:33,583 Creating new index and embedding documents...
+2025-10-24T04:40:33.646030742Z time=2025-10-24T04:40:33.645Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat_tau
+2025-10-24T04:40:33.646050752Z time=2025-10-24T04:40:33.645Z level=WARN source=types.go:753 msg="invalid option provided" option=tfs_z
+2025-10-24T04:40:33.646052955Z time=2025-10-24T04:40:33.645Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat
+2025-10-24T04:40:33.646054998Z time=2025-10-24T04:40:33.645Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat_eta
+2025-10-24T04:40:33.667703212Z llama_model_loader: loaded meta data with 24 key-value pairs and 112 tensors from /runpod-volume/ollama_models/blobs/sha256-970aa74c0a90ef7482477cf803618e776e173c007bf957f635f1015bfcfef0e6 (version GGUF V3 (latest))
+2025-10-24T04:40:33.667731935Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:40:33.667734950Z llama_model_loader: - kv   0:                       general.architecture str              = nomic-bert
+2025-10-24T04:40:33.667736873Z llama_model_loader: - kv   1:                               general.name str              = nomic-embed-text-v1.5
+2025-10-24T04:40:33.667739106Z llama_model_loader: - kv   2:                     nomic-bert.block_count u32              = 12
+2025-10-24T04:40:33.667746628Z llama_model_loader: - kv   3:                  nomic-bert.context_length u32              = 2048
+2025-10-24T04:40:33.667748611Z llama_model_loader: - kv   4:                nomic-bert.embedding_length u32              = 768
+2025-10-24T04:40:33.667750503Z llama_model_loader: - kv   5:             nomic-bert.feed_forward_length u32              = 3072
+2025-10-24T04:40:33.667752426Z llama_model_loader: - kv   6:            nomic-bert.attention.head_count u32              = 12
+2025-10-24T04:40:33.667754249Z llama_model_loader: - kv   7:    nomic-bert.attention.layer_norm_epsilon f32              = 0.000000
+2025-10-24T04:40:33.667756142Z llama_model_loader: - kv   8:                          general.file_type u32              = 1
+2025-10-24T04:40:33.667758005Z llama_model_loader: - kv   9:                nomic-bert.attention.causal bool             = false
+2025-10-24T04:40:33.667760188Z llama_model_loader: - kv  10:                    nomic-bert.pooling_type u32              = 1
+2025-10-24T04:40:33.667762020Z llama_model_loader: - kv  11:                  nomic-bert.rope.freq_base f32              = 1000.000000
+2025-10-24T04:40:33.667764144Z llama_model_loader: - kv  12:            tokenizer.ggml.token_type_count u32              = 2
+2025-10-24T04:40:33.667766437Z llama_model_loader: - kv  13:                tokenizer.ggml.bos_token_id u32              = 101
+2025-10-24T04:40:33.667768320Z llama_model_loader: - kv  14:                tokenizer.ggml.eos_token_id u32              = 102
+2025-10-24T04:40:33.667770173Z llama_model_loader: - kv  15:                       tokenizer.ggml.model str              = bert
+2025-10-24T04:40:33.671180282Z llama_model_loader: - kv  16:                      tokenizer.ggml.tokens arr[str,30522]   = ["[PAD]", "[unused0]", "[unused1]", "...
+2025-10-24T04:40:33.676175547Z llama_model_loader: - kv  17:                      tokenizer.ggml.scores arr[f32,30522]   = [-1000.000000, -1000.000000, -1000.00...
+2025-10-24T04:40:33.677113327Z llama_model_loader: - kv  18:                  tokenizer.ggml.token_type arr[i32,30522]   = [3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T04:40:33.677130773Z llama_model_loader: - kv  19:            tokenizer.ggml.unknown_token_id u32              = 100
+2025-10-24T04:40:33.677134089Z llama_model_loader: - kv  20:          tokenizer.ggml.seperator_token_id u32              = 102
+2025-10-24T04:40:33.677136733Z llama_model_loader: - kv  21:            tokenizer.ggml.padding_token_id u32              = 0
+2025-10-24T04:40:33.677139306Z llama_model_loader: - kv  22:                tokenizer.ggml.cls_token_id u32              = 101
+2025-10-24T04:40:33.677141219Z llama_model_loader: - kv  23:               tokenizer.ggml.mask_token_id u32              = 103
+2025-10-24T04:40:33.677149171Z llama_model_loader: - type  f32:   51 tensors
+2025-10-24T04:40:33.677152196Z llama_model_loader: - type  f16:   61 tensors
+2025-10-24T04:40:33.677154028Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:40:33.677155801Z print_info: file type   = F16
+2025-10-24T04:40:33.677158575Z print_info: file size   = 260.86 MiB (16.00 BPW)
+2025-10-24T04:40:33.691753069Z load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+2025-10-24T04:40:33.691774742Z load: printing all EOG tokens:
+2025-10-24T04:40:33.691778518Z load:   - 102 ('[SEP]')
+2025-10-24T04:40:33.691781222Z load: special tokens cache size = 5
+2025-10-24T04:40:33.694352519Z load: token to piece cache size = 0.2032 MB
+2025-10-24T04:40:33.694363005Z print_info: arch             = nomic-bert
+2025-10-24T04:40:33.694365428Z print_info: vocab_only       = 1
+2025-10-24T04:40:33.694367892Z print_info: model type       = ?B
+2025-10-24T04:40:33.694369935Z print_info: model params     = 136.73 M
+2025-10-24T04:40:33.694371698Z print_info: general.name     = nomic-embed-text-v1.5
+2025-10-24T04:40:33.694373690Z print_info: vocab type       = WPM
+2025-10-24T04:40:33.694375393Z print_info: n_vocab          = 30522
+2025-10-24T04:40:33.694377296Z print_info: n_merges         = 0
+2025-10-24T04:40:33.694379069Z print_info: BOS token        = 101 '[CLS]'
+2025-10-24T04:40:33.694380912Z print_info: EOS token        = 102 '[SEP]'
+2025-10-24T04:40:33.694382644Z print_info: UNK token        = 100 '[UNK]'
+2025-10-24T04:40:33.694384477Z print_info: SEP token        = 102 '[SEP]'
+2025-10-24T04:40:33.694386209Z print_info: PAD token        = 0 '[PAD]'
+2025-10-24T04:40:33.694388023Z print_info: MASK token       = 103 '[MASK]'
+2025-10-24T04:40:33.694389836Z print_info: LF token         = 0 '[PAD]'
+2025-10-24T04:40:33.694391589Z print_info: EOG token        = 102 '[SEP]'
+2025-10-24T04:40:33.694393321Z print_info: max token length = 21
+2025-10-24T04:40:33.694395124Z llama_model_load: vocab only - skipping tensors
+2025-10-24T04:40:33.694730278Z time=2025-10-24T04:40:33.694Z level=WARN source=server.go:174 msg="requested context size too large for model" num_ctx=8192 n_ctx_train=2048
+2025-10-24T04:40:33.707037120Z time=2025-10-24T04:40:33.706Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --model /runpod-volume/ollama_models/blobs/sha256-970aa74c0a90ef7482477cf803618e776e173c007bf957f635f1015bfcfef0e6 --port 33371"
+2025-10-24T04:40:33.716582278Z time=2025-10-24T04:40:33.716Z level=INFO source=server.go:505 msg="system memory" total="1889.8 GiB" free="1847.4 GiB" free_swap="0 B"
+2025-10-24T04:40:33.716702599Z time=2025-10-24T04:40:33.716Z level=INFO source=memory.go:36 msg="new model will fit in available VRAM across minimum required GPUs, loading" model=/runpod-volume/ollama_models/blobs/sha256-970aa74c0a90ef7482477cf803618e776e173c007bf957f635f1015bfcfef0e6 library=cpu parallel=1 required="0 B" gpus=1
+2025-10-24T04:40:33.716872665Z time=2025-10-24T04:40:33.716Z level=INFO source=server.go:545 msg=offload library=cpu layers.requested=-1 layers.model=13 layers.offload=0 layers.split=[] memory.available="[1847.4 GiB]" memory.gpu_overhead="0 B" memory.required.full="297.4 MiB" memory.required.partial="0 B" memory.required.kv="6.0 MiB" memory.required.allocations="[297.4 MiB]" memory.weights.total="260.9 MiB" memory.weights.repeating="216.1 MiB" memory.weights.nonrepeating="44.7 MiB" memory.graph.full="12.0 MiB" memory.graph.partial="12.0 MiB"
+2025-10-24T04:40:33.732648846Z time=2025-10-24T04:40:33.732Z level=INFO source=runner.go:893 msg="starting go runner"
+2025-10-24T04:40:33.734947684Z time=2025-10-24T04:40:33.732Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-24T04:40:33.735312633Z time=2025-10-24T04:40:33.735Z level=INFO source=runner.go:929 msg="Server listening on 127.0.0.1:33371"
+2025-10-24T04:40:33.741381182Z time=2025-10-24T04:40:33.740Z level=INFO source=runner.go:828 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:false KvSize:2048 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:40:33.741592840Z time=2025-10-24T04:40:33.741Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:40:33.741922866Z time=2025-10-24T04:40:33.741Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-24T04:40:33.746972723Z llama_model_loader: loaded meta data with 24 key-value pairs and 112 tensors from /runpod-volume/ollama_models/blobs/sha256-970aa74c0a90ef7482477cf803618e776e173c007bf957f635f1015bfcfef0e6 (version GGUF V3 (latest))
+2025-10-24T04:40:33.746986634Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:40:33.746989849Z llama_model_loader: - kv   0:                       general.architecture str              = nomic-bert
+2025-10-24T04:40:33.746992032Z llama_model_loader: - kv   1:                               general.name str              = nomic-embed-text-v1.5
+2025-10-24T04:40:33.746994035Z llama_model_loader: - kv   2:                     nomic-bert.block_count u32              = 12
+2025-10-24T04:40:33.746995978Z llama_model_loader: - kv   3:                  nomic-bert.context_length u32              = 2048
+2025-10-24T04:40:33.746997890Z llama_model_loader: - kv   4:                nomic-bert.embedding_length u32              = 768
+2025-10-24T04:40:33.746999733Z llama_model_loader: - kv   5:             nomic-bert.feed_forward_length u32              = 3072
+2025-10-24T04:40:33.747001556Z llama_model_loader: - kv   6:            nomic-bert.attention.head_count u32              = 12
+2025-10-24T04:40:33.747003339Z llama_model_loader: - kv   7:    nomic-bert.attention.layer_norm_epsilon f32              = 0.000000
+2025-10-24T04:40:33.747005252Z llama_model_loader: - kv   8:                          general.file_type u32              = 1
+2025-10-24T04:40:33.747007064Z llama_model_loader: - kv   9:                nomic-bert.attention.causal bool             = false
+2025-10-24T04:40:33.747008887Z llama_model_loader: - kv  10:                    nomic-bert.pooling_type u32              = 1
+2025-10-24T04:40:33.747010810Z llama_model_loader: - kv  11:                  nomic-bert.rope.freq_base f32              = 1000.000000
+2025-10-24T04:40:33.747013013Z llama_model_loader: - kv  12:            tokenizer.ggml.token_type_count u32              = 2
+2025-10-24T04:40:33.747014796Z llama_model_loader: - kv  13:                tokenizer.ggml.bos_token_id u32              = 101
+2025-10-24T04:40:33.747016589Z llama_model_loader: - kv  14:                tokenizer.ggml.eos_token_id u32              = 102
+2025-10-24T04:40:33.747018421Z llama_model_loader: - kv  15:                       tokenizer.ggml.model str              = bert
+2025-10-24T04:40:33.750519108Z llama_model_loader: - kv  16:                      tokenizer.ggml.tokens arr[str,30522]   = ["[PAD]", "[unused0]", "[unused1]", "...
+2025-10-24T04:40:33.755524427Z llama_model_loader: - kv  17:                      tokenizer.ggml.scores arr[f32,30522]   = [-1000.000000, -1000.000000, -1000.00...
+2025-10-24T04:40:33.756465102Z llama_model_loader: - kv  18:                  tokenizer.ggml.token_type arr[i32,30522]   = [3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T04:40:33.756469157Z llama_model_loader: - kv  19:            tokenizer.ggml.unknown_token_id u32              = 100
+2025-10-24T04:40:33.756471011Z llama_model_loader: - kv  20:          tokenizer.ggml.seperator_token_id u32              = 102
+2025-10-24T04:40:33.756472883Z llama_model_loader: - kv  21:            tokenizer.ggml.padding_token_id u32              = 0
+2025-10-24T04:40:33.756474626Z llama_model_loader: - kv  22:                tokenizer.ggml.cls_token_id u32              = 101
+2025-10-24T04:40:33.756476328Z llama_model_loader: - kv  23:               tokenizer.ggml.mask_token_id u32              = 103
+2025-10-24T04:40:33.756478031Z llama_model_loader: - type  f32:   51 tensors
+2025-10-24T04:40:33.756480104Z llama_model_loader: - type  f16:   61 tensors
+2025-10-24T04:40:33.756481827Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:40:33.756483529Z print_info: file type   = F16
+2025-10-24T04:40:33.756486233Z print_info: file size   = 260.86 MiB (16.00 BPW)
+2025-10-24T04:40:33.771097021Z load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+2025-10-24T04:40:33.771104643Z load: printing all EOG tokens:
+2025-10-24T04:40:33.771106996Z load:   - 102 ('[SEP]')
+2025-10-24T04:40:33.771110141Z load: special tokens cache size = 5
+2025-10-24T04:40:33.773752607Z load: token to piece cache size = 0.2032 MB
+2025-10-24T04:40:33.773758966Z print_info: arch             = nomic-bert
+2025-10-24T04:40:33.773760979Z print_info: vocab_only       = 0
+2025-10-24T04:40:33.773762762Z print_info: n_ctx_train      = 2048
+2025-10-24T04:40:33.773764474Z print_info: n_embd           = 768
+2025-10-24T04:40:33.773766207Z print_info: n_layer          = 12
+2025-10-24T04:40:33.773768059Z print_info: n_head           = 12
+2025-10-24T04:40:33.773770173Z print_info: n_head_kv        = 12
+2025-10-24T04:40:33.773771825Z print_info: n_rot            = 64
+2025-10-24T04:40:33.773773478Z print_info: n_swa            = 0
+2025-10-24T04:40:33.773775410Z print_info: is_swa_any       = 0
+2025-10-24T04:40:33.773777063Z print_info: n_embd_head_k    = 64
+2025-10-24T04:40:33.773778766Z print_info: n_embd_head_v    = 64
+2025-10-24T04:40:33.773780408Z print_info: n_gqa            = 1
+2025-10-24T04:40:33.773782060Z print_info: n_embd_k_gqa     = 768
+2025-10-24T04:40:33.773783713Z print_info: n_embd_v_gqa     = 768
+2025-10-24T04:40:33.773785536Z print_info: f_norm_eps       = 1.0e-12
+2025-10-24T04:40:33.773787359Z print_info: f_norm_rms_eps   = 0.0e+00
+2025-10-24T04:40:33.773789071Z print_info: f_clamp_kqv      = 0.0e+00
+2025-10-24T04:40:33.773790794Z print_info: f_max_alibi_bias = 0.0e+00
+2025-10-24T04:40:33.773792466Z print_info: f_logit_scale    = 0.0e+00
+2025-10-24T04:40:33.773794089Z print_info: f_attn_scale     = 0.0e+00
+2025-10-24T04:40:33.773795721Z print_info: n_ff             = 3072
+2025-10-24T04:40:33.773797383Z print_info: n_expert         = 0
+2025-10-24T04:40:33.773799086Z print_info: n_expert_used    = 0
+2025-10-24T04:40:33.773800739Z print_info: causal attn      = 0
+2025-10-24T04:40:33.773802411Z print_info: pooling type     = 1
+2025-10-24T04:40:33.773804044Z print_info: rope type        = 2
+2025-10-24T04:40:33.773805696Z print_info: rope scaling     = linear
+2025-10-24T04:40:33.773807378Z print_info: freq_base_train  = 1000.0
+2025-10-24T04:40:33.773809021Z print_info: freq_scale_train = 1
+2025-10-24T04:40:33.773810674Z print_info: n_ctx_orig_yarn  = 2048
+2025-10-24T04:40:33.773812406Z print_info: rope_finetuned   = unknown
+2025-10-24T04:40:33.773814179Z print_info: model type       = 137M
+2025-10-24T04:40:33.773816162Z print_info: model params     = 136.73 M
+2025-10-24T04:40:33.773817814Z print_info: general.name     = nomic-embed-text-v1.5
+2025-10-24T04:40:33.773819717Z print_info: vocab type       = WPM
+2025-10-24T04:40:33.773821350Z print_info: n_vocab          = 30522
+2025-10-24T04:40:33.773822992Z print_info: n_merges         = 0
+2025-10-24T04:40:33.773824624Z print_info: BOS token        = 101 '[CLS]'
+2025-10-24T04:40:33.773826317Z print_info: EOS token        = 102 '[SEP]'
+2025-10-24T04:40:33.773827949Z print_info: UNK token        = 100 '[UNK]'
+2025-10-24T04:40:33.773829672Z print_info: SEP token        = 102 '[SEP]'
+2025-10-24T04:40:33.773831314Z print_info: PAD token        = 0 '[PAD]'
+2025-10-24T04:40:33.773832957Z print_info: MASK token       = 103 '[MASK]'
+2025-10-24T04:40:33.773834590Z print_info: LF token         = 0 '[PAD]'
+2025-10-24T04:40:33.773836242Z print_info: EOG token        = 102 '[SEP]'
+2025-10-24T04:40:33.773837864Z print_info: max token length = 21
+2025-10-24T04:40:33.773839547Z load_tensors: loading model tensors, this can take a while... (mmap = false)
+2025-10-24T04:40:33.774348243Z load_tensors:          CPU model buffer size =   260.86 MiB
+2025-10-24T04:40:35.590945995Z llama_init_from_model: model default pooling_type is [1], but [-1] was specified
+2025-10-24T04:40:35.590981478Z llama_context: constructing llama_context
+2025-10-24T04:40:35.590984904Z llama_context: n_seq_max     = 1
+2025-10-24T04:40:35.590987167Z llama_context: n_ctx         = 2048
+2025-10-24T04:40:35.590988919Z llama_context: n_ctx_per_seq = 2048
+2025-10-24T04:40:35.590990752Z llama_context: n_batch       = 512
+2025-10-24T04:40:35.590992635Z llama_context: n_ubatch      = 512
+2025-10-24T04:40:35.590994418Z llama_context: causal_attn   = 0
+2025-10-24T04:40:35.591014929Z llama_context: flash_attn    = disabled
+2025-10-24T04:40:35.591016981Z llama_context: kv_unified    = false
+2025-10-24T04:40:35.591018704Z llama_context: freq_base     = 1000.0
+2025-10-24T04:40:35.591020417Z llama_context: freq_scale    = 1
+2025-10-24T04:40:35.591022139Z llama_context:        CPU  output buffer size =     0.12 MiB
+2025-10-24T04:40:35.591851447Z llama_context:        CPU compute buffer size =    23.51 MiB
+2025-10-24T04:40:35.591878828Z llama_context: graph nodes  = 371
+2025-10-24T04:40:35.591882434Z llama_context: graph splits = 1
+2025-10-24T04:40:35.753039182Z time=2025-10-24T04:40:35.752Z level=INFO source=server.go:1310 msg="llama runner started in 2.05 seconds"
+2025-10-24T04:40:35.753076678Z time=2025-10-24T04:40:35.752Z level=INFO source=sched.go:482 msg="loaded runners" count=1
+2025-10-24T04:40:35.753079963Z time=2025-10-24T04:40:35.752Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:40:35.753334476Z time=2025-10-24T04:40:35.753Z level=INFO source=server.go:1310 msg="llama runner started in 2.05 seconds"
+2025-10-24T04:40:35.774479324Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:35.774493935Z output_reserve: reallocating output buffer from size 0.12 MiB to 3.34 MiB
+2025-10-24T04:40:37.213954532Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:37.213974743Z output_reserve: reallocating output buffer from size 3.34 MiB to 61.11 MiB
+2025-10-24T04:40:39.477882919Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:40.393497205Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:41.547528376Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:42.664759482Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:44.585460892Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:47.622467194Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:50.919461903Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:40:57.004979935Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:02.764574208Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:10.357019423Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:16.109687819Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:22.875967111Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:26.389231731Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:35.284858486Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:39.829560818Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:39.981977420Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:44.478962353Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:47.178843538Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:49.924791479Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:52.931503270Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:41:59.160132607Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:05.470050960Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:11.108953646Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:13.425351348Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:15.843630835Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:18.365115569Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:26.240788697Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:28.583565631Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:31.056993463Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:35.235324595Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:38.799787861Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:42.478077438Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:45.753638134Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:48.346137060Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:53.265850209Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:42:56.666090413Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:01.014210237Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:04.318806870Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:06.533085511Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:09.512810520Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:13.824197499Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:19.338877441Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:23.246084156Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:27.496503125Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:32.531949284Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:35.910948236Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:38.250492156Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:41.361998395Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:43.600717601Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:46.131938560Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:48.299934811Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:53.327023819Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:43:55.686759643Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:00.177262837Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:04.790247763Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:08.305163888Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:10.751901673Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:15.718819716Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:18.821964038Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:21.437483004Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:23.639949774Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:27.274554609Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:29.606658937Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:32.159032186Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:35.453401730Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:38.053922536Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:40.179870541Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:42.697267167Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:44.775843112Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:47.377736844Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:49.505208391Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:52.546882345Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:57.375927677Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:44:59.655919265Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:01.943084893Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:06.815975921Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:11.731154871Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:18.877767224Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:21.488213101Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:26.067147050Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:29.404988577Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:32.451692657Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:35.979295555Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:38.605526666Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:40.739190538Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:43.172871664Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:46.860752800Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:49.292982793Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:52.767108577Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:54.981333984Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:57.593174047Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:45:59.781576019Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:02.178811351Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:05.157074740Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:07.944661441Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:10.501650964Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:12.612977626Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:15.070047314Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:17.600663515Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:20.008723810Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:22.529136613Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:27.356252303Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:30.822054836Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:33.858263730Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:36.031762384Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:38.485212407Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:40.662949697Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:44.479146724Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:46.626999239Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:49.291219656Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:51.964084326Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:55.390549595Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:46:58.920595146Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:01.431476652Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:03.917150818Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:06.388988511Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:08.889420668Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:11.615883963Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:14.117772491Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:19.036921813Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:21.611982690Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:24.770737955Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:29.024002124Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:34.155168495Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:37.968025598Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:40.481813515Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:42.514427221Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:46.311756997Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:48.874561056Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:51.266947875Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:54.947551083Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:47:57.396051831Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:01.264043351Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:03.326519018Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:05.816428075Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:09.444916310Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:13.560241263Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:16.020406628Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:18.928039448Z [GIN] 2025/10/24 - 04:48:18 | 200 |         7m45s |       127.0.0.1 | POST     "/api/embed"
+2025-10-24T04:48:18.928525580Z _client.py          :1025 2025-10-24 04:48:18,928 HTTP Request: POST http://127.0.0.1:11434/api/embed "HTTP/1.1 200 OK"
+2025-10-24T04:48:18.951307349Z 61:M 24 Oct 2025 04:48:18.951 # <search> creating vector index. Server memory limit: 2029155315712B, required memory: 3170696B, available memory: 2029153893960B
+2025-10-24T04:48:18.980993305Z rag_pipeline.py     :93   2025-10-24 04:48:18,980 Successfully created and populated new index 'labnote_index'.
+2025-10-24T04:48:18.981049099Z main.py             :50   2025-10-24 04:48:18,980 RAG pipeline initialized successfully from main.py.
+2025-10-24T04:48:18.981062159Z main.py             :61   2025-10-24 04:48:18,980 SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
+2025-10-24T04:48:18.981089880Z main.py             :227  2025-10-24 04:48:18,981 Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
+2025-10-24T04:48:18.981435590Z main.py             :230  2025-10-24 04:48:18,981 Loaded 64 workflows and 83 unit operations.
+2025-10-24T04:48:19.037783983Z 61:M 24 Oct 2025 04:48:19.037 * 100 changes in 300 seconds. Saving...
+2025-10-24T04:48:19.038734122Z 61:M 24 Oct 2025 04:48:19.038 * Background saving started by pid 35416
+2025-10-24T04:48:19.047514450Z 35416:C 24 Oct 2025 04:48:19.047 * DB saved on disk
+2025-10-24T04:48:19.048362065Z 35416:C 24 Oct 2025 04:48:19.048 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+2025-10-24T04:48:19.140426013Z 61:M 24 Oct 2025 04:48:19.140 * Background saving terminated with success
+2025-10-24T04:48:19.297745582Z --- Starting Serverless Worker |  Version 1.7.13 ---
+2025-10-24T04:48:48.235159375Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
+2025-10-24T04:48:48.235205274Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
+2025-10-24T04:48:48.235207998Z {"requestId": "cf5f5641-9f88-4ca5-9759-47861d7d1ae0-e2", "message": "Started.", "level": "INFO"}
+2025-10-24T04:48:48.235212525Z [RunPod Handler] Incoming payload: {'body': {'file_content': "---\ntitle: WD010 General Design of Experiment - 1\nexperimenter: ''\ncreated_date: '2025-10-23'\nend_date: 2025-10-23 16:19\nlast_updated_date: '2025-10-23'\n---\n\n## [WD010 General Design of Experiment] 1\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose)\n> This workflow provides a general-purpose approach for experimental design using the Design of Experiment methodology. It allows for the independent design of variables from various domains to optimize experimental conditions.\n\n## 🗂️ Related Unit Operations\n> Enter the list of related unit operations between the markers below.\n> When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n\n\n\n\n---\n\n### [USW060 Structure-based Sequence Generation new]\n\n- **Description**: Generating sequences based on protein structures using AI models. This software aids in designing novel proteins with desired structural and functional properties.\n\n#### Meta\n- Experimenter: \n- Start_date: '2025-10-23 16:19'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n- (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n- (e.g. filter, well-plate, etc.)\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n\n", 'file_path': 'c:\\Users\\user\\Desktop\\bfworkflow_template\\labnote\\004_1\\001_WD010_General_Design_of_Experiment--1.md', 'query': 'WD010 General Design of Experiment - 1', 'section': 'Method', 'uo_id': 'USW060'}, 'method': 'POST', 'path': '/populate_note'}
+2025-10-24T04:48:48.245326749Z main.py             :1351 2025-10-24 04:48:48,245 Phase 2: Populating section 'Method' for UO 'USW060'
+2025-10-24T04:48:48.249670714Z agents.py           :276  2025-10-24 04:48:48,249 Supervisor-led agent graph compiled successfully.
+2025-10-24T04:48:48.252751158Z agents.py           :57   2025-10-24 04:48:48,252 Generating drafts for UO 'USW060' - Section 'Method'
+2025-10-24T04:48:48.252974173Z rag_pipeline.py     :101  2025-10-24 04:48:48,252 Retrieving top 3 documents for query: 'Find the specific procedure or list of items for the 'Method' section of the unit operation 'USW060: Structure-based Sequence Generation new' related to the experiment: WD010 General Design of Experiment - 1'
+2025-10-24T04:48:48.275309631Z time=2025-10-24T04:48:48.275Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat
+2025-10-24T04:48:48.275355059Z time=2025-10-24T04:48:48.275Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat_eta
+2025-10-24T04:48:48.275358044Z time=2025-10-24T04:48:48.275Z level=WARN source=types.go:753 msg="invalid option provided" option=tfs_z
+2025-10-24T04:48:48.275360798Z time=2025-10-24T04:48:48.275Z level=WARN source=types.go:753 msg="invalid option provided" option=mirostat_tau
+2025-10-24T04:48:48.284503241Z init: embeddings required but some input tokens were not marked as outputs -> overriding
+2025-10-24T04:48:51.752362168Z [GIN] 2025/10/24 - 04:48:51 | 200 |  3.496707812s |       127.0.0.1 | POST     "/api/embed"
+2025-10-24T04:48:51.753113447Z _client.py          :1025 2025-10-24 04:48:51,752 HTTP Request: POST http://127.0.0.1:11434/api/embed "HTTP/1.1 200 OK"
+2025-10-24T04:48:51.755586338Z agents.py           :113  2025-10-24 04:48:51,755 Draft prompt prepared | uo=USW060 | section=Method | chars=6450
+2025-10-24T04:48:51.755753169Z llm_utils.py        :66   2025-10-24 04:48:51,755 Calling LLM: llama3.1:8b for a specific task.
+2025-10-24T04:48:51.774759740Z llm_utils.py        :66   2025-10-24 04:48:51,774 Calling LLM: mixtral for a specific task.
+2025-10-24T04:48:51.791214381Z llm_utils.py        :66   2025-10-24 04:48:51,791 Calling LLM: llama3.1:70b for a specific task.
+2025-10-24T04:48:51.807762895Z llm_utils.py        :66   2025-10-24 04:48:51,807 Calling LLM: gpt-oss:120b for a specific task.
+2025-10-24T04:48:52.276151863Z time=2025-10-24T04:48:52.275Z level=INFO source=sched.go:545 msg="updated VRAM based on existing loaded models" gpu=0 library=cpu total="1889.8 GiB" available="1846.7 GiB"
+2025-10-24T04:48:52.351974379Z llama_model_loader: loaded meta data with 29 key-value pairs and 292 tensors from /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 (version GGUF V3 (latest))
+2025-10-24T04:48:52.352013318Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:48:52.352016452Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T04:48:52.352018586Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T04:48:52.352020338Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 8B Instruct
+2025-10-24T04:48:52.352037604Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-24T04:48:52.352040749Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-24T04:48:52.352043403Z llama_model_loader: - kv   5:                         general.size_label str              = 8B
+2025-10-24T04:48:52.352046617Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-24T04:48:52.352049161Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-24T04:48:52.352052427Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-24T04:48:52.352054861Z llama_model_loader: - kv   9:                          llama.block_count u32              = 32
+2025-10-24T04:48:52.352057314Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-24T04:48:52.352059748Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 4096
+2025-10-24T04:48:52.352062112Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+2025-10-24T04:48:52.352064585Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+2025-10-24T04:48:52.352067039Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-24T04:48:52.352069573Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-24T04:48:52.352073298Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T04:48:52.352075642Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-24T04:48:52.352077925Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-24T04:48:52.352080620Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-24T04:48:52.352083083Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-24T04:48:52.352084916Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-24T04:48:52.366338096Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-24T04:48:52.369642146Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T04:48:52.399622975Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-24T04:48:52.399657407Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-24T04:48:52.399665569Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-24T04:48:52.399668593Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-24T04:48:52.399671357Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-24T04:48:52.399674472Z llama_model_loader: - type  f32:   66 tensors
+2025-10-24T04:48:52.399677547Z llama_model_loader: - type q4_K:  193 tensors
+2025-10-24T04:48:52.399679941Z llama_model_loader: - type q6_K:   33 tensors
+2025-10-24T04:48:52.399682474Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:48:52.399684868Z print_info: file type   = Q4_K - Medium
+2025-10-24T04:48:52.399687141Z print_info: file size   = 4.58 GiB (4.89 BPW)
+2025-10-24T04:48:52.533206890Z load: printing all EOG tokens:
+2025-10-24T04:48:52.533244066Z load:   - 128001 ('<|end_of_text|>')
+2025-10-24T04:48:52.533254121Z load:   - 128008 ('<|eom_id|>')
+2025-10-24T04:48:52.533256064Z load:   - 128009 ('<|eot_id|>')
+2025-10-24T04:48:52.533258137Z load: special tokens cache size = 256
+2025-10-24T04:48:52.563428451Z load: token to piece cache size = 0.7999 MB
+2025-10-24T04:48:52.563464405Z print_info: arch             = llama
+2025-10-24T04:48:52.563466799Z print_info: vocab_only       = 1
+2025-10-24T04:48:52.563469382Z print_info: model type       = ?B
+2025-10-24T04:48:52.563471415Z print_info: model params     = 8.03 B
+2025-10-24T04:48:52.563473288Z print_info: general.name     = Meta Llama 3.1 8B Instruct
+2025-10-24T04:48:52.563475942Z print_info: vocab type       = BPE
+2025-10-24T04:48:52.563477955Z print_info: n_vocab          = 128256
+2025-10-24T04:48:52.563479748Z print_info: n_merges         = 280147
+2025-10-24T04:48:52.563481481Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-24T04:48:52.563483293Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.563485076Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.563486809Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-24T04:48:52.563488541Z print_info: LF token         = 198 'Ċ'
+2025-10-24T04:48:52.563490304Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-24T04:48:52.563492056Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-24T04:48:52.563493819Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.563495542Z print_info: max token length = 256
+2025-10-24T04:48:52.563497284Z llama_model_load: vocab only - skipping tensors
+2025-10-24T04:48:52.575104195Z time=2025-10-24T04:48:52.574Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --model /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 --port 42757"
+2025-10-24T04:48:52.584375861Z time=2025-10-24T04:48:52.584Z level=INFO source=server.go:505 msg="system memory" total="1889.8 GiB" free="1846.7 GiB" free_swap="0 B"
+2025-10-24T04:48:52.584577695Z time=2025-10-24T04:48:52.584Z level=INFO source=memory.go:36 msg="new model will fit in available VRAM across minimum required GPUs, loading" model=/runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 library=cpu parallel=1 required="0 B" gpus=1
+2025-10-24T04:48:52.584769184Z time=2025-10-24T04:48:52.584Z level=INFO source=server.go:545 msg=offload library=cpu layers.requested=-1 layers.model=33 layers.offload=0 layers.split=[] memory.available="[1846.7 GiB]" memory.gpu_overhead="0 B" memory.required.full="5.2 GiB" memory.required.partial="0 B" memory.required.kv="512.0 MiB" memory.required.allocations="[5.2 GiB]" memory.weights.total="4.3 GiB" memory.weights.repeating="3.9 GiB" memory.weights.nonrepeating="411.0 MiB" memory.graph.full="296.0 MiB" memory.graph.partial="677.5 MiB"
+2025-10-24T04:48:52.600108157Z time=2025-10-24T04:48:52.599Z level=INFO source=runner.go:893 msg="starting go runner"
+2025-10-24T04:48:52.601761274Z time=2025-10-24T04:48:52.600Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-24T04:48:52.603922435Z time=2025-10-24T04:48:52.603Z level=INFO source=runner.go:929 msg="Server listening on 127.0.0.1:42757"
+2025-10-24T04:48:52.607230692Z time=2025-10-24T04:48:52.607Z level=INFO source=runner.go:828 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:false KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:48:52.607358974Z time=2025-10-24T04:48:52.607Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:48:52.607694048Z time=2025-10-24T04:48:52.607Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-24T04:48:52.644283178Z llama_model_loader: loaded meta data with 29 key-value pairs and 292 tensors from /runpod-volume/ollama_models/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29 (version GGUF V3 (latest))
+2025-10-24T04:48:52.644325421Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:48:52.644328135Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T04:48:52.644330018Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T04:48:52.644331841Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 8B Instruct
+2025-10-24T04:48:52.644334385Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-24T04:48:52.644336438Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-24T04:48:52.644338291Z llama_model_loader: - kv   5:                         general.size_label str              = 8B
+2025-10-24T04:48:52.644340424Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-24T04:48:52.644342246Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-24T04:48:52.644345812Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-24T04:48:52.644348466Z llama_model_loader: - kv   9:                          llama.block_count u32              = 32
+2025-10-24T04:48:52.644351300Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-24T04:48:52.644353864Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 4096
+2025-10-24T04:48:52.644356498Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+2025-10-24T04:48:52.644359362Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+2025-10-24T04:48:52.644361996Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-24T04:48:52.644364580Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-24T04:48:52.644367945Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T04:48:52.644370519Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-24T04:48:52.644372883Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-24T04:48:52.644375326Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-24T04:48:52.644378040Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-24T04:48:52.644380363Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-24T04:48:52.660018087Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-24T04:48:52.663847878Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T04:48:52.696089798Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-24T04:48:52.696132192Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-24T04:48:52.696135177Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-24T04:48:52.696137440Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-24T04:48:52.696139553Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-24T04:48:52.696141937Z llama_model_loader: - type  f32:   66 tensors
+2025-10-24T04:48:52.696144160Z llama_model_loader: - type q4_K:  193 tensors
+2025-10-24T04:48:52.696156078Z llama_model_loader: - type q6_K:   33 tensors
+2025-10-24T04:48:52.696157931Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:48:52.696159984Z print_info: file type   = Q4_K - Medium
+2025-10-24T04:48:52.696161847Z print_info: file size   = 4.58 GiB (4.89 BPW)
+2025-10-24T04:48:52.829681445Z load: printing all EOG tokens:
+2025-10-24T04:48:52.829716657Z load:   - 128001 ('<|end_of_text|>')
+2025-10-24T04:48:52.829720273Z load:   - 128008 ('<|eom_id|>')
+2025-10-24T04:48:52.829722456Z load:   - 128009 ('<|eot_id|>')
+2025-10-24T04:48:52.829724770Z load: special tokens cache size = 256
+2025-10-24T04:48:52.859601382Z load: token to piece cache size = 0.7999 MB
+2025-10-24T04:48:52.859621161Z print_info: arch             = llama
+2025-10-24T04:48:52.859625608Z print_info: vocab_only       = 0
+2025-10-24T04:48:52.859628151Z print_info: n_ctx_train      = 131072
+2025-10-24T04:48:52.859630154Z print_info: n_embd           = 4096
+2025-10-24T04:48:52.859632008Z print_info: n_layer          = 32
+2025-10-24T04:48:52.859633960Z print_info: n_head           = 32
+2025-10-24T04:48:52.859635893Z print_info: n_head_kv        = 8
+2025-10-24T04:48:52.859637806Z print_info: n_rot            = 128
+2025-10-24T04:48:52.859639559Z print_info: n_swa            = 0
+2025-10-24T04:48:52.859641281Z print_info: is_swa_any       = 0
+2025-10-24T04:48:52.859643134Z print_info: n_embd_head_k    = 128
+2025-10-24T04:48:52.859644877Z print_info: n_embd_head_v    = 128
+2025-10-24T04:48:52.859646599Z print_info: n_gqa            = 4
+2025-10-24T04:48:52.859648322Z print_info: n_embd_k_gqa     = 1024
+2025-10-24T04:48:52.859650064Z print_info: n_embd_v_gqa     = 1024
+2025-10-24T04:48:52.859651807Z print_info: f_norm_eps       = 0.0e+00
+2025-10-24T04:48:52.859653509Z print_info: f_norm_rms_eps   = 1.0e-05
+2025-10-24T04:48:52.859655222Z print_info: f_clamp_kqv      = 0.0e+00
+2025-10-24T04:48:52.859656935Z print_info: f_max_alibi_bias = 0.0e+00
+2025-10-24T04:48:52.859658637Z print_info: f_logit_scale    = 0.0e+00
+2025-10-24T04:48:52.859660350Z print_info: f_attn_scale     = 0.0e+00
+2025-10-24T04:48:52.859662053Z print_info: n_ff             = 14336
+2025-10-24T04:48:52.859692960Z print_info: n_expert         = 0
+2025-10-24T04:48:52.859694973Z print_info: n_expert_used    = 0
+2025-10-24T04:48:52.859696726Z print_info: causal attn      = 1
+2025-10-24T04:48:52.859698568Z print_info: pooling type     = 0
+2025-10-24T04:48:52.859700301Z print_info: rope type        = 0
+2025-10-24T04:48:52.859702194Z print_info: rope scaling     = linear
+2025-10-24T04:48:52.859703986Z print_info: freq_base_train  = 500000.0
+2025-10-24T04:48:52.859705749Z print_info: freq_scale_train = 1
+2025-10-24T04:48:52.859707572Z print_info: n_ctx_orig_yarn  = 131072
+2025-10-24T04:48:52.859709354Z print_info: rope_finetuned   = unknown
+2025-10-24T04:48:52.859711107Z print_info: model type       = 8B
+2025-10-24T04:48:52.859712850Z print_info: model params     = 8.03 B
+2025-10-24T04:48:52.859714572Z print_info: general.name     = Meta Llama 3.1 8B Instruct
+2025-10-24T04:48:52.859716575Z print_info: vocab type       = BPE
+2025-10-24T04:48:52.859718328Z print_info: n_vocab          = 128256
+2025-10-24T04:48:52.859720061Z print_info: n_merges         = 280147
+2025-10-24T04:48:52.859721823Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-24T04:48:52.859723546Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.859725338Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.859727081Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-24T04:48:52.859728834Z print_info: LF token         = 198 'Ċ'
+2025-10-24T04:48:52.859730556Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-24T04:48:52.859732279Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-24T04:48:52.859734011Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-24T04:48:52.859735774Z print_info: max token length = 256
+2025-10-24T04:48:52.859737557Z load_tensors: loading model tensors, this can take a while... (mmap = false)
+2025-10-24T04:48:52.861087277Z load_tensors:          CPU model buffer size =  4685.30 MiB
+2025-10-24T04:49:24.801151943Z llama_init_from_model: model default pooling_type is [0], but [-1] was specified
+2025-10-24T04:49:24.801364573Z llama_context: constructing llama_context
+2025-10-24T04:49:24.801390351Z llama_context: n_seq_max     = 1
+2025-10-24T04:49:24.801393356Z llama_context: n_ctx         = 4096
+2025-10-24T04:49:24.801395579Z llama_context: n_ctx_per_seq = 4096
+2025-10-24T04:49:24.801397592Z llama_context: n_batch       = 512
+2025-10-24T04:49:24.801399515Z llama_context: n_ubatch      = 512
+2025-10-24T04:49:24.801401328Z llama_context: causal_attn   = 1
+2025-10-24T04:49:24.801403411Z llama_context: flash_attn    = disabled
+2025-10-24T04:49:24.801405223Z llama_context: kv_unified    = false
+2025-10-24T04:49:24.801407277Z llama_context: freq_base     = 500000.0
+2025-10-24T04:49:24.801409260Z llama_context: freq_scale    = 1
+2025-10-24T04:49:24.801413106Z llama_context: n_ctx_per_seq (4096) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+2025-10-24T04:49:24.801415329Z llama_context:        CPU  output buffer size =     0.50 MiB
+2025-10-24T04:49:24.801522170Z llama_kv_cache:        CPU KV buffer size =   512.00 MiB
+2025-10-24T04:49:25.071563602Z llama_kv_cache: size =  512.00 MiB (  4096 cells,  32 layers,  1/1 seqs), K (f16):  256.00 MiB, V (f16):  256.00 MiB
+2025-10-24T04:49:25.073650031Z llama_context:        CPU compute buffer size =   300.01 MiB
+2025-10-24T04:49:25.073702640Z llama_context: graph nodes  = 1158
+2025-10-24T04:49:25.073705734Z llama_context: graph splits = 1
+2025-10-24T04:49:25.255888284Z time=2025-10-24T04:49:25.255Z level=INFO source=server.go:1310 msg="llama runner started in 32.68 seconds"
+2025-10-24T04:49:25.255924088Z time=2025-10-24T04:49:25.255Z level=INFO source=sched.go:482 msg="loaded runners" count=2
+2025-10-24T04:49:25.255988275Z time=2025-10-24T04:49:25.255Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:49:25.256390580Z time=2025-10-24T04:49:25.256Z level=INFO source=server.go:1310 msg="llama runner started in 32.68 seconds"
+2025-10-24T04:49:25.262647582Z time=2025-10-24T04:49:25.262Z level=INFO source=sched.go:545 msg="updated VRAM based on existing loaded models" gpu=0 library=cpu total="1889.8 GiB" available="1840.9 GiB"
+2025-10-24T04:49:25.275464652Z llama_model_loader: loaded meta data with 40 key-value pairs and 323 tensors from /runpod-volume/ollama_models/blobs/sha256-f2dc41fa964b42bfe34e9fb09c0acdcfbfd6e52f1332930b4eacc9d6ad1c6cd2 (version GGUF V3 (latest))
+2025-10-24T04:49:25.275483220Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:49:25.275486776Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T04:49:25.275489520Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T04:49:25.275492173Z llama_model_loader: - kv   2:                               general.name str              = Mixtral 8x7B Instruct v0.1
+2025-10-24T04:49:25.275494788Z llama_model_loader: - kv   3:                            general.version str              = v0.1
+2025-10-24T04:49:25.275497972Z llama_model_loader: - kv   4:                           general.finetune str              = Instruct
+2025-10-24T04:49:25.275500496Z llama_model_loader: - kv   5:                           general.basename str              = Mixtral
+2025-10-24T04:49:25.275502800Z llama_model_loader: - kv   6:                         general.size_label str              = 8x7B
+2025-10-24T04:49:25.275505233Z llama_model_loader: - kv   7:                            general.license str              = apache-2.0
+2025-10-24T04:49:25.275507507Z llama_model_loader: - kv   8:                   general.base_model.count u32              = 1
+2025-10-24T04:49:25.275509840Z llama_model_loader: - kv   9:                  general.base_model.0.name str              = Mixtral 8x7B v0.1
+2025-10-24T04:49:25.275514988Z llama_model_loader: - kv  10:               general.base_model.0.version str              = v0.1
+2025-10-24T04:49:25.275520366Z llama_model_loader: - kv  11:          general.base_model.0.organization str              = Mistralai
+2025-10-24T04:49:25.275522759Z llama_model_loader: - kv  12:              general.base_model.0.repo_url str              = https://huggingface.co/mistralai/Mixt...
+2025-10-24T04:49:25.275568017Z llama_model_loader: - kv  13:                          general.languages arr[str,5]       = ["fr", "it", "de", "es", "en"]
+2025-10-24T04:49:25.275614417Z llama_model_loader: - kv  14:                          llama.block_count u32              = 32
+2025-10-24T04:49:25.275619945Z llama_model_loader: - kv  15:                       llama.context_length u32              = 32768
+2025-10-24T04:49:25.275629129Z llama_model_loader: - kv  16:                     llama.embedding_length u32              = 4096
+2025-10-24T04:49:25.275638163Z llama_model_loader: - kv  17:                  llama.feed_forward_length u32              = 14336
+2025-10-24T04:49:25.275643230Z llama_model_loader: - kv  18:                 llama.attention.head_count u32              = 32
+2025-10-24T04:49:25.275672055Z llama_model_loader: - kv  19:              llama.attention.head_count_kv u32              = 8
+2025-10-24T04:49:25.275675349Z llama_model_loader: - kv  20:                       llama.rope.freq_base f32              = 1000000.000000
+2025-10-24T04:49:25.275698163Z llama_model_loader: - kv  21:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T04:49:25.275701919Z llama_model_loader: - kv  22:                         llama.expert_count u32              = 8
+2025-10-24T04:49:25.275704593Z llama_model_loader: - kv  23:                    llama.expert_used_count u32              = 2
+2025-10-24T04:49:25.275707288Z llama_model_loader: - kv  24:                          general.file_type u32              = 2
+2025-10-24T04:49:25.275710973Z llama_model_loader: - kv  25:                           llama.vocab_size u32              = 32000
+2025-10-24T04:49:25.275716571Z llama_model_loader: - kv  26:                 llama.rope.dimension_count u32              = 128
+2025-10-24T04:49:25.275724954Z llama_model_loader: - kv  27:                       tokenizer.ggml.model str              = llama
+2025-10-24T04:49:25.275727407Z llama_model_loader: - kv  28:                         tokenizer.ggml.pre str              = default
+2025-10-24T04:49:25.278919148Z llama_model_loader: - kv  29:                      tokenizer.ggml.tokens arr[str,32000]   = ["<unk>", "<s>", "</s>", "<0x00>", "<...
+2025-10-24T04:49:25.289787137Z llama_model_loader: - kv  30:                      tokenizer.ggml.scores arr[f32,32000]   = [-1000.000000, -1000.000000, -1000.00...
+2025-10-24T04:49:25.293663218Z llama_model_loader: - kv  31:                  tokenizer.ggml.token_type arr[i32,32000]   = [3, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
+2025-10-24T04:49:25.293715737Z llama_model_loader: - kv  32:                tokenizer.ggml.bos_token_id u32              = 1
+2025-10-24T04:49:25.293719151Z llama_model_loader: - kv  33:                tokenizer.ggml.eos_token_id u32              = 2
+2025-10-24T04:49:25.293721194Z llama_model_loader: - kv  34:            tokenizer.ggml.unknown_token_id u32              = 0
+2025-10-24T04:49:25.293723177Z llama_model_loader: - kv  35:               tokenizer.ggml.add_bos_token bool             = true
+2025-10-24T04:49:25.293725291Z llama_model_loader: - kv  36:               tokenizer.ggml.add_eos_token bool             = false
+2025-10-24T04:49:25.293727784Z llama_model_loader: - kv  37:                    tokenizer.chat_template str              = {%- if messages[0]['role'] == 'system...
+2025-10-24T04:49:25.293729798Z llama_model_loader: - kv  38:            tokenizer.ggml.add_space_prefix bool             = false
+2025-10-24T04:49:25.293731931Z llama_model_loader: - kv  39:               general.quantization_version u32              = 2
+2025-10-24T04:49:25.293733724Z llama_model_loader: - type  f32:   97 tensors
+2025-10-24T04:49:25.293736117Z llama_model_loader: - type q4_0:  161 tensors
+2025-10-24T04:49:25.293737839Z llama_model_loader: - type q8_0:   64 tensors
+2025-10-24T04:49:25.293744359Z llama_model_loader: - type q6_K:    1 tensors
+2025-10-24T04:49:25.293746172Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:49:25.293748225Z print_info: file type   = Q4_0
+2025-10-24T04:49:25.293750769Z print_info: file size   = 24.63 GiB (4.53 BPW)
+2025-10-24T04:49:25.310583720Z load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+2025-10-24T04:49:25.310627997Z load: printing all EOG tokens:
+2025-10-24T04:49:25.310631252Z load:   - 2 ('</s>')
+2025-10-24T04:49:25.310634427Z load: special tokens cache size = 3
+2025-10-24T04:49:25.315501999Z load: token to piece cache size = 0.1637 MB
+2025-10-24T04:49:25.315537953Z print_info: arch             = llama
+2025-10-24T04:49:25.315540737Z print_info: vocab_only       = 1
+2025-10-24T04:49:25.315543841Z print_info: model type       = ?B
+2025-10-24T04:49:25.315546045Z print_info: model params     = 46.70 B
+2025-10-24T04:49:25.315548479Z print_info: general.name     = Mixtral 8x7B Instruct v0.1
+2025-10-24T04:49:25.315550942Z print_info: vocab type       = SPM
+2025-10-24T04:49:25.315553836Z print_info: n_vocab          = 32000
+2025-10-24T04:49:25.315556020Z print_info: n_merges         = 0
+2025-10-24T04:49:25.315558363Z print_info: BOS token        = 1 '<s>'
+2025-10-24T04:49:25.315560517Z print_info: EOS token        = 2 '</s>'
+2025-10-24T04:49:25.315562770Z print_info: UNK token        = 0 '<unk>'
+2025-10-24T04:49:25.315564973Z print_info: LF token         = 13 '<0x0A>'
+2025-10-24T04:49:25.315567527Z print_info: EOG token        = 2 '</s>'
+2025-10-24T04:49:25.315570121Z print_info: max token length = 48
+2025-10-24T04:49:25.315572524Z llama_model_load: vocab only - skipping tensors
+2025-10-24T04:49:25.351935995Z time=2025-10-24T04:49:25.351Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --model /runpod-volume/ollama_models/blobs/sha256-f2dc41fa964b42bfe34e9fb09c0acdcfbfd6e52f1332930b4eacc9d6ad1c6cd2 --port 34005"
+2025-10-24T04:49:25.383309068Z time=2025-10-24T04:49:25.383Z level=INFO source=server.go:505 msg="system memory" total="1889.8 GiB" free="1840.9 GiB" free_swap="0 B"
+2025-10-24T04:49:25.383780958Z time=2025-10-24T04:49:25.383Z level=INFO source=memory.go:36 msg="new model will fit in available VRAM across minimum required GPUs, loading" model=/runpod-volume/ollama_models/blobs/sha256-f2dc41fa964b42bfe34e9fb09c0acdcfbfd6e52f1332930b4eacc9d6ad1c6cd2 library=cpu parallel=1 required="0 B" gpus=1
+2025-10-24T04:49:25.387496016Z time=2025-10-24T04:49:25.384Z level=INFO source=server.go:545 msg=offload library=cpu layers.requested=-1 layers.model=33 layers.offload=0 layers.split=[] memory.available="[1840.9 GiB]" memory.gpu_overhead="0 B" memory.required.full="26.1 GiB" memory.required.partial="0 B" memory.required.kv="512.0 MiB" memory.required.allocations="[26.1 GiB]" memory.weights.total="24.6 GiB" memory.weights.repeating="24.5 GiB" memory.weights.nonrepeating="102.6 MiB" memory.graph.full="296.0 MiB" memory.graph.partial="830.0 MiB"
+2025-10-24T04:49:25.405285236Z time=2025-10-24T04:49:25.404Z level=INFO source=runner.go:893 msg="starting go runner"
+2025-10-24T04:49:25.407568500Z time=2025-10-24T04:49:25.405Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-24T04:49:25.408703187Z time=2025-10-24T04:49:25.408Z level=INFO source=runner.go:929 msg="Server listening on 127.0.0.1:34005"
+2025-10-24T04:49:25.420901226Z time=2025-10-24T04:49:25.420Z level=INFO source=runner.go:828 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:false KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:49:25.421152364Z time=2025-10-24T04:49:25.421Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:49:25.421552626Z time=2025-10-24T04:49:25.421Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-24T04:49:25.437913376Z llama_model_loader: loaded meta data with 40 key-value pairs and 323 tensors from /runpod-volume/ollama_models/blobs/sha256-f2dc41fa964b42bfe34e9fb09c0acdcfbfd6e52f1332930b4eacc9d6ad1c6cd2 (version GGUF V3 (latest))
+2025-10-24T04:49:25.437938174Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T04:49:25.437941209Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T04:49:25.437958875Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T04:49:25.437961248Z llama_model_loader: - kv   2:                               general.name str              = Mixtral 8x7B Instruct v0.1
+2025-10-24T04:49:25.437963983Z llama_model_loader: - kv   3:                            general.version str              = v0.1
+2025-10-24T04:49:25.437966787Z llama_model_loader: - kv   4:                           general.finetune str              = Instruct
+2025-10-24T04:49:25.437978736Z llama_model_loader: - kv   5:                           general.basename str              = Mixtral
+2025-10-24T04:49:25.437981520Z llama_model_loader: - kv   6:                         general.size_label str              = 8x7B
+2025-10-24T04:49:25.437999627Z llama_model_loader: - kv   7:                            general.license str              = apache-2.0
+2025-10-24T04:49:25.438011796Z llama_model_loader: - kv   8:                   general.base_model.count u32              = 1
+2025-10-24T04:49:25.438014209Z llama_model_loader: - kv   9:                  general.base_model.0.name str              = Mixtral 8x7B v0.1
+2025-10-24T04:49:25.438016583Z llama_model_loader: - kv  10:               general.base_model.0.version str              = v0.1
+2025-10-24T04:49:25.438018886Z llama_model_loader: - kv  11:          general.base_model.0.organization str              = Mistralai
+2025-10-24T04:49:25.438022141Z llama_model_loader: - kv  12:              general.base_model.0.repo_url str              = https://huggingface.co/mistralai/Mixt...
+2025-10-24T04:49:25.438029162Z llama_model_loader: - kv  13:                          general.languages arr[str,5]       = ["fr", "it", "de", "es", "en"]
+2025-10-24T04:49:25.438038525Z llama_model_loader: - kv  14:                          llama.block_count u32              = 32
+2025-10-24T04:49:25.438046297Z llama_model_loader: - kv  15:                       llama.context_length u32              = 32768
+2025-10-24T04:49:25.438056943Z llama_model_loader: - kv  16:                     llama.embedding_length u32              = 4096
+2025-10-24T04:49:25.438063222Z llama_model_loader: - kv  17:                  llama.feed_forward_length u32              = 14336
+2025-10-24T04:49:25.438072647Z llama_model_loader: - kv  18:                 llama.attention.head_count u32              = 32
+2025-10-24T04:49:25.438082712Z llama_model_loader: - kv  19:              llama.attention.head_count_kv u32              = 8
+2025-10-24T04:49:25.438092316Z llama_model_loader: - kv  20:                       llama.rope.freq_base f32              = 1000000.000000
+2025-10-24T04:49:25.438098446Z llama_model_loader: - kv  21:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T04:49:25.438111645Z llama_model_loader: - kv  22:                         llama.expert_count u32              = 8
+2025-10-24T04:49:25.438121330Z llama_model_loader: - kv  23:                    llama.expert_used_count u32              = 2
+2025-10-24T04:49:25.438128621Z llama_model_loader: - kv  24:                          general.file_type u32              = 2
+2025-10-24T04:49:25.438138095Z llama_model_loader: - kv  25:                           llama.vocab_size u32              = 32000
+2025-10-24T04:49:25.438144845Z llama_model_loader: - kv  26:                 llama.rope.dimension_count u32              = 128
+2025-10-24T04:49:25.438154870Z llama_model_loader: - kv  27:                       tokenizer.ggml.model str              = llama
+2025-10-24T04:49:25.438161320Z llama_model_loader: - kv  28:                         tokenizer.ggml.pre str              = default
+2025-10-24T04:49:25.446559683Z llama_model_loader: - kv  29:                      tokenizer.ggml.tokens arr[str,32000]   = ["<unk>", "<s>", "</s>", "<0x00>", "<...
+2025-10-24T04:49:25.468591785Z llama_model_loader: - kv  30:                      tokenizer.ggml.scores arr[f32,32000]   = [-1000.000000, -1000.000000, -1000.00...
+2025-10-24T04:49:25.468766468Z llama_model_loader: - kv  31:                  tokenizer.ggml.token_type arr[i32,32000]   = [3, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
+2025-10-24T04:49:25.468811366Z llama_model_loader: - kv  32:                tokenizer.ggml.bos_token_id u32              = 1
+2025-10-24T04:49:25.468814740Z llama_model_loader: - kv  33:                tokenizer.ggml.eos_token_id u32              = 2
+2025-10-24T04:49:25.468816964Z llama_model_loader: - kv  34:            tokenizer.ggml.unknown_token_id u32              = 0
+2025-10-24T04:49:25.468819237Z llama_model_loader: - kv  35:               tokenizer.ggml.add_bos_token bool             = true
+2025-10-24T04:49:25.468821310Z llama_model_loader: - kv  36:               tokenizer.ggml.add_eos_token bool             = false
+2025-10-24T04:49:25.468824405Z llama_model_loader: - kv  37:                    tokenizer.chat_template str              = {%- if messages[0]['role'] == 'system...
+2025-10-24T04:49:25.468827279Z llama_model_loader: - kv  38:            tokenizer.ggml.add_space_prefix bool             = false
+2025-10-24T04:49:25.468829543Z llama_model_loader: - kv  39:               general.quantization_version u32              = 2
+2025-10-24T04:49:25.468831626Z llama_model_loader: - type  f32:   97 tensors
+2025-10-24T04:49:25.468834710Z llama_model_loader: - type q4_0:  161 tensors
+2025-10-24T04:49:25.468836733Z llama_model_loader: - type q8_0:   64 tensors
+2025-10-24T04:49:25.468838756Z llama_model_loader: - type q6_K:    1 tensors
+2025-10-24T04:49:25.468840819Z print_info: file format = GGUF V3 (latest)
+2025-10-24T04:49:25.468847700Z print_info: file type   = Q4_0
+2025-10-24T04:49:25.468850694Z print_info: file size   = 24.63 GiB (4.53 BPW)
+2025-10-24T04:49:25.511615363Z load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+2025-10-24T04:49:25.511665068Z load: printing all EOG tokens:
+2025-10-24T04:49:25.511668914Z load:   - 2 ('</s>')
+2025-10-24T04:49:25.511671979Z load: special tokens cache size = 3
+2025-10-24T04:49:25.517299274Z load: token to piece cache size = 0.1637 MB
+2025-10-24T04:49:25.517347336Z print_info: arch             = llama
+2025-10-24T04:49:25.517350341Z print_info: vocab_only       = 0
+2025-10-24T04:49:25.517353325Z print_info: n_ctx_train      = 32768
+2025-10-24T04:49:25.517355549Z print_info: n_embd           = 4096
+2025-10-24T04:49:25.517357721Z print_info: n_layer          = 32
+2025-10-24T04:49:25.517359885Z print_info: n_head           = 32
+2025-10-24T04:49:25.517361918Z print_info: n_head_kv        = 8
+2025-10-24T04:49:25.517364031Z print_info: n_rot            = 128
+2025-10-24T04:49:25.517366114Z print_info: n_swa            = 0
+2025-10-24T04:49:25.517368468Z print_info: is_swa_any       = 0
+2025-10-24T04:49:25.517614167Z print_info: n_embd_head_k    = 128
+2025-10-24T04:49:25.517619015Z print_info: n_embd_head_v    = 128
+2025-10-24T04:49:25.517621178Z print_info: n_gqa            = 4
+2025-10-24T04:49:25.518325237Z print_info: n_embd_k_gqa     = 1024
+2025-10-24T04:49:25.518329343Z print_info: n_embd_v_gqa     = 1024
+2025-10-24T04:49:25.518331476Z print_info: f_norm_eps       = 0.0e+00
+2025-10-24T04:49:25.518334060Z print_info: f_norm_rms_eps   = 1.0e-05
+2025-10-24T04:49:25.518336113Z print_info: f_clamp_kqv      = 0.0e+00
+2025-10-24T04:49:25.518338467Z print_info: f_max_alibi_bias = 0.0e+00
+2025-10-24T04:49:25.518340480Z print_info: f_logit_scale    = 0.0e+00
+2025-10-24T04:49:25.518342703Z print_info: f_attn_scale     = 0.0e+00
+2025-10-24T04:49:25.518344997Z print_info: n_ff             = 14336
+2025-10-24T04:49:25.518347060Z print_info: n_expert         = 8
+2025-10-24T04:49:25.518350004Z print_info: n_expert_used    = 2
+2025-10-24T04:49:25.518352067Z print_info: causal attn      = 1
+2025-10-24T04:49:25.518354120Z print_info: pooling type     = 0
+2025-10-24T04:49:25.518356183Z print_info: rope type        = 0
+2025-10-24T04:49:25.518358397Z print_info: rope scaling     = linear
+2025-10-24T04:49:25.518360470Z print_info: freq_base_train  = 1000000.0
+2025-10-24T04:49:25.518362573Z print_info: freq_scale_train = 1
+2025-10-24T04:49:25.518364656Z print_info: n_ctx_orig_yarn  = 32768
+2025-10-24T04:49:25.518472919Z print_info: rope_finetuned   = unknown
+2025-10-24T04:49:25.518477426Z print_info: model type       = 8x7B
+2025-10-24T04:49:25.518479549Z print_info: model params     = 46.70 B
+2025-10-24T04:49:25.518482053Z print_info: general.name     = Mixtral 8x7B Instruct v0.1
+2025-10-24T04:49:25.518493350Z print_info: vocab type       = SPM
+2025-10-24T04:49:25.518495564Z print_info: n_vocab          = 32000
+2025-10-24T04:49:25.518497877Z print_info: n_merges         = 0
+2025-10-24T04:49:25.518499960Z print_info: BOS token        = 1 '<s>'
+2025-10-24T04:49:25.518502013Z print_info: EOS token        = 2 '</s>'
+2025-10-24T04:49:25.518504066Z print_info: UNK token        = 0 '<unk>'
+2025-10-24T04:49:25.518506300Z print_info: LF token         = 13 '<0x0A>'
+2025-10-24T04:49:25.518508553Z print_info: EOG token        = 2 '</s>'
+2025-10-24T04:49:25.518510596Z print_info: max token length = 48
+2025-10-24T04:49:25.518512669Z load_tensors: loading model tensors, this can take a while... (mmap = false)
+2025-10-24T04:49:25.524907919Z load_tensors:          CPU model buffer size = 25217.87 MiB
+2025-10-24T04:54:34.274355482Z [GIN] 2025/10/24 - 04:54:34 | 200 |         5m42s |       127.0.0.1 | POST     "/api/chat"
+2025-10-24T04:54:34.275138511Z _client.py          :1740 2025-10-24 04:54:34,274 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-24T04:55:26.398962128Z llama_init_from_model: model default pooling_type is [0], but [-1] was specified
+2025-10-24T04:55:26.399006485Z llama_context: constructing llama_context
+2025-10-24T04:55:26.399009520Z llama_context: n_seq_max     = 1
+2025-10-24T04:55:26.399011994Z llama_context: n_ctx         = 4096
+2025-10-24T04:55:26.399013906Z llama_context: n_ctx_per_seq = 4096
+2025-10-24T04:55:26.399015629Z llama_context: n_batch       = 512
+2025-10-24T04:55:26.399017351Z llama_context: n_ubatch      = 512
+2025-10-24T04:55:26.399019084Z llama_context: causal_attn   = 1
+2025-10-24T04:55:26.399020977Z llama_context: flash_attn    = disabled
+2025-10-24T04:55:26.399022730Z llama_context: kv_unified    = false
+2025-10-24T04:55:26.399024442Z llama_context: freq_base     = 1000000.0
+2025-10-24T04:55:26.399026195Z llama_context: freq_scale    = 1
+2025-10-24T04:55:26.399028208Z llama_context: n_ctx_per_seq (4096) < n_ctx_train (32768) -- the full capacity of the model will not be utilized
+2025-10-24T04:55:26.399030631Z llama_context:        CPU  output buffer size =     0.14 MiB
+2025-10-24T04:55:26.399032434Z llama_kv_cache:        CPU KV buffer size =   512.00 MiB
+2025-10-24T04:55:26.691965752Z llama_kv_cache: size =  512.00 MiB (  4096 cells,  32 layers,  1/1 seqs), K (f16):  256.00 MiB, V (f16):  256.00 MiB
+2025-10-24T04:55:26.695259497Z llama_context:        CPU compute buffer size =   300.01 MiB
+2025-10-24T04:55:26.695270754Z llama_context: graph nodes  = 1638
+2025-10-24T04:55:26.695273768Z llama_context: graph splits = 1
+2025-10-24T04:55:26.937794442Z time=2025-10-24T04:55:26.937Z level=INFO source=server.go:1310 msg="llama runner started in 361.59 seconds"
+2025-10-24T04:55:26.938248414Z time=2025-10-24T04:55:26.938Z level=INFO source=sched.go:482 msg="loaded runners" count=2
+2025-10-24T04:55:26.938378801Z time=2025-10-24T04:55:26.938Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:55:26.938853475Z time=2025-10-24T04:55:26.938Z level=INFO source=server.go:1310 msg="llama runner started in 361.59 seconds"
+2025-10-24T04:55:26.972531004Z time=2025-10-24T04:55:26.972Z level=INFO source=sched.go:545 msg="updated VRAM based on existing loaded models" gpu=0 library=cpu total="1889.8 GiB" available="1817.3 GiB"
+2025-10-24T04:55:27.196267653Z time=2025-10-24T04:55:27.196Z level=INFO source=server.go:216 msg="enabling flash attention"
+2025-10-24T04:55:27.198714874Z time=2025-10-24T04:55:27.196Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --ollama-engine --model /runpod-volume/ollama_models/blobs/sha256-6be6d66a3f546d8c19b130dc41dc24b2fc159f84ffbc76a0ee0676205083cf5a --port 37541"
+2025-10-24T04:55:27.200870476Z time=2025-10-24T04:55:27.200Z level=INFO source=server.go:676 msg="loading model" "model layers"=37 requested=-1
+2025-10-24T04:55:27.222145649Z time=2025-10-24T04:55:27.221Z level=INFO source=server.go:682 msg="system memory" total="1889.8 GiB" free="1817.3 GiB" free_swap="0 B"
+2025-10-24T04:55:27.235656213Z time=2025-10-24T04:55:27.234Z level=INFO source=runner.go:1332 msg="starting ollama engine"
+2025-10-24T04:55:27.240032716Z time=2025-10-24T04:55:27.239Z level=INFO source=runner.go:1367 msg="Server listening on 127.0.0.1:37541"
+2025-10-24T04:55:27.244533186Z time=2025-10-24T04:55:27.244Z level=INFO source=runner.go:1205 msg=load request="{Operation:fit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:true KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:55:27.338431243Z time=2025-10-24T04:55:27.338Z level=INFO source=ggml.go:134 msg="" architecture=gptoss file_type=MXFP4 name="" description="" num_tensors=687 num_key_values=32
+2025-10-24T04:55:27.340824112Z time=2025-10-24T04:55:27.338Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-24T04:55:27.351903649Z time=2025-10-24T04:55:27.351Z level=INFO source=runner.go:1205 msg=load request="{Operation:alloc LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:true KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:55:27.629606356Z time=2025-10-24T04:55:27.629Z level=INFO source=runner.go:1205 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:true KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T04:55:27.630095931Z time=2025-10-24T04:55:27.629Z level=INFO source=device.go:211 msg="model weights" device=CPU size="60.9 GiB"
+2025-10-24T04:55:27.630324325Z time=2025-10-24T04:55:27.630Z level=INFO source=device.go:222 msg="kv cache" device=CPU size="288.0 MiB"
+2025-10-24T04:55:27.630781383Z time=2025-10-24T04:55:27.630Z level=INFO source=device.go:233 msg="compute graph" device=CPU size="86.8 MiB"
+2025-10-24T04:55:27.630816135Z time=2025-10-24T04:55:27.630Z level=INFO source=device.go:238 msg="total memory" size="61.2 GiB"
+2025-10-24T04:55:27.630819391Z time=2025-10-24T04:55:27.630Z level=INFO source=sched.go:482 msg="loaded runners" count=3
+2025-10-24T04:55:27.631477390Z time=2025-10-24T04:55:27.631Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T04:55:27.631710140Z time=2025-10-24T04:55:27.629Z level=INFO source=ggml.go:480 msg="offloading 0 repeating layers to GPU"
+2025-10-24T04:55:27.631716430Z time=2025-10-24T04:55:27.629Z level=INFO source=ggml.go:484 msg="offloading output layer to CPU"
+2025-10-24T04:55:27.631719725Z time=2025-10-24T04:55:27.629Z level=INFO source=ggml.go:492 msg="offloaded 0/37 layers to GPU"
+2025-10-24T04:55:27.632059456Z time=2025-10-24T04:55:27.631Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-24T04:59:56.102695349Z [GIN] 2025/10/24 - 04:59:56 | 200 |         11m4s |       127.0.0.1 | POST     "/api/chat"
+2025-10-24T04:59:56.103266788Z _client.py          :1740 2025-10-24 04:59:56,103 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-24T05:00:22.135356543Z time=2025-10-24T05:00:22.135Z level=INFO source=server.go:1310 msg="llama runner started in 294.94 seconds"
+2025-10-24T05:00:22.135853239Z time=2025-10-24T05:00:22.135Z level=INFO source=sched.go:545 msg="updated VRAM based on existing loaded models" gpu=0 library=cpu total="1889.8 GiB" available="1822.0 GiB"
+2025-10-24T05:00:22.222971167Z llama_model_loader: loaded meta data with 29 key-value pairs and 724 tensors from /runpod-volume/ollama_models/blobs/sha256-de20d2cf2dc430b1717a8b07a9df029d651f3895dbffec4729a3902a6fe344c9 (version GGUF V3 (latest))
+2025-10-24T05:00:22.223012760Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T05:00:22.223016416Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T05:00:22.223018459Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T05:00:22.223020312Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 70B Instruct
+2025-10-24T05:00:22.223023397Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-24T05:00:22.223037197Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-24T05:00:22.223039511Z llama_model_loader: - kv   5:                         general.size_label str              = 70B
+2025-10-24T05:00:22.223042245Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-24T05:00:22.223044057Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-24T05:00:22.223048043Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-24T05:00:22.223049977Z llama_model_loader: - kv   9:                          llama.block_count u32              = 80
+2025-10-24T05:00:22.223051900Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-24T05:00:22.223053632Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 8192
+2025-10-24T05:00:22.223055385Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 28672
+2025-10-24T05:00:22.223057257Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 64
+2025-10-24T05:00:22.223059240Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-24T05:00:22.223061123Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-24T05:00:22.223064078Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T05:00:22.223065930Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-24T05:00:22.223067984Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-24T05:00:22.223069726Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-24T05:00:22.223071599Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-24T05:00:22.223073592Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-24T05:00:22.236962173Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-24T05:00:22.241418757Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T05:00:22.272600834Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-24T05:00:22.272627674Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-24T05:00:22.272630808Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-24T05:00:22.272632932Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-24T05:00:22.272635515Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-24T05:00:22.272637869Z llama_model_loader: - type  f32:  162 tensors
+2025-10-24T05:00:22.272640073Z llama_model_loader: - type q4_K:  441 tensors
+2025-10-24T05:00:22.272641805Z llama_model_loader: - type q5_K:   40 tensors
+2025-10-24T05:00:22.272643567Z llama_model_loader: - type q6_K:   81 tensors
+2025-10-24T05:00:22.272645290Z print_info: file format = GGUF V3 (latest)
+2025-10-24T05:00:22.272647123Z print_info: file type   = Q4_K - Medium
+2025-10-24T05:00:22.272649116Z print_info: file size   = 39.59 GiB (4.82 BPW)
+2025-10-24T05:00:22.433550663Z load: printing all EOG tokens:
+2025-10-24T05:00:22.433595612Z load:   - 128001 ('<|end_of_text|>')
+2025-10-24T05:00:22.433598726Z load:   - 128008 ('<|eom_id|>')
+2025-10-24T05:00:22.433609753Z load:   - 128009 ('<|eot_id|>')
+2025-10-24T05:00:22.433612417Z load: special tokens cache size = 256
+2025-10-24T05:00:22.473079395Z load: token to piece cache size = 0.7999 MB
+2025-10-24T05:00:22.473108890Z print_info: arch             = llama
+2025-10-24T05:00:22.473111974Z print_info: vocab_only       = 1
+2025-10-24T05:00:22.473114999Z print_info: model type       = ?B
+2025-10-24T05:00:22.473117613Z print_info: model params     = 70.55 B
+2025-10-24T05:00:22.473120317Z print_info: general.name     = Meta Llama 3.1 70B Instruct
+2025-10-24T05:00:22.473122961Z print_info: vocab type       = BPE
+2025-10-24T05:00:22.473125375Z print_info: n_vocab          = 128256
+2025-10-24T05:00:22.473127598Z print_info: n_merges         = 280147
+2025-10-24T05:00:22.473129901Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-24T05:00:22.473132275Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:22.473134588Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:22.473137232Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-24T05:00:22.473139636Z print_info: LF token         = 198 'Ċ'
+2025-10-24T05:00:22.473141949Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-24T05:00:22.473144303Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-24T05:00:22.473146606Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:22.473148980Z print_info: max token length = 256
+2025-10-24T05:00:22.473151363Z llama_model_load: vocab only - skipping tensors
+2025-10-24T05:00:22.504307701Z time=2025-10-24T05:00:22.503Z level=INFO source=server.go:400 msg="starting runner" cmd="/usr/local/bin/ollama runner --model /runpod-volume/ollama_models/blobs/sha256-de20d2cf2dc430b1717a8b07a9df029d651f3895dbffec4729a3902a6fe344c9 --port 46643"
+2025-10-24T05:00:22.536993368Z time=2025-10-24T05:00:22.536Z level=INFO source=server.go:505 msg="system memory" total="1889.8 GiB" free="1760.2 GiB" free_swap="0 B"
+2025-10-24T05:00:22.537163184Z time=2025-10-24T05:00:22.536Z level=INFO source=memory.go:36 msg="new model will fit in available VRAM across minimum required GPUs, loading" model=/runpod-volume/ollama_models/blobs/sha256-de20d2cf2dc430b1717a8b07a9df029d651f3895dbffec4729a3902a6fe344c9 library=cpu parallel=1 required="0 B" gpus=1
+2025-10-24T05:00:22.537969086Z time=2025-10-24T05:00:22.537Z level=INFO source=server.go:545 msg=offload library=cpu layers.requested=-1 layers.model=81 layers.offload=0 layers.split=[] memory.available="[1822.0 GiB]" memory.gpu_overhead="0 B" memory.required.full="41.4 GiB" memory.required.partial="0 B" memory.required.kv="1.2 GiB" memory.required.allocations="[41.4 GiB]" memory.weights.total="39.0 GiB" memory.weights.repeating="38.2 GiB" memory.weights.nonrepeating="822.0 MiB" memory.graph.full="584.0 MiB" memory.graph.partial="1.1 GiB"
+2025-10-24T05:00:22.566898193Z time=2025-10-24T05:00:22.563Z level=INFO source=runner.go:893 msg="starting go runner"
+2025-10-24T05:00:22.571040374Z time=2025-10-24T05:00:22.564Z level=INFO source=ggml.go:104 msg=system CPU.0.LLAMAFILE=1 compiler=cgo(gcc)
+2025-10-24T05:00:22.573900115Z time=2025-10-24T05:00:22.573Z level=INFO source=runner.go:929 msg="Server listening on 127.0.0.1:46643"
+2025-10-24T05:00:22.583339845Z time=2025-10-24T05:00:22.583Z level=INFO source=server.go:1272 msg="waiting for llama runner to start responding"
+2025-10-24T05:00:22.583581178Z time=2025-10-24T05:00:22.582Z level=INFO source=runner.go:828 msg=load request="{Operation:commit LoraPath:[] Parallel:1 BatchSize:512 FlashAttention:false KvSize:4096 KvCacheType: NumThreads:252 GPULayers:[] MultiUserCache:false ProjectorPath: MainGPU:0 UseMmap:false}"
+2025-10-24T05:00:22.583728600Z time=2025-10-24T05:00:22.583Z level=INFO source=server.go:1306 msg="waiting for server to become available" status="llm server loading model"
+2025-10-24T05:00:22.700857181Z llama_model_loader: loaded meta data with 29 key-value pairs and 724 tensors from /runpod-volume/ollama_models/blobs/sha256-de20d2cf2dc430b1717a8b07a9df029d651f3895dbffec4729a3902a6fe344c9 (version GGUF V3 (latest))
+2025-10-24T05:00:22.700955199Z llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+2025-10-24T05:00:22.701070803Z llama_model_loader: - kv   0:                       general.architecture str              = llama
+2025-10-24T05:00:22.701106917Z llama_model_loader: - kv   1:                               general.type str              = model
+2025-10-24T05:00:22.701516023Z llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 70B Instruct
+2025-10-24T05:00:22.701530705Z llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+2025-10-24T05:00:22.701534040Z llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+2025-10-24T05:00:22.701536805Z llama_model_loader: - kv   5:                         general.size_label str              = 70B
+2025-10-24T05:00:22.701540039Z llama_model_loader: - kv   6:                            general.license str              = llama3.1
+2025-10-24T05:00:22.701542663Z llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+2025-10-24T05:00:22.701545808Z llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+2025-10-24T05:00:22.701647340Z llama_model_loader: - kv   9:                          llama.block_count u32              = 80
+2025-10-24T05:00:22.701650044Z llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+2025-10-24T05:00:22.701685357Z llama_model_loader: - kv  11:                     llama.embedding_length u32              = 8192
+2025-10-24T05:00:22.701736344Z llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 28672
+2025-10-24T05:00:22.701777856Z llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 64
+2025-10-24T05:00:22.701827442Z llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+2025-10-24T05:00:22.701890256Z llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+2025-10-24T05:00:22.702036596Z llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+2025-10-24T05:00:22.702080571Z llama_model_loader: - kv  17:                          general.file_type u32              = 15
+2025-10-24T05:00:22.702126782Z llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+2025-10-24T05:00:22.702180673Z llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+2025-10-24T05:00:22.702227673Z llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+2025-10-24T05:00:22.702272691Z llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+2025-10-24T05:00:22.742329206Z llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+2025-10-24T05:00:22.748937107Z llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+2025-10-24T05:00:22.804482221Z llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+2025-10-24T05:00:22.805385379Z llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+2025-10-24T05:00:22.805466010Z llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+2025-10-24T05:00:22.805486231Z llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+2025-10-24T05:00:22.805489966Z llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+2025-10-24T05:00:22.805493031Z llama_model_loader: - type  f32:  162 tensors
+2025-10-24T05:00:22.805495294Z llama_model_loader: - type q4_K:  441 tensors
+2025-10-24T05:00:22.805504328Z llama_model_loader: - type q5_K:   40 tensors
+2025-10-24T05:00:22.805506911Z llama_model_loader: - type q6_K:   81 tensors
+2025-10-24T05:00:22.805541824Z print_info: file format = GGUF V3 (latest)
+2025-10-24T05:00:22.805813683Z print_info: file type   = Q4_K - Medium
+2025-10-24T05:00:22.805819612Z print_info: file size   = 39.59 GiB (4.82 BPW)
+2025-10-24T05:00:23.008729150Z load: printing all EOG tokens:
+2025-10-24T05:00:23.009718378Z load:   - 128001 ('<|end_of_text|>')
+2025-10-24T05:00:23.009773021Z load:   - 128008 ('<|eom_id|>')
+2025-10-24T05:00:23.009776938Z load:   - 128009 ('<|eot_id|>')
+2025-10-24T05:00:23.009810437Z load: special tokens cache size = 256
+2025-10-24T05:00:23.059166281Z load: token to piece cache size = 0.7999 MB
+2025-10-24T05:00:23.059242737Z print_info: arch             = llama
+2025-10-24T05:00:23.059245861Z print_info: vocab_only       = 0
+2025-10-24T05:00:23.059249186Z print_info: n_ctx_train      = 131072
+2025-10-24T05:00:23.059252081Z print_info: n_embd           = 8192
+2025-10-24T05:00:23.059254765Z print_info: n_layer          = 80
+2025-10-24T05:00:23.059257238Z print_info: n_head           = 64
+2025-10-24T05:00:23.059259562Z print_info: n_head_kv        = 8
+2025-10-24T05:00:23.059261865Z print_info: n_rot            = 128
+2025-10-24T05:00:23.059264189Z print_info: n_swa            = 0
+2025-10-24T05:00:23.059266492Z print_info: is_swa_any       = 0
+2025-10-24T05:00:23.059268856Z print_info: n_embd_head_k    = 128
+2025-10-24T05:00:23.059271190Z print_info: n_embd_head_v    = 128
+2025-10-24T05:00:23.059273523Z print_info: n_gqa            = 8
+2025-10-24T05:00:23.059275857Z print_info: n_embd_k_gqa     = 1024
+2025-10-24T05:00:23.059321234Z print_info: n_embd_v_gqa     = 1024
+2025-10-24T05:00:23.059324029Z print_info: f_norm_eps       = 0.0e+00
+2025-10-24T05:00:23.059326332Z print_info: f_norm_rms_eps   = 1.0e-05
+2025-10-24T05:00:23.059328656Z print_info: f_clamp_kqv      = 0.0e+00
+2025-10-24T05:00:23.059330969Z print_info: f_max_alibi_bias = 0.0e+00
+2025-10-24T05:00:23.059333363Z print_info: f_logit_scale    = 0.0e+00
+2025-10-24T05:00:23.059335807Z print_info: f_attn_scale     = 0.0e+00
+2025-10-24T05:00:23.059338340Z print_info: n_ff             = 28672
+2025-10-24T05:00:23.059340663Z print_info: n_expert         = 0
+2025-10-24T05:00:23.059433923Z print_info: n_expert_used    = 0
+2025-10-24T05:00:23.059481505Z print_info: causal attn      = 1
+2025-10-24T05:00:23.059495416Z print_info: pooling type     = 0
+2025-10-24T05:00:23.059512972Z print_info: rope type        = 0
+2025-10-24T05:00:23.059525040Z print_info: rope scaling     = linear
+2025-10-24T05:00:23.059538021Z print_info: freq_base_train  = 500000.0
+2025-10-24T05:00:23.059549959Z print_info: freq_scale_train = 1
+2025-10-24T05:00:23.059564571Z print_info: n_ctx_orig_yarn  = 131072
+2025-10-24T05:00:23.059575497Z print_info: rope_finetuned   = unknown
+2025-10-24T05:00:23.059590510Z print_info: model type       = 70B
+2025-10-24T05:00:23.059638722Z print_info: model params     = 70.55 B
+2025-10-24T05:00:23.059654716Z print_info: general.name     = Meta Llama 3.1 70B Instruct
+2025-10-24T05:00:23.059693875Z print_info: vocab type       = BPE
+2025-10-24T05:00:23.059711020Z print_info: n_vocab          = 128256
+2025-10-24T05:00:23.059729468Z print_info: n_merges         = 280147
+2025-10-24T05:00:23.059735768Z print_info: BOS token        = 128000 '<|begin_of_text|>'
+2025-10-24T05:00:23.059741506Z print_info: EOS token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:23.059755868Z print_info: EOT token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:23.059827486Z print_info: EOM token        = 128008 '<|eom_id|>'
+2025-10-24T05:00:23.059830179Z print_info: LF token         = 198 'Ċ'
+2025-10-24T05:00:23.059832764Z print_info: EOG token        = 128001 '<|end_of_text|>'
+2025-10-24T05:00:23.059836029Z print_info: EOG token        = 128008 '<|eom_id|>'
+2025-10-24T05:00:23.059838713Z print_info: EOG token        = 128009 '<|eot_id|>'
+2025-10-24T05:00:23.059851282Z print_info: max token length = 256
+2025-10-24T05:00:23.059854948Z load_tensors: loading model tensors, this can take a while... (mmap = false)
+2025-10-24T05:00:23.066188354Z load_tensors:          CPU model buffer size = 40543.11 MiB

@@ -58,21 +58,8 @@ async def _generate_drafts(state: AgentState) -> AgentState:
     input_context = _extract_section_content(uo_block, "Input")
     rag_query = f"Find the specific procedure or list of items for the '{section}' section of the unit operation '{uo_id}: {uo_name}' related to the experiment: {query}"
 
-    rag_context = "No relevant context found in the SOPs."
-    try:
-        pipeline = rag_module.get_rag_pipeline()
-    except Exception as exc:  # pylint: disable=broad-except
-        logger.exception("Failed to acquire RAG pipeline: %s", exc)
-        pipeline = None
-
-    if pipeline and hasattr(pipeline, "retrieve_context"):
-        try:
-            context_docs = pipeline.retrieve_context(rag_query, k=3)
-            rag_context = pipeline.format_context_for_prompt(context_docs)
-        except Exception as exc:  # pylint: disable=broad-except
-            logger.exception("RAG context retrieval failed: %s", exc)
-    else:
-        logger.warning("RAG pipeline unavailable; continuing without SOP context.")
+    context_docs = rag_module.rag_pipeline.retrieve_context(rag_query, k=3)
+    rag_context = rag_module.rag_pipeline.format_context_for_prompt(context_docs)
 
     base_user_prompt = f"""
 - **Experiment Goal**: '{query}'
@@ -109,28 +96,15 @@ async def _generate_drafts(state: AgentState) -> AgentState:
 6. 코드, 의사코드, 템플릿 플레이스홀더(`def ...`, `{{ ... }}`, `if (...) {{`, `Changes:` 등)를 출력하지 말고, 반드시 실험 절차 또는 자원 설명으로만 작성합니다.
 """
 
-    prompt_preview = base_user_prompt[:400].replace("\n", " ")
-    logger.info(
-        "Draft prompt prepared | uo=%s | section=%s | chars=%d",
-        uo_id,
-        section,
-        len(base_user_prompt)
-    )
-    logger.debug("Draft prompt preview: %s%s", prompt_preview, "..." if len(base_user_prompt) > 400 else "")
-
 
     system_prompt = "You are a specialized scientific assistant. Your task is to generate a comprehensive and well-structured response for a specific section of a lab note, using the provided context. The response should be clear, detailed, and directly applicable to the experiment. Your answer MUST be only the list or method itself, without any extra conversation or explanation."
 
-    configured_models = [
+    models_to_use = [
         os.getenv("LLM_MODEL", "llama3.1:8b"),
         "mixtral",
         "llama3.1:70b",
-        os.getenv("LABNOTE_FALLBACK_MODEL", "llama3.1:70b"),
+        "gpt-oss:120b",
     ]
-    models_to_use: List[str] = []
-    for model_name in configured_models:
-        if model_name and model_name not in models_to_use:
-            models_to_use.append(model_name)
     tasks = [
         call_llm_api(system_prompt, base_user_prompt, model_name)
         for model_name in models_to_use
@@ -221,7 +195,7 @@ You are a highly experienced principal investigator reviewing lab notes. Evaluat
     highest_score = best_draft_eval.get('score', 0)
     
     # 품질 기준(8.5점)을 통과했는지 확인
-    if highest_score >= 8.0:
+    if highest_score >= 8.5:
         logger.info(f"Supervisor: Quality threshold passed with score {highest_score}. Finalizing options.")
         # 고품질 초안들만 필터링하여 사용자에게 제공
         high_quality_drafts = [
@@ -325,6 +299,5 @@ async def run_agent_team(
     return {
         "uo_id": uo_id,
         "section": section,
-        "options": final_state.get('final_options', []),
-        "feedback": final_state.get('feedback')
+        "options": final_state.get('final_options', [])
     }
