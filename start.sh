@@ -31,7 +31,7 @@ export EMBEDDING_MODEL="nomic-embed-text"
 export OLLAMA_USE_GPU=1
 export OLLAMA_NUM_GPU="${OLLAMA_NUM_GPU:-1}"
 export OLLAMA_GPU_DEVICE="${OLLAMA_GPU_DEVICE:-0}"
-export OLLAMA_LLM_LIBRARY="${OLLAMA_LLM_LIBRARY:-cublas}"
+export OLLAMA_LLM_LIBRARY="${OLLAMA_LLM_LIBRARY:-cuda}"
 export OLLAMA_FLASH_ATTENTION="${OLLAMA_FLASH_ATTENTION:-true}"
 export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-2}"
 export OLLAMA_KEEP_ALIVE="${OLLAMA_KEEP_ALIVE:-5m}"
@@ -49,13 +49,26 @@ export OLLAMA_MODELS=/runpod-volume/ollama_models
 export REDIS_URL="redis://localhost:6379/0"
 
 REDIS_DATA_DIR="/runpod-volume/redis-data"
+DEFAULT_REDIS_DIR="/var/lib/redis-stack"
 mkdir -p "${REDIS_DATA_DIR}"
-mkdir -p /var/lib/redis-stack
 
-# 기존 Redis 스냅샷이 존재하면 복원합니다.
-if [ -f "${REDIS_DATA_DIR}/dump.rdb" ]; then
-    echo ">>> Restoring Redis snapshot from persistent storage."
-    cp "${REDIS_DATA_DIR}/dump.rdb" /var/lib/redis-stack/dump.rdb
+# Redis 기본 데이터 디렉터리를 영속 스토리지에 바인딩합니다.
+if [ ! -L "${DEFAULT_REDIS_DIR}" ]; then
+    if [ -d "${DEFAULT_REDIS_DIR}" ] && [ "$(ls -A "${DEFAULT_REDIS_DIR}")" ]; then
+        echo ">>> Migrating existing Redis data into persistent storage."
+        cp -a "${DEFAULT_REDIS_DIR}/." "${REDIS_DATA_DIR}/"
+    fi
+    rm -rf "${DEFAULT_REDIS_DIR}"
+    ln -s "${REDIS_DATA_DIR}" "${DEFAULT_REDIS_DIR}"
+    echo ">>> Redis data directory bound to ${REDIS_DATA_DIR}."
+else
+    echo ">>> Redis data directory already linked to persistent storage."
+fi
+
+if [ -f "${DEFAULT_REDIS_DIR}/dump.rdb" ]; then
+    echo ">>> Detected existing Redis snapshot at ${DEFAULT_REDIS_DIR}/dump.rdb."
+else
+    echo ">>> No Redis snapshot found; index will be created on first use."
 fi
 
 # 모델 저장 디렉토리 생성
@@ -171,18 +184,29 @@ else
     echo ">>> Found existing ${ENV_FILE}; keeping current configuration."
 fi
 
+if [ "${FORCE_RAG_REINDEX:-0}" = "1" ]; then
+    echo ">>> FORCE_RAG_REINDEX=1 detected. Rebuilding Redis vector index..."
+    REINDEX_ARGS=()
+    if [ "${FORCE_RAG_KEEP_DOCUMENTS:-0}" = "1" ]; then
+        REINDEX_ARGS+=(--keep-documents)
+    fi
+    if ! /opt/venv/bin/python /app/labnote-ai-backend/scripts/rebuild_rag_index.py "${REINDEX_ARGS[@]}"; then
+        echo "❌ RAG index rebuild failed. Aborting startup." >&2
+        exit 1
+    fi
+fi
+
 # 백엔드 메인 API 서버 실행 (포그라운드)
 # 이 프로세스가 컨테이너의 메인 프로세스가 되어 요청을 처리합니다.
 echo "Starting LabNote AI Backend server on port 8000 (foreground)..."
 cd /app/labnote-ai-backend
 
 backup_redis_snapshot() {
-    echo ">>> Saving Redis snapshot to persistent storage..."
+    echo ">>> Requesting Redis to persist in-memory data to disk..."
     if redis-cli SAVE >/dev/null 2>&1; then
-        cp /var/lib/redis-stack/dump.rdb "${REDIS_DATA_DIR}/dump.rdb"
-        echo ">>> Redis snapshot saved to ${REDIS_DATA_DIR}/dump.rdb."
+        echo ">>> Redis snapshot saved under ${DEFAULT_REDIS_DIR}/dump.rdb."
     else
-        echo ">>> WARNING: redis-cli SAVE failed; snapshot not updated."
+        echo ">>> WARNING: redis-cli SAVE failed; snapshot may be outdated."
     fi
 }
 

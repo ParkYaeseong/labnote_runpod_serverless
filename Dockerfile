@@ -35,7 +35,8 @@ RUN /opt/venv/bin/pip install --no-cache-dir runpod
 
 # 7. 시작 스크립트 복사 및 실행 권한 부여
 COPY start.sh .
-RUN chmod +x ./start.sh
+COPY rebuild_rag_index.sh .
+RUN chmod +x ./start.sh ./rebuild_rag_index.sh
 
 # 8. 포트 노출 (FastAPI 백엔드 포트)
 EXPOSE 8000

@@ -5,6 +5,9 @@
 
 FROM redis/redis-stack-server:latest AS redis_stack
 
+# Ollama 공식 이미지에서 GPU 지원 바이너리와 런타임 라이브러리를 복사합니다.
+FROM ollama/ollama:0.12.6 AS ollama_gpu
+
 # --- Stage 1: Builder (Python 의존성 준비) ---
 FROM runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404 AS builder
 
@@ -34,42 +37,15 @@ RUN apt-get update && \
 COPY --from=redis_stack /opt/redis-stack /opt/redis-stack
 RUN mkdir -p /usr/lib/redis && ln -s /opt/redis-stack/lib/modules /usr/lib/redis/modules
 ENV PATH="/opt/redis-stack/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/opt/redis-stack/lib:/usr/local/lib/ollama:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/opt/redis-stack/lib:/usr/lib/ollama:${LD_LIBRARY_PATH}"
 
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-# 2. Ollama 수동 설치 (압축 파일 다운로드 및 추출)
-RUN set -euxo pipefail; \
-    OLLAMA_VERSION="v0.12.6"; \
-    OLLAMA_TGZ_URL="https://github.com/ollama/ollama/releases/download/${OLLAMA_VERSION}/ollama-linux-amd64.tgz"; \
-    TEMP_DIR=$(mktemp -d); \
-    echo ">>> Ollama 압축 파일 다운로드 시도..."; \
-    if ! curl -fsSL "${OLLAMA_TGZ_URL}" -o "${TEMP_DIR}/ollama.tgz"; then \
-        curl -fsSL --insecure "${OLLAMA_TGZ_URL}" -o "${TEMP_DIR}/ollama.tgz"; \
-    fi; \
-    tar -xzf "${TEMP_DIR}/ollama.tgz" -C "${TEMP_DIR}"; \
-    INSTALL_ROOT="${TEMP_DIR}"; \
-    if [ -f "${INSTALL_ROOT}/ollama" ]; then \
-        INSTALL_BIN="${INSTALL_ROOT}/ollama"; \
-    elif [ -f "${INSTALL_ROOT}/bin/ollama" ]; then \
-        INSTALL_BIN="${INSTALL_ROOT}/bin/ollama"; \
-    else \
-        INSTALL_BIN=$(find "${INSTALL_ROOT}" -maxdepth 4 -type f -name ollama | head -n 1); \
-    fi; \
-    if [ -z "${INSTALL_BIN}" ]; then \
-        echo "!!! 오류: Ollama 바이너리를 찾을 수 없습니다."; \
-        ls -R "${INSTALL_ROOT}"; \
-        exit 1; \
-    fi; \
-    install -Dm755 "${INSTALL_BIN}" /usr/local/bin/ollama; \
-    if [ -d "${INSTALL_ROOT}/lib" ]; then \
-        rm -rf /usr/local/lib/ollama; \
-        mkdir -p /usr/local/lib/ollama; \
-        cp -r "${INSTALL_ROOT}/lib/." /usr/local/lib/ollama/; \
-    fi; \
-    rm -rf "${TEMP_DIR}"; \
-    ollama --version; \
-    echo ">>> Ollama 수동 설치 완료."
+# 2. Ollama GPU 런타임 설치 (공식 이미지에서 복사)
+COPY --from=ollama_gpu /usr/bin/ollama /usr/bin/ollama
+COPY --from=ollama_gpu /usr/lib/ollama /usr/lib/ollama
+
+RUN ollama --version && ls -la /usr/lib/ollama
 
 # 3. Python 가상 환경 복사
 ENV VENV_PATH=/opt/venv

@@ -5,6 +5,26 @@
 # 스크립트 실행 중 오류가 발생하면 즉시 중단합니다.
 set -e
 
+NO_CACHE_ARGS=()
+POSITIONAL_TAG=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --no-cache)
+            NO_CACHE_ARGS+=(--no-cache)
+            shift
+            ;;
+        *)
+            if [ -z "$POSITIONAL_TAG" ]; then
+                POSITIONAL_TAG="$1"
+            else
+                echo "❌ 알 수 없는 추가 인자: $1" >&2
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
 # TLS 인증서 번들을 명시적으로 지정하여 사설 루트 인증서가 있는 환경에서도 curl이 실패하지 않도록 합니다.
 export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
@@ -17,8 +37,8 @@ BASE_IMAGE_NAME="labnote-ai-base"
 APP_IMAGE_NAME="labnote-ai-app"
 
 # 버전 태그 설정
-if [ -n "$1" ]; then
-    TAG="$1"
+if [ -n "$POSITIONAL_TAG" ]; then
+    TAG="$POSITIONAL_TAG"
 else
     TAG=$(date +%Y%m%d-%H%M%S)
     echo "⚠️ 버전 태그가 제공되지 않았습니다. 현재 시간($TAG)을 태그로 사용합니다."
@@ -43,12 +63,12 @@ fi
 echo "🚀 이미지 빌드 및 푸시를 시작합니다..."
 
 # --- 1. 베이스 이미지 빌드 및 푸시 ---
-#echo "--- Step 1/2: 베이스 이미지(${FULL_BASE_IMAGE_NAME}) 빌드 및 푸시 ---"
-#DOCKER_BUILDKIT=1 docker buildx build \
-#    -f Dockerfile.base \
-#    -t "${FULL_BASE_IMAGE_NAME}" \
-#    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
-#    --push .
+echo "--- Step 1/2: 베이스 이미지(${FULL_BASE_IMAGE_NAME}) 빌드 및 푸시 ---"
+DOCKER_BUILDKIT=1 docker buildx build \
+    -f Dockerfile.base \
+    -t "${FULL_BASE_IMAGE_NAME}" \
+    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
+    --push .
 
 # --- 2. 최종 애플리케이션 이미지 빌드 및 푸시 ---
 echo "--- Step 2/2: 최종 앱 이미지(${FULL_APP_IMAGE_NAME}) 빌드 및 푸시 ---"
@@ -58,6 +78,7 @@ DOCKER_BUILDKIT=1 docker buildx build \
     --build-arg BASE_IMAGE_NAME=${BASE_IMAGE_NAME} \
     --build-arg BASE_IMAGE_TAG=latest \
     -f Dockerfile \
+    "${NO_CACHE_ARGS[@]}" \
     -t "${FULL_APP_IMAGE_NAME}" \
     -t "${LATEST_APP_IMAGE_NAME}" \
     --push .
