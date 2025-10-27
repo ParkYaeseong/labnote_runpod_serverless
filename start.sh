@@ -38,7 +38,7 @@ export OLLAMA_KEEP_ALIVE="${OLLAMA_KEEP_ALIVE:-5m}"
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export NVIDIA_VISIBLE_DEVICES="${NVIDIA_VISIBLE_DEVICES:-all}"
 export NVIDIA_DRIVER_CAPABILITIES="${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}"
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/ollama:/usr/lib/ollama/cuda_v12:/usr/lib/ollama/cuda_v13:${LD_LIBRARY_PATH}"
 export OLLAMA_ACCELERATE="${OLLAMA_ACCELERATE:-1}"
 
 # Runpod의 Network Storage 경로를 OLLAMA_MODELS로 지정합니다.
