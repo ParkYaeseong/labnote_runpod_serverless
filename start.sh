@@ -44,6 +44,7 @@ export OLLAMA_ACCELERATE="${OLLAMA_ACCELERATE:-1}"
 # Runpod의 Network Storage 경로를 OLLAMA_MODELS로 지정합니다.
 # 이 경로는 Runpod Serverless Endpoint 설정의 Volume Mount Path와 일치해야 합니다. (예: /runpod-volume)
 export OLLAMA_MODELS=/runpod-volume/ollama_models
+export OLLAMA_LIBRARY_PATH="/usr/lib/ollama"
 
 # Redis 서버 연결을 위한 환경 변수 설정
 export REDIS_URL="redis://localhost:6379/0"
