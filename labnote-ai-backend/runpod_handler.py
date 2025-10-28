@@ -48,8 +48,25 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         else:
             response = client.request(method, normalized_path, json=body or {})
 
+        # Raise for HTTP errors first
         response.raise_for_status()
-        return response.json()
+
+        # Handle empty/No Content responses gracefully (e.g., 204)
+        if response.status_code == 204 or not getattr(response, "content", b""):
+            return {"status": "no_content", "status_code": response.status_code}
+
+        # Prefer JSON when server indicates JSON
+        content_type = (response.headers.get("content-type") or "").lower()
+        if "application/json" in content_type:
+            return response.json()
+
+        # Fallback: return textual body
+        try:
+            return {"status": "ok", "status_code": response.status_code, "body": response.text}
+        except Exception:
+            # As a last resort, return raw bytes length to stay JSON-serializable
+            raw = getattr(response, "content", b"")
+            return {"status": "ok", "status_code": response.status_code, "bytes": len(raw)}
     except Exception as exc:
         # TestClient는 HTTP 에러를 직접 발생시키므로 httpx.HTTPStatusError가 필요 없습니다.
         error_detail = getattr(exc, 'detail', str(exc))

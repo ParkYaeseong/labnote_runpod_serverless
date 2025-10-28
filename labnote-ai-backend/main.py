@@ -1223,24 +1223,36 @@ def _run_git_operations(token: str, repo_url: str, local_path_str: str, preferen
             except Exception:
                 pass
     logger.info("Fetching latest changes from DPO repository...")
-    origin.fetch()
+    origin.fetch(prune=True)
 
-    # Detect default branch (prefer main, then master, else first remote head)
-    remote_heads = [getattr(r, 'remote_head', None) for r in origin.refs]
-    remote_heads = [h for h in remote_heads if h]
+    # Detect default branch from remote HEAD; fallback to main/master/first
     target_branch = None
-    for cand in ("main", "master"):
-        if cand in remote_heads:
-            target_branch = cand
-            break
-    if not target_branch and remote_heads:
-        target_branch = remote_heads[0]
+    try:
+        # e.g. origin/HEAD -> origin/main
+        target_branch = origin.refs.HEAD.reference.remote_head  # type: ignore[attr-defined]
+    except Exception:
+        pass
+    if not target_branch:
+        remote_heads = [getattr(r, 'remote_head', None) for r in origin.refs]
+        remote_heads = [h for h in remote_heads if h]
+        for cand in ("main", "master"):
+            if cand in remote_heads:
+                target_branch = cand
+                break
+        if not target_branch and remote_heads:
+            target_branch = remote_heads[0]
 
     if target_branch:
-        logger.info(f"Resetting local branch to match origin/{target_branch}...")
-        repo.git.reset('--hard', f'origin/{target_branch}')
+        # Ensure we are on a real local branch tracking the remote
+        logger.info(f"Checking out local branch '{target_branch}' from origin/{target_branch}...")
+        repo.git.checkout('-B', target_branch, f'origin/{target_branch}')
+        # Set upstream to avoid detached HEAD and simplify pushes
+        try:
+            repo.git.branch('--set-upstream-to', f'origin/{target_branch}', target_branch)
+        except Exception:
+            pass
     else:
-        logger.warning("No remote branches found on origin; proceeding without hard reset.")
+        logger.warning("No remote branches found on origin; staying on current HEAD.")
 
     # Write preference JSON
     data_dir = local_path / "data"
@@ -1255,7 +1267,11 @@ def _run_git_operations(token: str, repo_url: str, local_path_str: str, preferen
     repo.index.add([str(file_path.resolve())])
     repo.index.commit(commit_message)
     logger.info("Pushing DPO data to remote repository...")
-    origin.push()
+    if target_branch:
+        # Push current HEAD explicitly to the target branch to handle edge cases
+        origin.push(refspec=f'HEAD:refs/heads/{target_branch}')
+    else:
+        origin.push()
     logger.info("Successfully pushed DPO data to Git.")
 
 async def _save_dpo_data(
@@ -1480,7 +1496,48 @@ async def record_preference(request: PreferenceRequest):
 
 @app.post("/record_completion_feedback", status_code=204)
 async def record_completion_feedback(request: CompletionFeedbackRequest):
-    pass
+    try:
+        # Derive optional unit operation id if present in the content
+        uo_match = re.search(r"^###\s*\[(U[A-Z]{2,3}\d{3,4}).*?\]", request.file_content, re.MULTILINE)
+        unit_operation_id = uo_match.group(1) if uo_match else None
+
+        # Build a completion-style payload compatible with the DPO repo schema
+        prompt = (
+            f"Completion event captured for {request.completion_type}.\n"
+            f"- Workflow Title: {request.workflow_title}\n"
+            f"- Experiment Topic: {request.experiment_topic}"
+        )
+
+        preference_data = {
+            "prompt": prompt,
+            "chosen": request.file_content,
+            "rejected": [],
+            "metadata": {
+                "source": "completion_event",
+                "completion_type": request.completion_type,
+                "workflow_title": request.workflow_title,
+                "experiment_topic": request.experiment_topic,
+                "unit_operation_id": unit_operation_id,
+                "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            },
+        }
+
+        repo_url = os.getenv("DPO_TRAINER_REPO_URL")
+        token = os.getenv("GIT_AUTH_TOKEN")
+        local_path_str = os.getenv("DPO_REPO_LOCAL_PATH", "./labnote-dpo-trainer-data")
+        if not repo_url or not token:
+            raise HTTPException(status_code=500, detail="DPO Git repository is not configured on the server.")
+
+        commit_message = f"chore: record {request.completion_type} completion for '{request.workflow_title}'"
+        await asyncio.to_thread(
+            _run_git_operations, token, repo_url, local_path_str, preference_data, commit_message
+        )
+    except git.exc.GitCommandError as e:
+        logger.error(f"Git command failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to push completion data to Git repository: {e.stderr}")
+    except Exception as e:
+        logger.error(f"Error recording completion feedback: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="An internal error occurred while recording completion feedback.")
 
 @app.post("/record_git_feedback", status_code=204)
 async def record_git_feedback(request: GitFeedbackRequest):

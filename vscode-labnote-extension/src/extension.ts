@@ -487,12 +487,8 @@ async function updateReadmeOnWorkflowSave(workflowDoc: vscode.TextDocument) {
         let originalContent = readmeDoc.getText();
         let newContent = originalContent;
 
-        // 1. End_date에 따른 체크박스 업데이트
+        // 1. 체크박스 자동 변경은 비활성화 (수동으로만 체크하도록 유지)
         const escapedFileName = workflowFileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        if (frontMatter.end_date) {
-            const checkboxRegex = new RegExp(`^(\\[ \\])(.*\\.\\/${escapedFileName}\\))`, 'm');
-            newContent = newContent.replace(checkboxRegex, `[x]$2`);
-        }
 
         // 2. Title 변경에 따른 링크 텍스트 업데이트
         const titleRegex = new RegExp(`^(\\[[ x]\\] \\[)(.*?)(\\]\\(\\.\\/${escapedFileName}\\))`, 'm');
@@ -1452,6 +1448,17 @@ async function reorderWorkflowFiles(readmePath: string) {
                 .filter(f => /^\d{3}_.+\.md$/i.test(f) && f.toLowerCase() !== 'readme.md')
                 .sort();
 
+            // 현재 README 섹션의 체크 상태를 보존하기 위해 파일명 -> 체크박스 상태 매핑을 먼저 추출
+            const existingSection = sectionMatch[2] || '';
+            const checkboxStateByFile = new Map<string, string>(); // fileName -> "[x]" | "[ ]"
+            const lineRegex = /^\s*(\[[ x]\])\s*\[[^\]]*\]\(\.\/([^\)\s]+)\)/;
+            for (const line of existingSection.split(/\r?\n/)) {
+                const m = line.match(lineRegex);
+                if (m) {
+                    checkboxStateByFile.set(m[2], m[1]);
+                }
+            }
+
             const newLinkLines = reorderedFiles.map(fileName => {
                 const filePath = path.join(dir, fileName);
                 let frontMatter = null;
@@ -1467,8 +1474,7 @@ async function reorderWorkflowFiles(readmePath: string) {
                     ? `${seq} ${frontMatter.title}`
                     : `${seq} ${path.basename(fileName, '.md').substring(4).replace(/_/g, ' ')}`;
 
-                const completed = Boolean(frontMatter?.end_date && frontMatter.end_date.trim() !== '');
-                const checkbox = completed ? '[x]' : '[ ]';
+                const checkbox = checkboxStateByFile.get(fileName) ?? '[ ]';
                 return `${checkbox} [${humanReadableName}](./${fileName})`;
             });
 

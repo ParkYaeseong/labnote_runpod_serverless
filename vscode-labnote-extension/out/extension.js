@@ -404,7 +404,7 @@ async function updateReadmeOnWorkflowSave(workflowDoc) {
         let newContent = originalContent;
         // 1. End_date에 따른 체크박스 업데이트
         const escapedFileName = workflowFileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        if (frontMatter.end_date) {
+        if (false && frontMatter.end_date) {
             const checkboxRegex = new RegExp(`^(\\[ \\])(.*\\.\\/${escapedFileName}\\))`, 'm');
             newContent = newContent.replace(checkboxRegex, `[x]$2`);
         }
@@ -1235,6 +1235,16 @@ async function reorderWorkflowFiles(readmePath) {
             const reorderedFiles = fs.readdirSync(dir)
                 .filter(f => /^\d{3}_.+\.md$/i.test(f) && f.toLowerCase() !== 'readme.md')
                 .sort();
+            // Preserve existing checkbox states from README section
+            const existingSection = sectionMatch[2] || '';
+            const checkboxStateByFile = new Map();
+            const lineRegex = /^\s*(\[[ x]\])\s*\[[^\]]*\]\(\.\/([^\)\s]+)\)/;
+            for (const line of existingSection.split(/\r?\n/)) {
+                const m = line.match(lineRegex);
+                if (m) {
+                    checkboxStateByFile.set(m[2], m[1]);
+                }
+            }
             const newLinkLines = reorderedFiles.map(fileName => {
                 const filePath = path.join(dir, fileName);
                 let frontMatter = null;
@@ -1249,8 +1259,7 @@ async function reorderWorkflowFiles(readmePath) {
                 const humanReadableName = frontMatter?.title
                     ? `${seq} ${frontMatter.title}`
                     : `${seq} ${path.basename(fileName, '.md').substring(4).replace(/_/g, ' ')}`;
-                const completed = Boolean(frontMatter?.end_date && frontMatter.end_date.trim() !== '');
-                const checkbox = completed ? '[x]' : '[ ]';
+                const checkbox = checkboxStateByFile.get(fileName) ?? '[ ]';
                 return `${checkbox} [${humanReadableName}](./${fileName})`;
             });
             const replacement = newLinkLines.length > 0 ? `${newLinkLines.join('\n')}\n\n` : '\n\n';
