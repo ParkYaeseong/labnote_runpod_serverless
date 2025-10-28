@@ -21,6 +21,7 @@ from typing import Optional, List, Dict, Any, Union, Tuple, Set
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from pathlib import Path
+from urllib.parse import urlparse, urlunparse
 from rapidfuzz import fuzz
 import git
 from fastapi.middleware.cors import CORSMiddleware
@@ -1170,41 +1171,89 @@ def _init_feedback_db():
 
 def _run_git_operations(token: str, repo_url: str, local_path_str: str, preference_data: dict, commit_message: str):
     local_path = Path(local_path_str)
-    repo_url_with_token = repo_url.replace("https://", f"https://oauth2:{token}@")
 
+    # Build authenticated URL suitable for GitHub over HTTPS
+    # Use x-access-token as username to avoid "password auth not supported" issues
+    parsed = urlparse(repo_url)
+    if parsed.scheme in {"http", "https"}:
+        netloc = parsed.netloc
+        if "@" in netloc:
+            netloc = netloc.split("@", 1)[-1]
+        repo_url_with_token = urlunparse(
+            (
+                parsed.scheme,
+                f"x-access-token:{token}@{netloc}",
+                parsed.path,
+                parsed.params,
+                parsed.query,
+                parsed.fragment,
+            )
+        )
+    else:
+        # Fallback to original when not HTTPS (e.g., ssh)
+        repo_url_with_token = repo_url
+
+    # Clone or open existing repo
     if local_path.exists():
         repo = git.Repo(local_path)
     else:
         logger.info(f"Cloning DPO repository to {local_path}...")
         repo = git.Repo.clone_from(repo_url_with_token, local_path)
 
+    # Ensure origin URL uses token form
     origin = repo.remote(name='origin')
     origin.set_url(repo_url_with_token)
-    
-    if repo.is_dirty() or "rebase" in repo.git.status():
-        logger.warning("Repository is in a dirty or rebase state. Resetting to origin/main...")
-        if "rebase" in repo.git.status():
-            repo.git.rebase('--abort')
-        repo.git.reset('--hard', 'origin/main')
-        
+
+    # Set local user if not present (avoids 'Please tell me who you are')
+    try:
+        author_name = os.getenv("GIT_AUTHOR_NAME", "labnote-bot")
+        author_email = os.getenv("GIT_AUTHOR_EMAIL", "labnote-bot@example.com")
+        repo.git.config("user.name", author_name)
+        repo.git.config("user.email", author_email)
+    except Exception:  # best-effort
+        pass
+
+    # Reset problematic states and fetch
+    status_out = repo.git.status()
+    if repo.is_dirty() or "rebase" in status_out:
+        logger.warning("Repository is dirty or in rebase; resetting to remote HEAD...")
+        if "rebase" in status_out:
+            try:
+                repo.git.rebase('--abort')
+            except Exception:
+                pass
     logger.info("Fetching latest changes from DPO repository...")
     origin.fetch()
 
-    logger.info("Resetting local branch to match the remote branch...")
-    repo.git.reset('--hard', 'origin/main')
+    # Detect default branch (prefer main, then master, else first remote head)
+    remote_heads = [getattr(r, 'remote_head', None) for r in origin.refs]
+    remote_heads = [h for h in remote_heads if h]
+    target_branch = None
+    for cand in ("main", "master"):
+        if cand in remote_heads:
+            target_branch = cand
+            break
+    if not target_branch and remote_heads:
+        target_branch = remote_heads[0]
 
+    if target_branch:
+        logger.info(f"Resetting local branch to match origin/{target_branch}...")
+        repo.git.reset('--hard', f'origin/{target_branch}')
+    else:
+        logger.warning("No remote branches found on origin; proceeding without hard reset.")
+
+    # Write preference JSON
     data_dir = local_path / "data"
-    data_dir.mkdir(exist_ok=True)
+    data_dir.mkdir(parents=True, exist_ok=True)
     file_name = f"{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4()}.json"
     file_path = data_dir / file_name
-    
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(preference_data, f, ensure_ascii=False, indent=2)
     logger.info(f"DPO data saved to {file_path}")
 
+    # Commit and push
     repo.index.add([str(file_path.resolve())])
     repo.index.commit(commit_message)
-    
     logger.info("Pushing DPO data to remote repository...")
     origin.push()
     logger.info("Successfully pushed DPO data to Git.")
