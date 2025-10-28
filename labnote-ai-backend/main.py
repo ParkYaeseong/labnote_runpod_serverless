@@ -311,6 +311,16 @@ class CompletionFeedbackRequest(BaseModel):
     workflow_title: str
     experiment_topic: str
 
+class ChatPreferenceRequest(BaseModel):
+    uo_id: str
+    section: str
+    prompt: str
+    generated_text: str
+    edited_text: Optional[str] = None
+    file_content: Optional[str] = None
+    file_path: Optional[str] = None
+    supervisor_evaluations: Optional[List[Dict]] = None
+
 class ChatResponse(BaseModel):
     response: str
     context: Dict[str, Any]  # 상태 비저장 컨텍스트 (대화 힌트)
@@ -1538,6 +1548,34 @@ async def record_completion_feedback(request: CompletionFeedbackRequest):
     except Exception as e:
         logger.error(f"Error recording completion feedback: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="An internal error occurred while recording completion feedback.")
+
+
+@app.post("/record_chat_preference", status_code=204)
+async def record_chat_preference(request: ChatPreferenceRequest):
+    """Save DPO-style preference data directly from chat results (non-populate flow)."""
+    try:
+        chosen_original = request.generated_text
+        chosen_edited = request.edited_text or chosen_original
+        rejected: List[str] = []
+        query = request.prompt
+        file_content = request.file_content or ""
+        file_path = request.file_path or "chat"
+        await _save_dpo_data(
+            uo_id=request.uo_id,
+            section=request.section,
+            chosen_original=chosen_original,
+            chosen_edited=chosen_edited,
+            rejected=rejected,
+            query=query,
+            file_content=file_content,
+            file_path=file_path,
+        )
+    except git.exc.GitCommandError as e:
+        logger.error(f"Git command failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to push DPO data to Git repository: {e.stderr}")
+    except Exception as e:
+        logger.error(f"Error recording chat preference: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="An internal error occurred while recording chat preference.")
 
 @app.post("/record_git_feedback", status_code=204)
 async def record_git_feedback(request: GitFeedbackRequest):

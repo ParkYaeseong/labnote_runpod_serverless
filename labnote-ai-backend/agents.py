@@ -220,12 +220,12 @@ You are a highly experienced principal investigator reviewing lab notes. Evaluat
     best_draft_eval = max(evaluations, key=lambda x: x.get('score', 0))
     highest_score = best_draft_eval.get('score', 0)
     
-    # 품질 기준(8.5점)을 통과했는지 확인
-    if highest_score >= 8.0:
+    # 품질 기준을 통과했는지 확인
+    if highest_score >= 5.0:
         logger.info(f"Supervisor: Quality threshold passed with score {highest_score}. Finalizing options.")
         # 고품질 초안들만 필터링하여 사용자에게 제공
         high_quality_drafts = [
-            drafts[e['draft_index']] for e in evaluations if e.get('score', 0) >= 8.0
+            drafts[e['draft_index']] for e in evaluations if e.get('score', 0) >= 5.0
         ]
         state['final_options'] = [f"--- {d['model']}의 제안 (품질 점수: {next(e['score'] for e in evaluations if e['draft_index'] == i)}) ---\n\n{d['content']}" for i, d in enumerate(drafts) if d in high_quality_drafts]
         state['feedback'] = '' # 재작성 필요 없음

@@ -268,7 +268,7 @@ slashCommands:
 
 | 설정 | 설명 | 기본값 |
 | --- | --- | --- |
-| `labnote.ai.backendUrl` | RunPod Serverless 엔드포인트를 지정합니다. (`runpod://<ID>` 또는 `https://<ID>.runpod.run`) | `runpod://t8z31me8m865sl` |
+| `labnote.ai.backendUrl` | 백엔드 URL 설정. 기본적으로 `runpod://<ID>` 또는 `https://<ID>.runpod.run` 형태는 RunPod runsync 모드로 동작합니다. HTTP 엔드포인트(uvicorn)에 직접 붙이고 싶다면 URL 끝에 `#http` 또는 `?mode=http`를 붙여 강제로 HTTP 모드로 사용하세요. 예: `https://<ENDPOINT_ID>.runpod.run#http` | `runpod://t8z31me8m865sl` |
 | `labnote.ai.vesslApiToken`| RunPod API Key를 저장합니다. | `rp_sk_********` |
 | `labnote.manager.workflowsPath` | 사용자 정의 워크플로우 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.hwUnitOperationsPath`| 사용자 정의 하드웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |

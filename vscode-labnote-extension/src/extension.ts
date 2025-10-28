@@ -25,6 +25,8 @@ interface ChatSession {
 }
 
 const chatSessions = new Map<string, ChatSession>();
+// Cache last saved content per file to detect meaningful changes for auto-DPO
+const lastSavedTextByFile: Map<string, string> = new Map();
 
 interface ChatResponse { 
     response: string; 
@@ -252,13 +254,37 @@ async function callRunpodServerless<T>(config: RunpodConfig, path: string, init:
 async function callBackendJson<T>(baseUrl: string, rawPath: string, init: BackendRequestInit = {}): Promise<T> {
     const method = init.method ?? 'POST';
     const path = normalizeEndpointPath(rawPath);
-    const runpodConfig = parseRunpodConfig(baseUrl);
+    // Allow forcing direct-HTTP mode by appending a marker to backendUrl, e.g. "#http" or "?mode=http"
+    let forceHttp = false;
+    let cleanBaseUrl = baseUrl;
+    try {
+        // Prefer URL parsing when possible to strip markers cleanly
+        const parsed = new URL(baseUrl);
+        if (parsed.hash && parsed.hash.toLowerCase().includes('http')) {
+            forceHttp = true;
+            parsed.hash = '';
+            cleanBaseUrl = parsed.toString();
+        } else if (parsed.searchParams.get('mode') === 'http' || parsed.searchParams.get('direct') === '1') {
+            forceHttp = true;
+            parsed.searchParams.delete('mode');
+            parsed.searchParams.delete('direct');
+            cleanBaseUrl = parsed.toString();
+        }
+    } catch {
+        // Fallback: simple suffix stripping
+        if (cleanBaseUrl.endsWith('#http')) {
+            forceHttp = true;
+            cleanBaseUrl = cleanBaseUrl.replace(/#http$/i, '');
+        }
+    }
+
+    const runpodConfig = forceHttp ? null : parseRunpodConfig(cleanBaseUrl);
 
     if (runpodConfig) {
         return callRunpodServerless<T>(runpodConfig, path, { ...init, method, body: init.body });
     }
 
-    const url = joinUrl(baseUrl, path);
+    const url = joinUrl(cleanBaseUrl, path);
     const headers = { ...getApiHeaders() };
 
     const requestInit: any = {
@@ -665,7 +691,8 @@ function registerCommands(context: vscode.ExtensionContext, outputChannel: vscod
     context.subscriptions.push(
         // 채팅 UI의 버튼과 연동될 명령어들
         vscode.commands.registerCommand('labnote.ai.generate.chat', () => {
-             vscode.commands.executeCommand('workbench.action.chat.open', '@labnote /generate');
+             // Only create the Lab Note folder + README (no workflows/UOs)
+             return createNewLabnoteCommand();
         }),
         vscode.commands.registerCommand('labnote.ai.populateSection.chat', () => {
              vscode.commands.executeCommand('workbench.action.chat.open', '@labnote /populate');
@@ -697,6 +724,19 @@ function registerEventListeners(context: vscode.ExtensionContext) {
             const filePath = document.uri.fsPath;
             if (logic.isValidWorkflowPath(filePath)) {
                 await updateReadmeOnWorkflowSave(document);
+
+                // Auto DPO on edit (optional)
+                try {
+                    const cfg = vscode.workspace.getConfiguration('labnote.ai');
+                    const enabled = cfg.get<boolean>('autoDpoOnEdit', true);
+                    if (!enabled) {
+                        lastSavedTextByFile.set(filePath, document.getText());
+                    } else {
+                        await autoDpoOnSave(document);
+                    }
+                } catch (e: any) {
+                    console.warn('[LabNote AI] autoDpoOnEdit error:', e?.message || e);
+                }
             }
         }),
         vscode.workspace.onDidCreateFiles(async (event) => {
@@ -716,6 +756,76 @@ function registerEventListeners(context: vscode.ExtensionContext) {
             }
         })
     );
+}
+
+async function autoDpoOnSave(document: vscode.TextDocument): Promise<void> {
+    const filePath = document.uri.fsPath;
+    const prev = lastSavedTextByFile.get(filePath) || '';
+    const curr = document.getText();
+    lastSavedTextByFile.set(filePath, curr);
+    if (prev === curr) return;
+
+    const cfg = vscode.workspace.getConfiguration('labnote.ai');
+    const minChars = Math.max(50, cfg.get<number>('autoDpoMinChars', 200));
+
+    // Build section text maps for prev and curr
+    const prevMap = buildSectionTextMap(prev);
+    const currMap = buildSectionTextMap(curr);
+
+    // Find changed sections and push to backend
+    const baseUrl = getBaseUrl();
+    if (!baseUrl) return;
+
+    for (const [key, newText] of currMap.entries()) {
+        const oldText = prevMap.get(key) || '';
+        if (newText && newText.trim() !== oldText.trim() && newText.trim().length >= minChars) {
+            const [uoId, section] = key.split('::');
+            const body = {
+                uo_id: uoId,
+                section: section,
+                prompt: 'auto:file_edit',
+                generated_text: newText,
+                edited_text: newText,
+                file_content: curr,
+                file_path: filePath,
+                supervisor_evaluations: [] as any[],
+            };
+            try {
+                await callBackendJson(baseUrl, '/record_chat_preference', { body });
+                vscode.window.setStatusBarMessage(`LabNote: Auto-saved DPO for ${uoId}/${section}`, 3000);
+            } catch (e: any) {
+                console.warn('[LabNote AI] Failed to auto-save DPO:', e?.message || e);
+            }
+        }
+    }
+}
+
+function buildSectionTextMap(content: string): Map<string, string> {
+    const map = new Map<string, string>();
+    const lines = content.split(/\r?\n/);
+    let currentUo: string | null = null;
+    const sections: Array<{ uo: string, name: string, start: number, end: number }> = [];
+    for (let i = 0; i < lines.length; i++) {
+        const lineText = lines[i];
+        const uoMatch = lineText.match(/^###\s*\[(U[A-Z]{2,3}\d{3,4}).*?\]/);
+        if (uoMatch) {
+            currentUo = uoMatch[1];
+        }
+        const secMatch = lineText.match(/^####\s*(.*?)\s*$/);
+        if (secMatch && currentUo) {
+            sections.push({ uo: currentUo, name: secMatch[1].trim(), start: i, end: -1 });
+        }
+    }
+    // determine end lines
+    for (let i = 0; i < sections.length; i++) {
+        sections[i].end = (i + 1 < sections.length) ? sections[i + 1].start - 1 : (lines.length - 1);
+    }
+    for (const s of sections) {
+        const contentStart = s.start + 1;
+        const text = lines.slice(contentStart, s.end + 1).join('\n').trim();
+        map.set(`${s.uo}::${s.name}`, text);
+    }
+    return map;
 }
 
 async function handleNewAssetPlacement(fileUri: vscode.Uri) {

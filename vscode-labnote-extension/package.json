@@ -119,6 +119,16 @@
           "type": "string",
           "default": "",
           "description": "Path to your custom software unit operations markdown file. Leave empty to use the default."
+        },
+        "labnote.ai.autoDpoOnEdit": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, automatically save edited UO sections (on save) to DPO via /record_chat_preference."
+        },
+        "labnote.ai.autoDpoMinChars": {
+          "type": "number",
+          "default": 200,
+          "description": "Minimum number of characters in a changed section to trigger auto DPO saving."
         }
       }
     }

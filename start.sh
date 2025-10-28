@@ -309,4 +309,9 @@ backup_redis_snapshot() {
 trap backup_redis_snapshot EXIT
 
 # Runpod Serverless 환경에서는 uvicorn을 직접 실행하는 대신, runpod_handler.py를 실행합니다.
-python -u runpod_handler.py
+if [ "${LABNOTE_HTTP:-0}" = "1" ]; then
+    echo ">>> LABNOTE_HTTP=1 detected. Starting FastAPI via uvicorn on :8000"
+    exec /opt/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
+else
+    python -u runpod_handler.py
+fi
