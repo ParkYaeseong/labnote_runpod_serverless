@@ -1,434 +1,404 @@
-2025-10-28T01:41:43.178513162Z ==========
-2025-10-28T01:41:43.178521469Z == CUDA ==
-2025-10-28T01:41:43.178529905Z ==========
-2025-10-28T01:41:43.187393329Z CUDA Version 12.8.1
-2025-10-28T01:41:43.189946470Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-2025-10-28T01:41:43.192150742Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
-2025-10-28T01:41:43.192155141Z By pulling and using the container, you accept the terms and conditions of this license:
-2025-10-28T01:41:43.192158557Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
-2025-10-28T01:41:43.192164749Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
-2025-10-28T01:41:43.214151780Z --- [DIAGNOSIS] Verifying storage mounts ---
-2025-10-28T01:41:43.214193769Z >>> Displaying mounted filesystems (df -h):
-2025-10-28T01:41:43.218374031Z Filesystem                    Size  Used Avail Use% Mounted on
-2025-10-28T01:41:43.218392044Z overlay                        20G   15M   20G   1% /
-2025-10-28T01:41:43.218395741Z tmpfs                          64M     0   64M   0% /dev
-2025-10-28T01:41:43.218398957Z mfs#ca-mtl-3.runpod.net:9421  503T  375T  129T  75% /runpod-volume
-2025-10-28T01:41:43.218402353Z shm                            55G     0   55G   0% /dev/shm
-2025-10-28T01:41:43.218405419Z /dev/vda2                     6.4T  3.7T  2.7T  58% /etc/hosts
-2025-10-28T01:41:43.218408555Z /dev/vda1                      39G   31G  7.8G  80% /usr/bin/nvidia-smi
-2025-10-28T01:41:43.218411851Z tmpfs                         473G     0  473G   0% /sys/fs/cgroup
-2025-10-28T01:41:43.218415047Z tmpfs                         473G   12K  473G   1% /proc/driver/nvidia
-2025-10-28T01:41:43.218418023Z tmpfs                         473G  4.0K  473G   1% /etc/nvidia/nvidia-application-profiles-rc.d
-2025-10-28T01:41:43.218421581Z tmpfs                          95G  3.6M   95G   1% /run/nvidia-persistenced/socket
-2025-10-28T01:41:43.218424706Z tmpfs                         473G     0  473G   0% /proc/acpi
-2025-10-28T01:41:43.218427702Z tmpfs                         473G     0  473G   0% /proc/scsi
-2025-10-28T01:41:43.218430798Z tmpfs                         473G     0  473G   0% /sys/firmware
-2025-10-28T01:41:43.218568267Z ---
-2025-10-28T01:41:43.218582314Z >>> Listing root directory contents (ls -la /):
-2025-10-28T01:41:43.223864921Z total 2967
-2025-10-28T01:41:43.223896992Z drwxr-xr-x    1 root   root         95 Oct 28 01:41 .
-2025-10-28T01:41:43.223900238Z drwxr-xr-x    1 root   root         95 Oct 28 01:41 ..
-2025-10-28T01:41:43.223902803Z -rwxr-xr-x    1 root   root          0 Oct 28 01:41 .dockerenv
-2025-10-28T01:41:43.223905348Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
-2025-10-28T01:41:43.223908694Z drwxr-xr-x    1 root   root         62 Oct 28 00:53 app
-2025-10-28T01:41:43.223911470Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
-2025-10-28T01:41:43.223914185Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
-2025-10-28T01:41:43.223916690Z drwxr-xr-x    2 root   root          6 Apr 22  2024 boot
-2025-10-28T01:41:43.223919234Z drwxr-xr-x    6 root   root        460 Oct 28 01:41 dev
-2025-10-28T01:41:43.223921779Z drwxr-xr-x    1 root   root         69 Oct 28 01:41 etc
-2025-10-28T01:41:43.223924314Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
-2025-10-28T01:41:43.223926888Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
-2025-10-28T01:41:43.223929514Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
-2025-10-28T01:41:43.223931878Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
-2025-10-28T01:41:43.223934233Z drwxr-xr-x    2 root   root          6 Jan 27  2025 media
-2025-10-28T01:41:43.223936777Z drwxr-xr-x    2 root   root          6 Jan 27  2025 mnt
-2025-10-28T01:41:43.223939132Z drwxr-xr-x    1 root   root         26 Oct 28 00:21 opt
-2025-10-28T01:41:43.223941457Z dr-xr-xr-x 3039 nobody nogroup       0 Oct 28 01:41 proc
-2025-10-28T01:41:43.223958629Z drwx------    1 root   root         32 Oct 28 00:53 root
-2025-10-28T01:41:43.223961234Z drwxr-xr-x    1 root   root         41 Oct 28 01:41 run
-2025-10-28T01:41:43.223963678Z drwxrwxrwx    5 root   root    3012995 Oct 28 01:23 runpod-volume
-2025-10-28T01:41:43.223966083Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
-2025-10-28T01:41:43.223968438Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
-2025-10-28T01:41:43.223970832Z drwxr-xr-x    2 root   root          6 Jan 27  2025 srv
-2025-10-28T01:41:43.223973227Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
-2025-10-28T01:41:43.223975611Z dr-xr-xr-x   13 nobody nogroup       0 Oct  7 11:43 sys
-2025-10-28T01:41:43.223978146Z drwxrwxrwt    1 root   root         10 Oct 28 00:53 tmp
-2025-10-28T01:41:43.223980681Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
-2025-10-28T01:41:43.223983215Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
-2025-10-28T01:41:43.223985730Z drwxr-xr-x    1 root   root         28 Oct  9 05:11 workspace
-2025-10-28T01:41:43.224030936Z ---
-2025-10-28T01:41:43.224039652Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
-2025-10-28T01:41:43.230346138Z total 9805
-2025-10-28T01:41:43.230361286Z drwxrwxrwx 5 root root 3012995 Oct 28 01:23 .
-2025-10-28T01:41:43.230364703Z drwxr-xr-x 1 root root      95 Oct 28 01:41 ..
-2025-10-28T01:41:43.230367307Z drwxrwxrwx 3 root root 2000453 Oct 21 07:36 .cache
-2025-10-28T01:41:43.230371235Z -rw-rw-rw- 1 root root   12288 Oct 28 01:23 evaluation_results.db
-2025-10-28T01:41:43.230374080Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
-2025-10-28T01:41:43.230376505Z drwxrwxrwx 2 root root 2000178 Oct 28 01:37 redis-data
-2025-10-28T01:41:43.230592925Z --- [DIAGNOSIS] Verification complete ---
-2025-10-28T01:41:43.230747397Z >>> GPU Diagnostics (nvidia-smi)
-2025-10-28T01:41:43.254685109Z Tue Oct 28 01:41:43 2025
-2025-10-28T01:41:43.254701481Z +-----------------------------------------------------------------------------------------+
-2025-10-28T01:41:43.254707251Z | NVIDIA-SMI 570.172.08             Driver Version: 570.172.08     CUDA Version: 12.8     |
-2025-10-28T01:41:43.254711019Z |-----------------------------------------+------------------------+----------------------+
-2025-10-28T01:41:43.254714535Z | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
-2025-10-28T01:41:43.254717581Z | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
-2025-10-28T01:41:43.254721077Z |                                         |                        |               MIG M. |
-2025-10-28T01:41:43.254724213Z |=========================================+========================+======================|
-2025-10-28T01:41:43.262937477Z |   0  NVIDIA A100 80GB PCIe          On  |   00000000:00:0D.0 Off |                    0 |
-2025-10-28T01:41:43.262949850Z | N/A   36C    P0             47W /  300W |       0MiB /  81920MiB |      0%      Default |
-2025-10-28T01:41:43.262953537Z |                                         |                        |             Disabled |
-2025-10-28T01:41:43.262956854Z +-----------------------------------------+------------------------+----------------------+
-2025-10-28T01:41:43.262963576Z +-----------------------------------------------------------------------------------------+
-2025-10-28T01:41:43.262966973Z | Processes:                                                                              |
-2025-10-28T01:41:43.262970169Z |  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
-2025-10-28T01:41:43.262973165Z |        ID   ID                                                               Usage      |
-2025-10-28T01:41:43.262976181Z |=========================================================================================|
-2025-10-28T01:41:43.263540738Z |  No running processes found                                                             |
-2025-10-28T01:41:43.263547001Z +-----------------------------------------------------------------------------------------+
-2025-10-28T01:41:43.611351557Z >>> GPU Short Summary
-2025-10-28T01:41:43.646053070Z NVIDIA A100 80GB PCIe, 81920, 0, 0
-2025-10-28T01:41:43.653527455Z >>> OLLAMA_LLM_LIBRARY not set; using autodetect.
-2025-10-28T01:41:43.653548916Z >>> [DIAGNOSIS] Environment summary (selected)
-2025-10-28T01:41:43.653553866Z OLLAMA_USE_GPU=1
-2025-10-28T01:41:43.653558053Z OLLAMA_LLM_LIBRARY=
-2025-10-28T01:41:43.653562341Z OLLAMA_NUM_GPU=1
-2025-10-28T01:41:43.653565638Z OLLAMA_GPU_DEVICE=0
-2025-10-28T01:41:43.653568894Z OLLAMA_MODELS=/runpod-volume/ollama_models
-2025-10-28T01:41:43.653572531Z OLLAMA_LIBRARY_PATH=/usr/lib/ollama
-2025-10-28T01:41:43.653575847Z OLLAMA_LOG_LEVEL=debug
-2025-10-28T01:41:43.653578913Z GGML_LOG_LEVEL=debug
-2025-10-28T01:41:43.653582419Z CUDA_VISIBLE_DEVICES=0
-2025-10-28T01:41:43.653585585Z LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/ollama:/usr/lib/ollama/cuda_v12:/usr/lib/ollama/cuda_v13:/opt/redis-stack/lib:/usr/lib/ollama:/usr/local/cuda/lib64
-2025-10-28T01:41:43.653592558Z >>> which/versions
-2025-10-28T01:41:43.656304892Z /usr/bin/ollama
-2025-10-28T01:41:43.694159914Z Warning: could not connect to a running Ollama instance
-2025-10-28T01:41:43.694226740Z Warning: client version is 0.12.6
-2025-10-28T01:41:43.700188772Z Python 3.12.3
-2025-10-28T01:41:45.497077265Z [PyTorch] 2.9.0+cu128 cuda_is_available= True
-2025-10-28T01:41:45.497134003Z cuda_version= 12.8
-2025-10-28T01:41:45.525214055Z device_name= NVIDIA A100 80GB PCIe
-2025-10-28T01:41:46.016236804Z >>> List CUDA/Ollama libs
-2025-10-28T01:41:46.020310132Z total 6016
-2025-10-28T01:41:46.020336813Z drwxr-xr-x 4 root root   4096 Oct 16 22:28 .
-2025-10-28T01:41:46.020341142Z drwxr-xr-x 1 root root     46 Oct 28 01:41 ..
-2025-10-28T01:41:46.020343857Z drwxr-xr-x 2 root root    188 Oct 16 22:44 cuda_v12
-2025-10-28T01:41:46.020348095Z drwxr-xr-x 2 root root   4096 Oct 16 22:40 cuda_v13
-2025-10-28T01:41:46.020350990Z -rwxr-xr-x 1 root root 661720 Oct 16 22:28 libggml-base.so
-2025-10-28T01:41:46.020354166Z -rwxr-xr-x 1 root root 820464 Oct 16 22:28 libggml-cpu-alderlake.so
-2025-10-28T01:41:46.020358173Z -rwxr-xr-x 1 root root 824560 Oct 16 22:28 libggml-cpu-haswell.so
-2025-10-28T01:41:46.020361870Z -rwxr-xr-x 1 root root 951536 Oct 16 22:28 libggml-cpu-icelake.so
-2025-10-28T01:41:46.020364946Z -rwxr-xr-x 1 root root 767280 Oct 16 22:28 libggml-cpu-sandybridge.so
-2025-10-28T01:41:46.020368543Z -rwxr-xr-x 1 root root 951536 Oct 16 22:28 libggml-cpu-skylakex.so
-2025-10-28T01:41:46.020371198Z -rwxr-xr-x 1 root root 578992 Oct 16 22:28 libggml-cpu-sse42.so
-2025-10-28T01:41:46.020373903Z -rwxr-xr-x 1 root root 574896 Oct 16 22:28 libggml-cpu-x64.so
-2025-10-28T01:41:46.024679291Z /usr/lib/ollama/cuda_v12:
-2025-10-28T01:41:46.024708095Z total 2376996
-2025-10-28T01:41:46.024712684Z drwxr-xr-x 2 root root        188 Oct 16 22:44 .
-2025-10-28T01:41:46.024715820Z drwxr-xr-x 4 root root       4096 Oct 16 22:28 ..
-2025-10-28T01:41:46.024719627Z lrwxrwxrwx 1 root root         21 Oct 16 22:44 libcublas.so.12 -> libcublas.so.12.8.4.1
-2025-10-28T01:41:46.024723825Z -rwxr-xr-x 1 root root  116388640 Jul  8  2015 libcublas.so.12.8.4.1
-2025-10-28T01:41:46.024727572Z lrwxrwxrwx 1 root root         23 Oct 16 22:44 libcublasLt.so.12 -> libcublasLt.so.12.8.4.1
-2025-10-28T01:41:46.024731039Z -rwxr-xr-x 1 root root  751771728 Jul  8  2015 libcublasLt.so.12.8.4.1
-2025-10-28T01:41:46.024734155Z lrwxrwxrwx 1 root root         20 Oct 16 22:44 libcudart.so.12 -> libcudart.so.12.8.90
-2025-10-28T01:41:46.024737251Z -rwxr-xr-x 1 root root     728800 Jul  8  2015 libcudart.so.12.8.90
-2025-10-28T01:41:46.024740336Z -rwxr-xr-x 1 root root 1565141104 Oct 16 22:44 libggml-cuda.so
-2025-10-28T01:41:46.024746078Z /usr/lib/ollama/cuda_v13:
-2025-10-28T01:41:46.024748683Z total 869728
-2025-10-28T01:41:46.024751658Z drwxr-xr-x 2 root root      4096 Oct 16 22:40 .
-2025-10-28T01:41:46.024754324Z drwxr-xr-x 4 root root      4096 Oct 16 22:28 ..
-2025-10-28T01:41:46.024757009Z lrwxrwxrwx 1 root root        21 Oct 16 22:40 libcublas.so.13 -> libcublas.so.13.1.0.3
-2025-10-28T01:41:46.024759954Z -rwxr-xr-x 1 root root  54177976 Jul  8  2015 libcublas.so.13.1.0.3
-2025-10-28T01:41:46.024762629Z lrwxrwxrwx 1 root root        23 Oct 16 22:40 libcublasLt.so.13 -> libcublasLt.so.13.1.0.3
-2025-10-28T01:41:46.024787456Z -rwxr-xr-x 1 root root 541595600 Jul  8  2015 libcublasLt.so.13.1.0.3
-2025-10-28T01:41:46.024790261Z lrwxrwxrwx 1 root root        20 Oct 16 22:40 libcudart.so.13 -> libcudart.so.13.0.96
-2025-10-28T01:41:46.024792876Z -rwxr-xr-x 1 root root    704288 Jul  8  2015 libcudart.so.13.0.96
-2025-10-28T01:41:46.024795631Z -rwxr-xr-x 1 root root 294107216 Oct 16 22:40 libggml-cuda.so
-2025-10-28T01:41:46.028981223Z 	libpcsamplingutil.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libpcsamplingutil.so
-2025-10-28T01:41:46.029001661Z 	libnvrtc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.so.12
-2025-10-28T01:41:46.029006661Z 	libnvrtc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.so
-2025-10-28T01:41:46.029010738Z 	libnvrtc.alt.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.alt.so.12
-2025-10-28T01:41:46.029014916Z 	libnvrtc.alt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.alt.so
-2025-10-28T01:41:46.029018864Z 	libnvrtc-builtins.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.so.12.8
-2025-10-28T01:41:46.029022080Z 	libnvrtc-builtins.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.so
-2025-10-28T01:41:46.029025346Z 	libnvrtc-builtins.alt.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so.12.8
-2025-10-28T01:41:46.029029254Z 	libnvrtc-builtins.alt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so
-2025-10-28T01:41:46.029032811Z 	libnvperf_target.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvperf_target.so
-2025-10-28T01:41:46.029036077Z 	libnvperf_host.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvperf_host.so
-2025-10-28T01:41:46.029039143Z 	libnvjpeg.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvjpeg.so.12
-2025-10-28T01:41:46.029042208Z 	libnvjpeg.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvjpeg.so
-2025-10-28T01:41:46.029045224Z 	libnvfatbin.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvfatbin.so.12
-2025-10-28T01:41:46.029048771Z 	libnvfatbin.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvfatbin.so
-2025-10-28T01:41:46.029052047Z 	libnvblas.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvblas.so.12
-2025-10-28T01:41:46.029055032Z 	libnvblas.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvblas.so
-2025-10-28T01:41:46.029058118Z 	libnvToolsExt.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvToolsExt.so.1
-2025-10-28T01:41:46.029061414Z 	libnvToolsExt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvToolsExt.so
-2025-10-28T01:41:46.029064440Z 	libnvJitLink.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvJitLink.so.12
-2025-10-28T01:41:46.029067486Z 	libnvJitLink.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvJitLink.so
-2025-10-28T01:41:46.029071273Z 	libnpps.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnpps.so.12
-2025-10-28T01:41:46.029074438Z 	libnpps.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnpps.so
-2025-10-28T01:41:46.029077455Z 	libnppitc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppitc.so.12
-2025-10-28T01:41:46.029080500Z 	libnppitc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppitc.so
-2025-10-28T01:41:46.029083567Z 	libnppisu.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppisu.so.12
-2025-10-28T01:41:46.029086612Z 	libnppisu.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppisu.so
-2025-10-28T01:41:46.029089628Z 	libnppist.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppist.so.12
-2025-10-28T01:41:46.029092644Z 	libnppist.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppist.so
-2025-10-28T01:41:46.029095669Z 	libnppim.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppim.so.12
-2025-10-28T01:41:46.029120967Z 	libnppim.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppim.so
-2025-10-28T01:41:46.029124293Z 	libnppig.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppig.so.12
-2025-10-28T01:41:46.029127329Z 	libnppig.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppig.so
-2025-10-28T01:41:46.029130605Z 	libnppif.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppif.so.12
-2025-10-28T01:41:46.029133641Z 	libnppif.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppif.so
-2025-10-28T01:41:46.029136647Z 	libnppidei.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppidei.so.12
-2025-10-28T01:41:46.029139682Z 	libnppidei.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppidei.so
-2025-10-28T01:41:46.029142739Z 	libnppicc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppicc.so.12
-2025-10-28T01:41:46.029145785Z 	libnppicc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppicc.so
-2025-10-28T01:41:46.029148820Z 	libnppial.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppial.so.12
-2025-10-28T01:41:46.029151856Z 	libnppial.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppial.so
-2025-10-28T01:41:46.029154911Z 	libnppc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppc.so.12
-2025-10-28T01:41:46.029157947Z 	libnppc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppc.so
-2025-10-28T01:41:46.029160963Z 	libicudata.so.74 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libicudata.so.74
-2025-10-28T01:41:46.029164640Z 	libcusparse.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusparse.so.12
-2025-10-28T01:41:46.029167766Z 	libcusparse.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusparse.so
-2025-10-28T01:41:46.029170842Z 	libcusolverMg.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolverMg.so.11
-2025-10-28T01:41:46.029173867Z 	libcusolverMg.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolverMg.so
-2025-10-28T01:41:46.029176923Z 	libcusolver.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolver.so.11
-2025-10-28T01:41:46.029179998Z 	libcusolver.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolver.so
-2025-10-28T01:41:46.029183586Z 	libcurand.so.10 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcurand.so.10
-2025-10-28T01:41:46.029186611Z 	libcurand.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcurand.so
-2025-10-28T01:41:46.029189627Z 	libcupti.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcupti.so.12
-2025-10-28T01:41:46.029192643Z 	libcupti.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcupti.so
-2025-10-28T01:41:46.029195648Z 	libcuinj64.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcuinj64.so.12.8
-2025-10-28T01:41:46.029202161Z 	libcuinj64.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcuinj64.so
-2025-10-28T01:41:46.029205207Z 	libcufile_rdma.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile_rdma.so.1
-2025-10-28T01:41:46.029208533Z 	libcufile_rdma.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile_rdma.so
-2025-10-28T01:41:46.029211930Z 	libcufile.so.0 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile.so.0
-2025-10-28T01:41:46.029214935Z 	libcufile.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile.so
-2025-10-28T01:41:46.029217931Z 	libcufftw.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufftw.so.11
-2025-10-28T01:41:46.029221728Z 	libcufftw.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufftw.so
-2025-10-28T01:41:46.029224754Z 	libcufft.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufft.so.11
-2025-10-28T01:41:46.029227749Z 	libcufft.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufft.so
-2025-10-28T01:41:46.029230745Z 	libcudart.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcudart.so.12
-2025-10-28T01:41:46.029239882Z 	libcudart.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcudart.so
-2025-10-28T01:41:46.029243108Z 	libcudadebugger.so.1 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libcudadebugger.so.1
-2025-10-28T01:41:46.029246545Z 	libcuda.so.1 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libcuda.so.1
-2025-10-28T01:41:46.029249760Z 	libcublasLt.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublasLt.so.12
-2025-10-28T01:41:46.029252856Z 	libcublasLt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublasLt.so
-2025-10-28T01:41:46.029255952Z 	libcublas.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublas.so.12
-2025-10-28T01:41:46.029258979Z 	libcublas.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublas.so
-2025-10-28T01:41:46.029262005Z 	libcheckpoint.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcheckpoint.so
-2025-10-28T01:41:46.029265742Z 	libaccinj64.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libaccinj64.so.12.8
-2025-10-28T01:41:46.029269448Z 	libaccinj64.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libaccinj64.so
-2025-10-28T01:41:46.029272494Z 	libOpenCL.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libOpenCL.so.1
-2025-10-28T01:41:46.029275520Z 	libOpenCL.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libOpenCL.so
-2025-10-28T01:41:46.038371895Z >>> Redis data directory bound to /runpod-volume/redis-data.
-2025-10-28T01:41:46.039782314Z >>> Detected existing Redis snapshot at /var/lib/redis-stack/dump.rdb.
-2025-10-28T01:41:46.051348203Z >>> vm.overcommit_memory set to 1 for Redis stability.
-2025-10-28T01:41:46.051422082Z >>> Starting core services...
-2025-10-28T01:41:46.057742203Z >>> Redis Stack Server started.
-2025-10-28T01:41:46.057828847Z >>> Waiting for Redis to accept connections...
-2025-10-28T01:41:46.063845174Z     - Redis not ready yet. Retrying in 2s... (1/30)
-2025-10-28T01:41:46.078976420Z Starting redis-stack-server, database path /var/lib/redis-stack
-2025-10-28T01:41:46.090068131Z 149:C 28 Oct 2025 01:41:46.088 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
-2025-10-28T01:41:46.090135508Z 149:C 28 Oct 2025 01:41:46.089 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-2025-10-28T01:41:46.090145748Z 149:C 28 Oct 2025 01:41:46.089 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=149, just started
-2025-10-28T01:41:46.090153322Z 149:C 28 Oct 2025 01:41:46.089 * Configuration loaded
-2025-10-28T01:41:46.091019261Z 149:M 28 Oct 2025 01:41:46.090 * monotonic clock: POSIX clock_gettime
-2025-10-28T01:41:46.097129374Z 149:M 28 Oct 2025 01:41:46.096 * Running mode=standalone, port=6379.
-2025-10-28T01:41:46.099870041Z 149:M 28 Oct 2025 01:41:46.097 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
-2025-10-28T01:41:46.099878618Z 149:M 28 Oct 2025 01:41:46.099 * <search> Redis version found by RedisSearch : 7.4.6 - oss
-2025-10-28T01:41:46.099882545Z 149:M 28 Oct 2025 01:41:46.099 * <search> RediSearch version 2.10.20 (Git=5c09b69)
-2025-10-28T01:41:46.099885761Z 149:M 28 Oct 2025 01:41:46.099 * <search> Low level api version 1 initialized successfully
-2025-10-28T01:41:46.100020957Z 149:M 28 Oct 2025 01:41:46.099 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
-2025-10-28T01:41:46.100047127Z 149:M 28 Oct 2025 01:41:46.099 * <search> Initialized thread pools!
-2025-10-28T01:41:46.101293445Z 149:M 28 Oct 2025 01:41:46.100 * <search> Subscribe to config changes
-2025-10-28T01:41:46.101308102Z 149:M 28 Oct 2025 01:41:46.100 * <search> Enabled role change notification
-2025-10-28T01:41:46.101324092Z 149:M 28 Oct 2025 01:41:46.100 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
-2025-10-28T01:41:46.102396503Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
-2025-10-28T01:41:46.102468889Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
-2025-10-28T01:41:46.102475351Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
-2025-10-28T01:41:46.102481353Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> loaded server DUPLICATE_POLICY: block
-2025-10-28T01:41:46.102509817Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
-2025-10-28T01:41:46.102512883Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
-2025-10-28T01:41:46.102582575Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> Setting default series ENCODING to: compressed
-2025-10-28T01:41:46.102636567Z 149:M 28 Oct 2025 01:41:46.102 * <timeseries> Detected redis oss
-2025-10-28T01:41:46.102886430Z 149:M 28 Oct 2025 01:41:46.102 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
-2025-10-28T01:41:46.103641409Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Created new data type 'ReJSON-RL'
-2025-10-28T01:41:46.103762467Z 149:M 28 Oct 2025 01:41:46.103 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
-2025-10-28T01:41:46.103789418Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> version: 20809 git sha: unknown branch: unknown
-2025-10-28T01:41:46.103894417Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Exported RedisJSON_V1 API
-2025-10-28T01:41:46.103900949Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Exported RedisJSON_V2 API
-2025-10-28T01:41:46.103909776Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Exported RedisJSON_V3 API
-2025-10-28T01:41:46.103988275Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Exported RedisJSON_V4 API
-2025-10-28T01:41:46.103991842Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Exported RedisJSON_V5 API
-2025-10-28T01:41:46.103999927Z 149:M 28 Oct 2025 01:41:46.103 * <ReJSON> Enabled diskless replication
-2025-10-28T01:41:46.104123871Z 149:M 28 Oct 2025 01:41:46.104 * <ReJSON> Initialized shared string cache, thread safe: false.
-2025-10-28T01:41:46.104127598Z 149:M 28 Oct 2025 01:41:46.104 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
-2025-10-28T01:41:46.104135544Z 149:M 28 Oct 2025 01:41:46.104 * <search> Acquired RedisJSON_V5 API
-2025-10-28T01:41:46.104464917Z 149:M 28 Oct 2025 01:41:46.104 * <bf> RedisBloom version 2.8.7 (Git=unknown)
-2025-10-28T01:41:46.104662581Z 149:M 28 Oct 2025 01:41:46.104 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
-2025-10-28T01:41:46.105450312Z 149:M 28 Oct 2025 01:41:46.105 * <redisgears_2> Created new data type 'GearsType'
-2025-10-28T01:41:46.105757694Z 149:M 28 Oct 2025 01:41:46.105 * <redisgears_2> Detected redis oss
-2025-10-28T01:41:46.105963403Z 149:M 28 Oct 2025 01:41:46.105 # <redisgears_2> could not initialize RedisAI_InitError
-2025-10-28T01:41:46.106030029Z 149:M 28 Oct 2025 01:41:46.105 * <redisgears_2> Failed loading RedisAI API.
-2025-10-28T01:41:46.106122444Z 149:M 28 Oct 2025 01:41:46.106 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
-2025-10-28T01:41:46.107854402Z 149:M 28 Oct 2025 01:41:46.107 * <redisgears_2> Registered backend: js.
-2025-10-28T01:41:46.108373294Z 149:M 28 Oct 2025 01:41:46.108 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
-2025-10-28T01:41:46.109314295Z 149:M 28 Oct 2025 01:41:46.109 * Server initialized
-2025-10-28T01:41:46.118113878Z 149:M 28 Oct 2025 01:41:46.117 * <search> Loading event starts
-2025-10-28T01:41:46.118324957Z 149:M 28 Oct 2025 01:41:46.118 * <redisgears_2> Got a loading start event, clear the entire functions data.
-2025-10-28T01:41:46.121970606Z 149:M 28 Oct 2025 01:41:46.121 * Loading RDB produced by version 7.4.6
-2025-10-28T01:41:46.122016594Z 149:M 28 Oct 2025 01:41:46.121 * RDB age 270 seconds
-2025-10-28T01:41:46.122034979Z 149:M 28 Oct 2025 01:41:46.121 * RDB memory usage when created 9.08 Mb
-2025-10-28T01:41:46.122077399Z 149:M 28 Oct 2025 01:41:46.121 # <search> creating vector index. Server memory limit: 1014068436992B, required memory: 3170696B, available memory: 1014067122072B
-2025-10-28T01:41:46.234350077Z 149:M 28 Oct 2025 01:41:46.234 * Done loading RDB, keys loaded: 428, keys expired: 0.
-2025-10-28T01:41:46.234408277Z 149:M 28 Oct 2025 01:41:46.234 * <search> Loading event ends
-2025-10-28T01:41:46.234413377Z 149:M 28 Oct 2025 01:41:46.234 * <redisgears_2> Loading finished, re-enable key space notificaitons.
-2025-10-28T01:41:46.234914796Z 149:M 28 Oct 2025 01:41:46.234 * DB loaded from disk: 0.125 seconds
-2025-10-28T01:41:46.234950573Z 149:M 28 Oct 2025 01:41:46.234 * Ready to accept connections tcp
-2025-10-28T01:41:48.074173985Z ✅ Redis is ready.
-2025-10-28T01:41:48.076626136Z >>> Starting Ollama server (logging to /tmp/ollama.log)
-2025-10-28T01:41:48.077244857Z >>> Waiting for Ollama server (http://127.0.0.1:11434)...
-2025-10-28T01:41:48.089708115Z     - Ollama server not ready yet. Retrying in 2 seconds... (1/30)
-2025-10-28T01:41:50.106054775Z ✅ Ollama server is ready.
-2025-10-28T01:41:50.106092436Z >>> Ollama initial log (last 80 lines)
-2025-10-28T01:41:50.109123062Z [ollama] Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
-2025-10-28T01:41:50.109141757Z [ollama] Your new public key is:
-2025-10-28T01:41:50.109146155Z [ollama]
-2025-10-28T01:41:50.109149642Z [ollama] ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMgvb4gBzzgGF2JPOjLYlY4oofwUZraYaSVd2VpDoMxQ
-2025-10-28T01:41:50.109153899Z [ollama]
-2025-10-28T01:41:50.109161815Z [ollama] time=2025-10-28T01:41:48.116Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES:0 GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:DEBUG OLLAMA_FLASH_ATTENTION:true OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:2 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
-2025-10-28T01:41:50.109165832Z [ollama] time=2025-10-28T01:41:48.161Z level=INFO source=images.go:522 msg="total blobs: 21"
-2025-10-28T01:41:50.109169038Z [ollama] time=2025-10-28T01:41:48.176Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
-2025-10-28T01:41:50.109172827Z [ollama] time=2025-10-28T01:41:48.235Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
-2025-10-28T01:41:50.109176523Z [ollama] time=2025-10-28T01:41:48.236Z level=DEBUG source=sched.go:123 msg="starting llm scheduler"
-2025-10-28T01:41:50.109183596Z [ollama] time=2025-10-28T01:41:48.237Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
-2025-10-28T01:41:50.109186823Z [ollama] time=2025-10-28T01:41:48.237Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
-2025-10-28T01:41:50.109192724Z [ollama] time=2025-10-28T01:41:48.576Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=338.89822ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
-2025-10-28T01:41:50.109196491Z [ollama] time=2025-10-28T01:41:48.576Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
-2025-10-28T01:41:50.109199586Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=202.303645ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
-2025-10-28T01:41:50.109230324Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:118 msg="filtering out unsupported or overlapping GPU library combinations" count=1
-2025-10-28T01:41:50.109237278Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:130 msg="verifying GPU is supported" library=/usr/lib/ollama/cuda_v12 description="NVIDIA A100 80GB PCIe" compute=8.0 pci_id=00:0d.0
-2025-10-28T01:41:50.109240515Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c]"
-2025-10-28T01:41:50.109246034Z [ollama] time=2025-10-28T01:41:49.091Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=312.858279ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c]"
-2025-10-28T01:41:50.109249251Z [ollama] time=2025-10-28T01:41:49.091Z level=DEBUG source=runner.go:45 msg="GPU bootstrap discovery took" duration=855.189021ms
-2025-10-28T01:41:50.109252477Z [ollama] time=2025-10-28T01:41:49.091Z level=INFO source=types.go:112 msg="inference compute" id=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c library=CUDA compute=8.0 name=CUDA0 description="NVIDIA A100 80GB PCIe" libdirs=ollama,cuda_v12 driver=12.8 pci_id=00:0d.0 type=discrete total="80.0 GiB" available="79.2 GiB"
-2025-10-28T01:41:50.109256614Z [ollama] [GIN] 2025/10/28 - 01:41:50 | 200 |     120.238µs |       127.0.0.1 | GET      "/"
-2025-10-28T01:41:50.109259740Z >>> Ollama compute summary from logs
-2025-10-28T01:41:50.112881194Z [ollama] time=2025-10-28T01:41:48.237Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
-2025-10-28T01:41:50.112962077Z [ollama] time=2025-10-28T01:41:48.576Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=338.89822ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
-2025-10-28T01:41:50.112970753Z [ollama] time=2025-10-28T01:41:48.576Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
-2025-10-28T01:41:50.112974871Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=202.303645ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
-2025-10-28T01:41:50.112978167Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:130 msg="verifying GPU is supported" library=/usr/lib/ollama/cuda_v12 description="NVIDIA A100 80GB PCIe" compute=8.0 pci_id=00:0d.0
-2025-10-28T01:41:50.112981744Z [ollama] time=2025-10-28T01:41:48.778Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c]"
-2025-10-28T01:41:50.112987866Z [ollama] time=2025-10-28T01:41:49.091Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=312.858279ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c]"
-2025-10-28T01:41:50.112991614Z [ollama] time=2025-10-28T01:41:49.091Z level=INFO source=types.go:112 msg="inference compute" id=GPU-931c1fb2-0ed3-1b2c-15ba-92a6b38cd82c library=CUDA compute=8.0 name=CUDA0 description="NVIDIA A100 80GB PCIe" libdirs=ollama,cuda_v12 driver=12.8 pci_id=00:0d.0 type=discrete total="80.0 GiB" available="79.2 GiB"
-2025-10-28T01:41:50.113604833Z >>> GPU state after Ollama start
-2025-10-28T01:41:50.146834952Z NVIDIA A100 80GB PCIe, 81920, 0, 0
-2025-10-28T01:41:50.163915668Z >>> Checking for required models in persistent storage...
-2025-10-28T01:41:50.235040653Z     - Model 'nomic-embed-text' already exists.
-2025-10-28T01:41:50.301512773Z     - Model 'llama3.1:8b' already exists.
-2025-10-28T01:41:50.377963557Z     - Model 'mixtral' already exists.
-2025-10-28T01:41:50.450968339Z     - Model 'llama3.1:70b' already exists.
-2025-10-28T01:41:50.450990311Z ✅ All required models are available.
-2025-10-28T01:41:50.450995591Z >>> Installed Ollama models (CLI)
-2025-10-28T01:41:50.529780983Z NAME                       ID              SIZE      MODIFIED
-2025-10-28T01:41:50.529892354Z gpt-oss:120b               a951a23b46a1    65 GB     7 days ago
-2025-10-28T01:41:50.529899017Z llama3.1:70b               711a9e8463af    42 GB     7 days ago
-2025-10-28T01:41:50.529902443Z mixtral:latest             a3b6bef0f836    26 GB     7 days ago
-2025-10-28T01:41:50.529905429Z llama3.1:8b                46e0c10c039e    4.9 GB    7 days ago
-2025-10-28T01:41:50.529909707Z nomic-embed-text:latest    0a109f422b47    274 MB    7 days ago
-2025-10-28T01:41:50.533658642Z >>> Installed Ollama models (REST)
-2025-10-28T01:41:50.567877933Z {"models":[{"name":"gpt-oss:120b","model":"gpt-oss:120b","modified_at":"2025-10-21T02:09:04Z","size":65369818941,"digest":"a951a23b46a1f6093dafee2ea481d634b4e31ac720a8a16f3f91e04f5a40ecd9","details":{"parent_model":"","format":"gguf","family":"gptoss","families":["gptoss"],"parameter_size":"116.8B","quantization_level":"MXFP4"}},{"name":"llama3.1:70b","model":"llama3.1:70b","modified_at":"2025-10-21T00:07:51Z","size":42520412561,"digest":"711a9e8463afd8edd580debd3b5c521521ebe55ba95bb80d576f4149969e07c6","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"70.6B","quantization_level":"Q4_K_M"}},{"name":"mixtral:latest","model":"mixtral:latest","modified_at":"2025-10-20T23:56:18Z","size":26443602516,"digest":"a3b6bef0f836ff29ddb576a80eeb1b7def43ec9b809466f62e96adb871fe8498","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"46.7B","quantization_level":"Q4_0"}},{"name":"llama3.1:8b","model":"llama3.1:8b","modified_at":"2025-10-20T23:47:45Z","size":4920753328,"digest":"46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"8.0B","quantization_level":"Q4_K_M"}},{"name":"nomic-embed-text:latest","model":"nomic-embed-text:latest","modified_at":"2025-10-20T23:46:52Z","size":274302450,"digest":"0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f","details":{"parent_model":"","format":"gguf","family":"nomic-bert","families":["nomic-bert"],"parameter_size":"137M","quantization_level":"F16"}}]}>>> Found existing /app/labnote-ai-backend/.env; keeping current configuration.
-2025-10-28T01:41:50.567898953Z Starting LabNote AI Backend server on port 8000 (foreground)...
-2025-10-28T01:41:56.398469879Z main.py             :47   2025-10-28 01:41:56,397 Initializing RAG pipeline within main.py for serverless environment...
-2025-10-28T01:41:56.398551985Z rag_pipeline.py     :450  2025-10-28 01:41:56,398 Lazy-initializing RAG pipeline on first access.
-2025-10-28T01:41:56.407053765Z rag_pipeline.py     :70   2025-10-28 01:41:56,406 Loaded Redis schema cache from /runpod-volume/redis-data/labnote_index_schema.json.
-2025-10-28T01:41:56.457116037Z rag_pipeline.py     :312  2025-10-28 01:41:56,456 Existing Redis index 'labnote_index' found. Connecting...
-2025-10-28T01:41:56.466982070Z main.py             :50   2025-10-28 01:41:56,466 RAG pipeline initialized successfully from main.py.
-2025-10-28T01:41:56.466991758Z main.py             :61   2025-10-28 01:41:56,466 SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
-2025-10-28T01:41:56.466996166Z main.py             :227  2025-10-28 01:41:56,466 Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
-2025-10-28T01:41:56.467434546Z main.py             :230  2025-10-28 01:41:56,467 Loaded 64 workflows and 83 unit operations.
-2025-10-28T01:41:56.668279589Z --- Starting Serverless Worker |  Version 1.7.13 ---
-2025-10-28T01:41:56.936924363Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
-2025-10-28T01:41:56.937000818Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
-2025-10-28T01:41:56.937129141Z {"requestId": "7de3a6e9-c402-42a4-8405-410e177403ef-e2", "message": "Started.", "level": "INFO"}
-2025-10-28T01:41:56.937160190Z [RunPod Handler] Incoming payload: {'body': {'file_content': "---\ntitle: WD070 Vector Design - new\nexperimenter: ''\ncreated_date: '2025-10-27'\nend_date: 2025-10-27 17:36\nlast_updated_date: '2025-10-27'\n---\n\n## [WD070 Vector Design] new\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose)\n> This workflow covers the design process for constructing DNA in the form of plasmid vectors, BACs, YACs, HACs, etc., ensuring the correct assembly and functionality of the vector for its intended application.\n\n## 🗂️ Related Unit Operations\n> Enter the list of related unit operations between the markers below.\n> When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n\n\n\n\n---\n\n### [USW030 Vector Design new]\n\n- **Description**: Designing vector maps regarding inserts and a plasmid backbone. This might include primer design and DNA assembly processes, facilitating the construction of functional genetic vectors for cloning and expression.\n\n#### Meta\n- Experimenter: \n- Start_date: '2025-10-27 17:36'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n1. DNA assembly reagents: Use 2x Gibson Assembly Master Mix (New England Biolabs) and prepare according to the manufacturer's instructions.\n2. PCR reagents: Utilize 2x Q5 High-Fidelity Master Mix (New England Biolabs) for amplification reactions, following the recommended protocol.\n3. Restriction enzymes: Employ FastDigest restriction enzymes (Thermo Fisher Scientific), such as EcoRI, BamHI, and XhoI, according to the supplier's guidelines.\n4. DNA ligation reagents: Use T4 DNA Ligase (New England Biolabs) at a concentration of 1 U/Î¼L for ligation reactions.\n5. Plasmid backbone preparation reagents: Prepare plasmid backbones using the QIAprep Spin Miniprep Kit (Qiagen), following the manufacturer's instructions.\n6. Primer design and synthesis reagents: Design primers using software such as Primer3 or SnapGene, and synthesize them using a service like IDT DNA or Eurofins Genomics.\n7. DNA sequencing reagents: Use the BigDye Terminator v3.1 Cycle Sequencing Kit (Applied Biosystems) for Sanger sequencing reactions, following the recommended protocol.\n8. Agarose gel electrophoresis reagents: Prepare 1% agarose gels using UltraPure Agarose (Invitrogen) and run them in 1x TAE buffer at 100 V for 30 minutes.\n9. DNA purification reagents: Use the QIAquick PCR Purification Kit (Qiagen) to purify PCR products, following the manufacturer's instructions.\n10. Water: Use nuclease-free water (Ambion) throughout all reactions and manipulations.\n\n#### Consumables\n\n1. DNA synthesis reagents (e.g., dNTPs, primers) for vector construction and primer design.\n2. Plasmid backbone preparation materials (e.g., restriction enzymes, ligase).\n3. DNA assembly kit (e.g., Gibson Assembly, Golden Gate Assembly) for constructing the final vector.\n4. PCR reagents (e.g., Taq polymerase, buffer, MgCl2) for amplifying specific DNA sequences.\n5. Agarose gel and electrophoresis equipment for verifying DNA fragment sizes.\n6. DNA sequencing reagents (e.g., Sanger sequencing kit) for confirming the final vector sequence.\n7. Computer software and hardware (e.g., Vector NTI, SnapGene, laptop) for designing and analyzing vector maps.\n8. Database access fees or subscriptions (e.g., iGEM Registry, Addgene) for retrieving standardized biological parts.\n9. Excel software or equivalent spreadsheet program for organizing part sequences and designing the final vector construct.\n10. Printer ink and paper for printing vector maps and primer designs (not specified).\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n\n", 'file_path': 'c:\\Users\\user\\Desktop\\templete\\labnote\\001_new\\001_WD070_Vector_Design--new.md', 'query': 'WD070 Vector Design - new', 'section': 'Equipment', 'uo_id': 'USW030'}, 'method': 'POST', 'path': '/populate_note'}
-2025-10-28T01:41:56.952587406Z main.py             :1351 2025-10-28 01:41:56,952 Phase 2: Populating section 'Equipment' for UO 'USW030'
-2025-10-28T01:41:56.959974907Z agents.py           :280  2025-10-28 01:41:56,959 Supervisor-led agent graph compiled successfully.
-2025-10-28T01:41:56.965072564Z agents.py           :57   2025-10-28 01:41:56,964 Generating drafts for UO 'USW030' - Section 'Equipment'
-2025-10-28T01:41:56.965436643Z rag_pipeline.py     :391  2025-10-28 01:41:56,965 Retrieving top 3 documents for query: 'Find the specific procedure or list of items for the 'Equipment' section of the unit operation 'USW030: Vector Design new' related to the experiment: WD070 Vector Design - new'
-2025-10-28T01:41:59.000186603Z _client.py          :1025 2025-10-28 01:41:58,999 HTTP Request: POST http://127.0.0.1:11434/api/embed "HTTP/1.1 200 OK"
-2025-10-28T01:41:59.003951829Z agents.py           :113  2025-10-28 01:41:59,003 Draft prompt prepared | uo=USW030 | section=Equipment | chars=6775
-2025-10-28T01:41:59.004157458Z llm_utils.py        :66   2025-10-28 01:41:59,003 Calling LLM: llama3.1:8b for a specific task.
-2025-10-28T01:41:59.030941607Z llm_utils.py        :66   2025-10-28 01:41:59,030 Calling LLM: mixtral for a specific task.
-2025-10-28T01:41:59.054737651Z llm_utils.py        :66   2025-10-28 01:41:59,054 Calling LLM: llama3.1:70b for a specific task.
-2025-10-28T01:42:51.296019819Z _client.py          :1740 2025-10-28 01:42:51,295 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
-2025-10-28T01:44:10.231275694Z _client.py          :1740 2025-10-28 01:44:10,230 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
-2025-10-28T01:44:17.283926361Z _client.py          :1740 2025-10-28 01:44:17,283 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
-2025-10-28T01:44:17.284474628Z agents.py           :145  2025-10-28 01:44:17,284 Draft generated by llama3.1:8b:
-2025-10-28T01:44:17.284515055Z ### Equipment
-2025-10-28T01:44:17.284520886Z 1. Computer with vector design software installed (e.g., SnapGene, Vector NTI)
-2025-10-28T01:44:17.284526777Z 2. Database access for retrieving and storing DNA parts
-2025-10-28T01:44:17.284530845Z 3. Excel or spreadsheet software for organizing part sequences
-2025-10-28T01:44:17.284534171Z 4. High-performance computing resources (if necessary)
-2025-10-28T01:44:17.284537288Z agents.py           :145  2025-10-28 01:44:17,284 Draft generated by mixtral:
-2025-10-28T01:44:17.284541205Z ### Equipment
-2025-10-28T01:44:17.284565641Z 1. Database: Retrieve DNA parts from a curated database for the design process.
-2025-10-28T01:44:17.284568486Z 2. Software for Vector Design (e.g., SnapGene, ApE, or Vector NTI): Design and visualize vector maps with selected DNA parts and plasmid backbone.
-2025-10-28T01:44:17.284572554Z - Ensure compatibility with the operating system and hardware environment in use.
-2025-10-28T01:44:17.284575410Z - Regularly update software to include new features and improvements.
-2025-10-28T01:44:17.284580329Z agents.py           :145  2025-10-28 01:44:17,284 Draft generated by llama3.1:70b:
-2025-10-28T01:44:17.284588644Z ### Equipment
-2025-10-28T01:44:17.284600578Z 1. Computer with internet access for database search and vector design software (e.g., Benchling, Vector NTI)
-2025-10-28T01:44:17.284609374Z 2. Database subscription or access to curated biological part databases (e.g., iGEM Registry, Addgene)
-2025-10-28T01:44:17.285680801Z agents.py           :155  2025-10-28 01:44:17,285 Supervisor Agent: Evaluating drafts for UO 'USW030' - Section 'Equipment'
-2025-10-28T01:44:17.285731959Z agents.py           :188  2025-10-28 01:44:17,285 Calling Scoring LLM (llama3.1:70b) to evaluate drafts.
-2025-10-28T01:44:17.285758709Z llm_utils.py        :66   2025-10-28 01:44:17,285 Calling LLM: llama3.1:70b for a specific task.
-2025-10-28T01:44:24.971512368Z _client.py          :1740 2025-10-28 01:44:24,971 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
-2025-10-28T01:44:24.972145566Z agents.py           :211  2025-10-28 01:44:24,971 Supervisor: Parsed evaluations: [{'draft_index': 0, 'model': 'llama3.1:8b', 'score': 6.5, 'justification': 'Clear format but lacks specificity in software versions and database details.'}, {'draft_index': 1, 'model': 'mixtral', 'score': 7.2, 'justification': 'Provides some detail on software compatibility but misses specific database names and computer specifications.'}, {'draft_index': 2, 'model': 'llama3.1:70b', 'score': 8.8, 'justification': 'Excellent structure and specificity in equipment details, including internet access for database search.'}]
-2025-10-28T01:44:24.972212132Z agents.py           :225  2025-10-28 01:44:24,972 Supervisor: Quality threshold passed with score 8.8. Finalizing options.
-2025-10-28T01:44:24.973710057Z agents.py           :256  2025-10-28 01:44:24,973 Routing: No feedback. Proceeding to end.
-2025-10-28T01:44:24.978824066Z _client.py          :1025 2025-10-28 01:44:24,978 HTTP Request: POST http://testserver/populate_note "HTTP/1.1 200 OK"
-2025-10-28T01:44:25.281948975Z {"requestId": "7de3a6e9-c402-42a4-8405-410e177403ef-e2", "message": "Finished.", "level": "INFO"}
-2025-10-28T01:44:58.292054228Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
-2025-10-28T01:44:58.292149679Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
-2025-10-28T01:44:58.292154739Z {"requestId": "dea0e5b4-ceb8-494b-b497-5102c962a204-e2", "message": "Started.", "level": "INFO"}
-2025-10-28T01:44:58.292389964Z [RunPod Handler] Incoming payload: {'body': {'chosen_edited': '### Equipment\n1. Computer with internet access for database search and vector design software (e.g., Benchling, Vector NTI)\n2. Database subscription or access to curated biological part databases (e.g., iGEM Registry, Addgene)', 'chosen_original': '--- llama3.1:70bì\x9d\x98 ì\xa0\x9cì\x95\x88 (í\x92\x88ì§\x88 ì\xa0\x90ì\x88\x98: 8.8) ---\n\n### Equipment\n1. Computer with internet access for database search and vector design software (e.g., Benchling, Vector NTI)\n2. Database subscription or access to curated biological part databases (e.g., iGEM Registry, Addgene)', 'file_content': "---\ntitle: WD070 Vector Design - new\nexperimenter: ''\ncreated_date: '2025-10-27'\nend_date: 2025-10-27 17:36\nlast_updated_date: '2025-10-27'\n---\n\n## [WD070 Vector Design] new\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose)\n> This workflow covers the design process for constructing DNA in the form of plasmid vectors, BACs, YACs, HACs, etc., ensuring the correct assembly and functionality of the vector for its intended application.\n\n## 🗂️ Related Unit Operations\n> Enter the list of related unit operations between the markers below.\n> When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n\n\n\n\n---\n\n### [USW030 Vector Design new]\n\n- **Description**: Designing vector maps regarding inserts and a plasmid backbone. This might include primer design and DNA assembly processes, facilitating the construction of functional genetic vectors for cloning and expression.\n\n#### Meta\n- Experimenter: \n- Start_date: '2025-10-27 17:36'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n1. DNA assembly reagents: Use 2x Gibson Assembly Master Mix (New England Biolabs) and prepare according to the manufacturer's instructions.\n2. PCR reagents: Utilize 2x Q5 High-Fidelity Master Mix (New England Biolabs) for amplification reactions, following the recommended protocol.\n3. Restriction enzymes: Employ FastDigest restriction enzymes (Thermo Fisher Scientific), such as EcoRI, BamHI, and XhoI, according to the supplier's guidelines.\n4. DNA ligation reagents: Use T4 DNA Ligase (New England Biolabs) at a concentration of 1 U/Î¼L for ligation reactions.\n5. Plasmid backbone preparation reagents: Prepare plasmid backbones using the QIAprep Spin Miniprep Kit (Qiagen), following the manufacturer's instructions.\n6. Primer design and synthesis reagents: Design primers using software such as Primer3 or SnapGene, and synthesize them using a service like IDT DNA or Eurofins Genomics.\n7. DNA sequencing reagents: Use the BigDye Terminator v3.1 Cycle Sequencing Kit (Applied Biosystems) for Sanger sequencing reactions, following the recommended protocol.\n8. Agarose gel electrophoresis reagents: Prepare 1% agarose gels using UltraPure Agarose (Invitrogen) and run them in 1x TAE buffer at 100 V for 30 minutes.\n9. DNA purification reagents: Use the QIAquick PCR Purification Kit (Qiagen) to purify PCR products, following the manufacturer's instructions.\n10. Water: Use nuclease-free water (Ambion) throughout all reactions and manipulations.\n\n#### Consumables\n\n1. DNA synthesis reagents (e.g., dNTPs, primers) for vector construction and primer design.\n2. Plasmid backbone preparation materials (e.g., restriction enzymes, ligase).\n3. DNA assembly kit (e.g., Gibson Assembly, Golden Gate Assembly) for constructing the final vector.\n4. PCR reagents (e.g., Taq polymerase, buffer, MgCl2) for amplifying specific DNA sequences.\n5. Agarose gel and electrophoresis equipment for verifying DNA fragment sizes.\n6. DNA sequencing reagents (e.g., Sanger sequencing kit) for confirming the final vector sequence.\n7. Computer software and hardware (e.g., Vector NTI, SnapGene, laptop) for designing and analyzing vector maps.\n8. Database access fees or subscriptions (e.g., iGEM Registry, Addgene) for retrieving standardized biological parts.\n9. Excel software or equivalent spreadsheet program for organizing part sequences and designing the final vector construct.\n10. Printer ink and paper for printing vector maps and primer designs (not specified).\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n\n", 'file_path': 'c:\\Users\\user\\Desktop\\templete\\labnote\\001_new\\001_WD070_Vector_Design--new.md', 'query': 'WD070 Vector Design - new', 'rejected': ['--- llama3.1:70b의 제안 (품질 점수: 8.8) ---\n\n### Equipment\n1. Computer with internet access for database search and vector design software (e.g., Benchling, Vector NTI)\n2. Database subscription or access to curated biological part databases (e.g., iGEM Registry, Addgene)'], 'section': 'Equipment', 'supervisor_evaluations': [], 'uo_id': 'USW030'}, 'method': 'POST', 'path': '/record_preference'}
-2025-10-28T01:44:58.295979779Z main.py             :1413 2025-10-28 01:44:58,295 Recording DPO data for UO 'USW030' via dedicated endpoint.
-2025-10-28T01:44:58.311339900Z main.py             :1169 2025-10-28 01:44:58,310 Feedback metrics table initialized in '/runpod-volume/evaluation_results.db'
-2025-10-28T01:44:58.331224345Z main.py             :1267 2025-10-28 01:44:58,330 Saved edit_distance_ratio (0.90) to DB for USW030/Equipment
-2025-10-28T01:44:58.365353901Z main.py             :1190 2025-10-28 01:44:58,365 Fetching latest changes from DPO repository...
-2025-10-28T01:44:58.646131804Z main.py             :1193 2025-10-28 01:44:58,645 Resetting local branch to match the remote branch...
-2025-10-28T01:44:58.659513942Z main.py             :1203 2025-10-28 01:44:58,659 DPO data saved to /app/labnote-ai-backend/labnote-dpo-trainer-data/data/20251028_014458_9aa9bd6a-7d2c-4667-8484-27519c0ff015.json
-2025-10-28T01:44:58.687448423Z main.py             :1208 2025-10-28 01:44:58,687 Pushing DPO data to remote repository...
-2025-10-28T01:44:58.694788485Z main.py             :1426 2025-10-28 01:44:58,692 Git command failed: Cmd('git') failed due to: exit code(128)
-2025-10-28T01:44:58.694877754Z   cmdline: git push --porcelain -- origin
-2025-10-28T01:44:58.694885379Z   stderr: 'fatal: You are not currently on a branch.'
-2025-10-28T01:44:58.694904665Z Traceback (most recent call last):
-2025-10-28T01:44:58.694908011Z   File "/app/labnote-ai-backend/main.py", line 1415, in record_preference
-2025-10-28T01:44:58.694912020Z     await _save_dpo_data(
-2025-10-28T01:44:58.694915737Z   File "/app/labnote-ai-backend/main.py", line 1273, in _save_dpo_data
-2025-10-28T01:44:58.694918913Z     await asyncio.to_thread(
-2025-10-28T01:44:58.694921769Z   File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
-2025-10-28T01:44:58.694924634Z     return await loop.run_in_executor(None, func_call)
-2025-10-28T01:44:58.694927309Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-28T01:44:58.694930164Z   File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
-2025-10-28T01:44:58.694932889Z     result = self.fn(*self.args, **self.kwargs)
-2025-10-28T01:44:58.694935715Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-28T01:44:58.694938320Z   File "/app/labnote-ai-backend/main.py", line 1209, in _run_git_operations
-2025-10-28T01:44:58.694940965Z     origin.push()
-2025-10-28T01:44:58.694944692Z   File "/opt/venv/lib/python3.12/site-packages/git/remote.py", line 1210, in push
-2025-10-28T01:44:58.694948468Z     return self._get_push_info(proc, progress, kill_after_timeout=kill_after_timeout)
-2025-10-28T01:44:58.694951304Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-10-28T01:44:58.694954449Z   File "/opt/venv/lib/python3.12/site-packages/git/remote.py", line 975, in _get_push_info
-2025-10-28T01:44:58.694957615Z     proc.wait(stderr=stderr_text)
-2025-10-28T01:44:58.694960241Z   File "/opt/venv/lib/python3.12/site-packages/git/cmd.py", line 419, in wait
-2025-10-28T01:44:58.694962846Z     raise GitCommandError(remove_password_if_present(self.args), status, errstr)
-2025-10-28T01:44:58.694965500Z git.exc.GitCommandError: Cmd('git') failed due to: exit code(128)
-2025-10-28T01:44:58.694968155Z   cmdline: git push --porcelain -- origin
-2025-10-28T01:44:58.694971062Z   stderr: 'fatal: You are not currently on a branch.'
-2025-10-28T01:44:58.697505388Z _client.py          :1025 2025-10-28 01:44:58,697 HTTP Request: POST http://testserver/record_preference "HTTP/1.1 500 Internal Server Error"
-2025-10-28T01:44:58.698890139Z {"requestId": "dea0e5b4-ceb8-494b-b497-5102c962a204-e2", "message": "Captured Handler Exception", "level": "ERROR"}
-2025-10-28T01:44:58.698912230Z {"requestId": null, "message": "{\n    \"error_type\": \"<class 'RuntimeError'>\",\n    \"error_message\": \"Error processing request for POST /record_preference: Server error '500 Internal Server Error' for url 'http://testserver/record_preference'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\",\n    \"error_traceback\": \"Traceback (most recent call last):\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 51, in handler\\n    response.raise_for_status()\\n  File \\\"/opt/venv/lib/python3.12/site-packages/httpx/_models.py\\\", line 829, in raise_for_status\\n    raise HTTPStatusError(message, request=request, response=self)\\nhttpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'http://testserver/record_preference'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\\nThe above exception was the direct cause of the following exception:\\n\\nTraceback (most recent call last):\\n  File \\\"/opt/venv/lib/python3.12/site-packages/runpod/serverless/modules/rp_job.py\\\", line 182, in run_job\\n    handler_return = handler(job)\\n                     ^^^^^^^^^^^^\\n  File \\\"/app/labnote-ai-backend/runpod_handler.py\\\", line 56, in handler\\n    raise RuntimeError(\\nRuntimeError: Error processing request for POST /record_preference: Server error '500 Internal Server Error' for url 'http://testserver/record_preference'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\\n\",\n    \"hostname\": \"cjwrfz20b3d6yz-64410b8c\",\n    \"worker_id\": \"cjwrfz20b3d6yz\",\n    \"runpod_version\": \"1.7.13\"\n}", "level": "ERROR"}
-2025-10-28T01:44:58.956330031Z {"requestId": "dea0e5b4-ceb8-494b-b497-5102c962a204-e2", "message": "Finished.", "level": "INFO"}
+2025-10-29T03:21:58.609525525Z ==========
+2025-10-29T03:21:58.609530655Z == CUDA ==
+2025-10-29T03:21:58.609657867Z ==========
+2025-10-29T03:21:58.614670419Z CUDA Version 12.8.1
+2025-10-29T03:21:58.615729062Z Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2025-10-29T03:21:58.617557975Z This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+2025-10-29T03:21:58.617563515Z By pulling and using the container, you accept the terms and conditions of this license:
+2025-10-29T03:21:58.617566975Z https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+2025-10-29T03:21:58.617572515Z A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+2025-10-29T03:21:58.639763789Z --- [DIAGNOSIS] Verifying storage mounts ---
+2025-10-29T03:21:58.639780089Z >>> Displaying mounted filesystems (df -h):
+2025-10-29T03:21:58.644272614Z Filesystem                    Size  Used Avail Use% Mounted on
+2025-10-29T03:21:58.644294685Z overlay                        20G   92K   20G   1% /
+2025-10-29T03:21:58.644298355Z tmpfs                          64M     0   64M   0% /dev
+2025-10-29T03:21:58.644300755Z mfs#ca-mtl-3.runpod.net:9421  503T  374T  130T  75% /runpod-volume
+2025-10-29T03:21:58.644304275Z shm                            55G     0   55G   0% /dev/shm
+2025-10-29T03:21:58.644306476Z /dev/vda2                     6.4T  5.1T  1.3T  81% /etc/hosts
+2025-10-29T03:21:58.644308676Z /dev/vda1                      39G   11G   28G  29% /usr/bin/nvidia-smi
+2025-10-29T03:21:58.644311386Z tmpfs                         473G     0  473G   0% /sys/fs/cgroup
+2025-10-29T03:21:58.644313606Z tmpfs                         473G   12K  473G   1% /proc/driver/nvidia
+2025-10-29T03:21:58.644315736Z tmpfs                         473G  4.0K  473G   1% /etc/nvidia/nvidia-application-profiles-rc.d
+2025-10-29T03:21:58.644318616Z tmpfs                          95G  4.4M   95G   1% /run/nvidia-persistenced/socket
+2025-10-29T03:21:58.644320756Z tmpfs                         473G     0  473G   0% /proc/acpi
+2025-10-29T03:21:58.644322866Z tmpfs                         473G     0  473G   0% /proc/scsi
+2025-10-29T03:21:58.644324936Z tmpfs                         473G     0  473G   0% /sys/firmware
+2025-10-29T03:21:58.644327086Z tmpfs                         473G     0  473G   0% /sys/devices/virtual/powercap
+2025-10-29T03:21:58.644340656Z ---
+2025-10-29T03:21:58.644343336Z >>> Listing root directory contents (ls -la /):
+2025-10-29T03:21:58.649986656Z total 2967
+2025-10-29T03:21:58.650008476Z drwxr-xr-x    1 root   root         95 Oct 29 03:21 .
+2025-10-29T03:21:58.650012996Z drwxr-xr-x    1 root   root         95 Oct 29 03:21 ..
+2025-10-29T03:21:58.650015256Z -rwxr-xr-x    1 root   root          0 Oct 29 03:20 .dockerenv
+2025-10-29T03:21:58.650018165Z -rw-r--r--    1 root   root      17294 Mar 10  2025 NGC-DL-CONTAINER-LICENSE
+2025-10-29T03:21:58.650021825Z drwxr-xr-x    1 root   root         62 Oct 29 03:15 app
+2025-10-29T03:21:58.650023985Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 bin -> usr/bin
+2025-10-29T03:21:58.650026096Z drwxr-xr-x    2 root   root         10 Jul 10 14:46 bin.usr-is-merged
+2025-10-29T03:21:58.650028336Z drwxr-xr-x    2 root   root          6 Apr 22  2024 boot
+2025-10-29T03:21:58.650030545Z drwxr-xr-x    6 root   root        460 Oct 29 03:21 dev
+2025-10-29T03:21:58.650032656Z drwxr-xr-x    1 root   root         69 Oct 29 03:21 etc
+2025-10-29T03:21:58.650034665Z drwxr-xr-x    3 root   root         28 Jan 27  2025 home
+2025-10-29T03:21:58.650036825Z lrwxrwxrwx    1 root   root          7 Apr 22  2024 lib -> usr/lib
+2025-10-29T03:21:58.650039196Z drwxr-xr-x    2 root   root         10 Nov 14  2024 lib.usr-is-merged
+2025-10-29T03:21:58.650041466Z lrwxrwxrwx    1 root   root          9 Apr 22  2024 lib64 -> usr/lib64
+2025-10-29T03:21:58.650043586Z drwxr-xr-x    2 root   root          6 Jan 27  2025 media
+2025-10-29T03:21:58.650045766Z drwxr-xr-x    2 root   root          6 Jan 27  2025 mnt
+2025-10-29T03:21:58.650047937Z drwxr-xr-x    1 root   root         26 Oct 28 00:21 opt
+2025-10-29T03:21:58.650070337Z dr-xr-xr-x 2877 nobody nogroup       0 Oct 29 03:21 proc
+2025-10-29T03:21:58.650073786Z drwx------    1 root   root         32 Oct 28 06:43 root
+2025-10-29T03:21:58.650076517Z drwxr-xr-x    1 root   root         41 Oct 29 03:21 run
+2025-10-29T03:21:58.650078697Z drwxrwxrwx    5 root   root    3012995 Oct 29 03:09 runpod-volume
+2025-10-29T03:21:58.650080837Z lrwxrwxrwx    1 root   root          8 Apr 22  2024 sbin -> usr/sbin
+2025-10-29T03:21:58.650082977Z drwxr-xr-x    2 root   root         10 Apr  1  2024 sbin.usr-is-merged
+2025-10-29T03:21:58.650085066Z drwxr-xr-x    2 root   root          6 Jan 27  2025 srv
+2025-10-29T03:21:58.650087617Z -rwxr-xr-x    1 root   root       3320 Oct  9 05:01 start.sh
+2025-10-29T03:21:58.650089717Z dr-xr-xr-x   13 nobody nogroup       0 Sep  1 08:42 sys
+2025-10-29T03:21:58.650092306Z drwxrwxrwt    1 root   root          6 Oct 29 03:15 tmp
+2025-10-29T03:21:58.650094446Z drwxr-xr-x    1 root   root         73 Jan 27  2025 usr
+2025-10-29T03:21:58.650096786Z drwxr-xr-x    1 root   root         27 Oct  9 05:07 var
+2025-10-29T03:21:58.650098946Z drwxr-xr-x    1 root   root         28 Oct  9 05:11 workspace
+2025-10-29T03:21:58.650199587Z ---
+2025-10-29T03:21:58.650223999Z >>> Listing /runpod-volume contents (ls -la /runpod-volume):
+2025-10-29T03:21:58.656377504Z total 9805
+2025-10-29T03:21:58.656388744Z drwxrwxrwx 5 root root 3012995 Oct 29 03:09 .
+2025-10-29T03:21:58.656392095Z drwxr-xr-x 1 root root      95 Oct 29 03:21 ..
+2025-10-29T03:21:58.656394495Z drwxrwxrwx 3 root root 2000453 Oct 21 07:36 .cache
+2025-10-29T03:21:58.656397075Z -rw-rw-rw- 1 root root   12288 Oct 29 03:09 evaluation_results.db
+2025-10-29T03:21:58.656399455Z drwxrwxrwx 4 root root 3012994 Oct 20 23:46 ollama_models
+2025-10-29T03:21:58.656401824Z drwxrwxrwx 2 root root 2000178 Oct 29 03:18 redis-data
+2025-10-29T03:21:58.656674667Z --- [DIAGNOSIS] Verification complete ---
+2025-10-29T03:21:58.656929731Z >>> GPU Diagnostics (nvidia-smi)
+2025-10-29T03:21:58.675836054Z Wed Oct 29 03:21:58 2025
+2025-10-29T03:21:58.675864015Z +-----------------------------------------------------------------------------------------+
+2025-10-29T03:21:58.675868765Z | NVIDIA-SMI 565.57.01              Driver Version: 565.57.01      CUDA Version: 12.7     |
+2025-10-29T03:21:58.675871085Z |-----------------------------------------+------------------------+----------------------+
+2025-10-29T03:21:58.675878455Z | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+2025-10-29T03:21:58.675881085Z | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+2025-10-29T03:21:58.675883365Z |                                         |                        |               MIG M. |
+2025-10-29T03:21:58.675885525Z |=========================================+========================+======================|
+2025-10-29T03:21:58.713252267Z |   0  NVIDIA A100 80GB PCIe          On  |   00000000:00:09.0 Off |                    0 |
+2025-10-29T03:21:58.713290487Z | N/A   44C    P0             60W /  300W |       1MiB /  81920MiB |      0%      Default |
+2025-10-29T03:21:58.713293307Z |                                         |                        |             Disabled |
+2025-10-29T03:21:58.713295117Z +-----------------------------------------+------------------------+----------------------+
+2025-10-29T03:21:58.713398339Z +-----------------------------------------------------------------------------------------+
+2025-10-29T03:21:58.713400599Z | Processes:                                                                              |
+2025-10-29T03:21:58.713402409Z |  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+2025-10-29T03:21:58.713407509Z |        ID   ID                                                               Usage      |
+2025-10-29T03:21:58.713409149Z |=========================================================================================|
+2025-10-29T03:21:58.713663483Z |  No running processes found                                                             |
+2025-10-29T03:21:58.713700392Z +-----------------------------------------------------------------------------------------+
+2025-10-29T03:21:59.023577801Z >>> GPU Short Summary
+2025-10-29T03:21:59.043527607Z NVIDIA A100 80GB PCIe, 81920, 1, 0
+2025-10-29T03:21:59.048856964Z >>> OLLAMA_LLM_LIBRARY not set; using autodetect.
+2025-10-29T03:21:59.048958795Z >>> [DIAGNOSIS] Environment summary (selected)
+2025-10-29T03:21:59.048963385Z OLLAMA_USE_GPU=1
+2025-10-29T03:21:59.048967195Z OLLAMA_LLM_LIBRARY=
+2025-10-29T03:21:59.048970615Z OLLAMA_NUM_GPU=1
+2025-10-29T03:21:59.048973075Z OLLAMA_GPU_DEVICE=0
+2025-10-29T03:21:59.049082737Z OLLAMA_MODELS=/runpod-volume/ollama_models
+2025-10-29T03:21:59.049132637Z OLLAMA_LIBRARY_PATH=/usr/lib/ollama
+2025-10-29T03:21:59.049136377Z OLLAMA_LOG_LEVEL=debug
+2025-10-29T03:21:59.049142677Z GGML_LOG_LEVEL=debug
+2025-10-29T03:21:59.049145457Z CUDA_VISIBLE_DEVICES=0
+2025-10-29T03:21:59.049148147Z LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/ollama:/usr/lib/ollama/cuda_v12:/usr/lib/ollama/cuda_v13:/opt/redis-stack/lib:/usr/lib/ollama:/usr/local/cuda/lib64
+2025-10-29T03:21:59.049153347Z >>> which/versions
+2025-10-29T03:21:59.051091981Z /usr/bin/ollama
+2025-10-29T03:21:59.078386919Z Warning: could not connect to a running Ollama instance
+2025-10-29T03:21:59.078417799Z Warning: client version is 0.12.6
+2025-10-29T03:21:59.085448725Z Python 3.12.3
+2025-10-29T03:22:00.345013458Z [PyTorch] 2.9.0+cu128 cuda_is_available= True
+2025-10-29T03:22:00.345055919Z cuda_version= 12.8
+2025-10-29T03:22:00.359717840Z device_name= NVIDIA A100 80GB PCIe
+2025-10-29T03:22:00.748360142Z >>> List CUDA/Ollama libs
+2025-10-29T03:22:00.751648062Z total 6020
+2025-10-29T03:22:00.751692513Z drwxr-xr-x 4 root root   4096 Oct 16 22:28 .
+2025-10-29T03:22:00.751697063Z drwxr-xr-x 1 root root     58 Oct 29 03:21 ..
+2025-10-29T03:22:00.751700493Z drwxr-xr-x 2 root root   4096 Oct 16 22:44 cuda_v12
+2025-10-29T03:22:00.751704503Z drwxr-xr-x 2 root root   4096 Oct 16 22:40 cuda_v13
+2025-10-29T03:22:00.751707343Z -rwxr-xr-x 1 root root 661720 Oct 16 22:28 libggml-base.so
+2025-10-29T03:22:00.751710043Z -rwxr-xr-x 1 root root 820464 Oct 16 22:28 libggml-cpu-alderlake.so
+2025-10-29T03:22:00.751713523Z -rwxr-xr-x 1 root root 824560 Oct 16 22:28 libggml-cpu-haswell.so
+2025-10-29T03:22:00.751715813Z -rwxr-xr-x 1 root root 951536 Oct 16 22:28 libggml-cpu-icelake.so
+2025-10-29T03:22:00.751718063Z -rwxr-xr-x 1 root root 767280 Oct 16 22:28 libggml-cpu-sandybridge.so
+2025-10-29T03:22:00.751721053Z -rwxr-xr-x 1 root root 951536 Oct 16 22:28 libggml-cpu-skylakex.so
+2025-10-29T03:22:00.751723603Z -rwxr-xr-x 1 root root 578992 Oct 16 22:28 libggml-cpu-sse42.so
+2025-10-29T03:22:00.751725813Z -rwxr-xr-x 1 root root 574896 Oct 16 22:28 libggml-cpu-x64.so
+2025-10-29T03:22:00.755180126Z /usr/lib/ollama/cuda_v12:
+2025-10-29T03:22:00.755219626Z total 2377000
+2025-10-29T03:22:00.755225646Z drwxr-xr-x 2 root root       4096 Oct 16 22:44 .
+2025-10-29T03:22:00.755230026Z drwxr-xr-x 4 root root       4096 Oct 16 22:28 ..
+2025-10-29T03:22:00.755234466Z lrwxrwxrwx 1 root root         21 Oct 16 22:44 libcublas.so.12 -> libcublas.so.12.8.4.1
+2025-10-29T03:22:00.755239256Z -rwxr-xr-x 1 root root  116388640 Jul  8  2015 libcublas.so.12.8.4.1
+2025-10-29T03:22:00.755243316Z lrwxrwxrwx 1 root root         23 Oct 16 22:44 libcublasLt.so.12 -> libcublasLt.so.12.8.4.1
+2025-10-29T03:22:00.755246156Z -rwxr-xr-x 1 root root  751771728 Jul  8  2015 libcublasLt.so.12.8.4.1
+2025-10-29T03:22:00.755249186Z lrwxrwxrwx 1 root root         20 Oct 16 22:44 libcudart.so.12 -> libcudart.so.12.8.90
+2025-10-29T03:22:00.755251976Z -rwxr-xr-x 1 root root     728800 Jul  8  2015 libcudart.so.12.8.90
+2025-10-29T03:22:00.755254997Z -rwxr-xr-x 1 root root 1565141104 Oct 16 22:44 libggml-cuda.so
+2025-10-29T03:22:00.755260317Z /usr/lib/ollama/cuda_v13:
+2025-10-29T03:22:00.755262988Z total 869728
+2025-10-29T03:22:00.755266028Z drwxr-xr-x 2 root root      4096 Oct 16 22:40 .
+2025-10-29T03:22:00.755269337Z drwxr-xr-x 4 root root      4096 Oct 16 22:28 ..
+2025-10-29T03:22:00.755272168Z lrwxrwxrwx 1 root root        21 Oct 16 22:40 libcublas.so.13 -> libcublas.so.13.1.0.3
+2025-10-29T03:22:00.755274748Z -rwxr-xr-x 1 root root  54177976 Jul  8  2015 libcublas.so.13.1.0.3
+2025-10-29T03:22:00.755292337Z lrwxrwxrwx 1 root root        23 Oct 16 22:40 libcublasLt.so.13 -> libcublasLt.so.13.1.0.3
+2025-10-29T03:22:00.755296208Z -rwxr-xr-x 1 root root 541595600 Jul  8  2015 libcublasLt.so.13.1.0.3
+2025-10-29T03:22:00.755299337Z lrwxrwxrwx 1 root root        20 Oct 16 22:40 libcudart.so.13 -> libcudart.so.13.0.96
+2025-10-29T03:22:00.755302128Z -rwxr-xr-x 1 root root    704288 Jul  8  2015 libcudart.so.13.0.96
+2025-10-29T03:22:00.755305468Z -rwxr-xr-x 1 root root 294107216 Oct 16 22:40 libggml-cuda.so
+2025-10-29T03:22:00.758420487Z 	libpcsamplingutil.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libpcsamplingutil.so
+2025-10-29T03:22:00.758437096Z 	libnvrtc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.so.12
+2025-10-29T03:22:00.758441327Z 	libnvrtc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.so
+2025-10-29T03:22:00.758443936Z 	libnvrtc.alt.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.alt.so.12
+2025-10-29T03:22:00.758446276Z 	libnvrtc.alt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc.alt.so
+2025-10-29T03:22:00.758449436Z 	libnvrtc-builtins.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.so.12.8
+2025-10-29T03:22:00.758451987Z 	libnvrtc-builtins.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.so
+2025-10-29T03:22:00.758454287Z 	libnvrtc-builtins.alt.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so.12.8
+2025-10-29T03:22:00.758457176Z 	libnvrtc-builtins.alt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so
+2025-10-29T03:22:00.758459447Z 	libnvperf_target.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvperf_target.so
+2025-10-29T03:22:00.758461716Z 	libnvperf_host.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvperf_host.so
+2025-10-29T03:22:00.758464316Z 	libnvjpeg.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvjpeg.so.12
+2025-10-29T03:22:00.758466416Z 	libnvjpeg.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvjpeg.so
+2025-10-29T03:22:00.758468856Z 	libnvfatbin.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvfatbin.so.12
+2025-10-29T03:22:00.758471136Z 	libnvfatbin.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvfatbin.so
+2025-10-29T03:22:00.758473416Z 	libnvblas.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvblas.so.12
+2025-10-29T03:22:00.758475516Z 	libnvblas.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvblas.so
+2025-10-29T03:22:00.758477716Z 	libnvToolsExt.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvToolsExt.so.1
+2025-10-29T03:22:00.758480247Z 	libnvToolsExt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvToolsExt.so
+2025-10-29T03:22:00.758482436Z 	libnvJitLink.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvJitLink.so.12
+2025-10-29T03:22:00.758484587Z 	libnvJitLink.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnvJitLink.so
+2025-10-29T03:22:00.758488147Z 	libnpps.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnpps.so.12
+2025-10-29T03:22:00.758490527Z 	libnpps.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnpps.so
+2025-10-29T03:22:00.758492767Z 	libnppitc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppitc.so.12
+2025-10-29T03:22:00.758495036Z 	libnppitc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppitc.so
+2025-10-29T03:22:00.758497247Z 	libnppisu.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppisu.so.12
+2025-10-29T03:22:00.758499376Z 	libnppisu.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppisu.so
+2025-10-29T03:22:00.758501556Z 	libnppist.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppist.so.12
+2025-10-29T03:22:00.758503687Z 	libnppist.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppist.so
+2025-10-29T03:22:00.758524617Z 	libnppim.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppim.so.12
+2025-10-29T03:22:00.758527537Z 	libnppim.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppim.so
+2025-10-29T03:22:00.758530217Z 	libnppig.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppig.so.12
+2025-10-29T03:22:00.758532408Z 	libnppig.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppig.so
+2025-10-29T03:22:00.758534668Z 	libnppif.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppif.so.12
+2025-10-29T03:22:00.758536828Z 	libnppif.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppif.so
+2025-10-29T03:22:00.758538977Z 	libnppidei.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppidei.so.12
+2025-10-29T03:22:00.758541108Z 	libnppidei.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppidei.so
+2025-10-29T03:22:00.758543328Z 	libnppicc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppicc.so.12
+2025-10-29T03:22:00.758546188Z 	libnppicc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppicc.so
+2025-10-29T03:22:00.758548408Z 	libnppial.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppial.so.12
+2025-10-29T03:22:00.758550657Z 	libnppial.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppial.so
+2025-10-29T03:22:00.758552757Z 	libnppc.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppc.so.12
+2025-10-29T03:22:00.758554908Z 	libnppc.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libnppc.so
+2025-10-29T03:22:00.758557008Z 	libicudata.so.74 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libicudata.so.74
+2025-10-29T03:22:00.758560437Z 	libcusparse.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusparse.so.12
+2025-10-29T03:22:00.758562648Z 	libcusparse.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusparse.so
+2025-10-29T03:22:00.758569217Z 	libcusolverMg.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolverMg.so.11
+2025-10-29T03:22:00.758571517Z 	libcusolverMg.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolverMg.so
+2025-10-29T03:22:00.758573817Z 	libcusolver.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolver.so.11
+2025-10-29T03:22:00.758576037Z 	libcusolver.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcusolver.so
+2025-10-29T03:22:00.758578517Z 	libcurand.so.10 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcurand.so.10
+2025-10-29T03:22:00.758580717Z 	libcurand.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcurand.so
+2025-10-29T03:22:00.758582857Z 	libcupti.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcupti.so.12
+2025-10-29T03:22:00.758585188Z 	libcupti.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcupti.so
+2025-10-29T03:22:00.758587537Z 	libcuinj64.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcuinj64.so.12.8
+2025-10-29T03:22:00.758589628Z 	libcuinj64.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcuinj64.so
+2025-10-29T03:22:00.758591918Z 	libcufile_rdma.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile_rdma.so.1
+2025-10-29T03:22:00.758594218Z 	libcufile_rdma.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile_rdma.so
+2025-10-29T03:22:00.758596389Z 	libcufile.so.0 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile.so.0
+2025-10-29T03:22:00.758598518Z 	libcufile.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufile.so
+2025-10-29T03:22:00.758600878Z 	libcufftw.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufftw.so.11
+2025-10-29T03:22:00.758603258Z 	libcufftw.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufftw.so
+2025-10-29T03:22:00.758605458Z 	libcufft.so.11 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufft.so.11
+2025-10-29T03:22:00.758607589Z 	libcufft.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcufft.so
+2025-10-29T03:22:00.758609738Z 	libcudart.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcudart.so.12
+2025-10-29T03:22:00.758615438Z 	libcudart.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcudart.so
+2025-10-29T03:22:00.758618549Z 	libcudadebugger.so.1 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libcudadebugger.so.1
+2025-10-29T03:22:00.758621358Z 	libcuda.so.1 (libc6,x86-64) => /usr/lib/x86_64-linux-gnu/libcuda.so.1
+2025-10-29T03:22:00.758623698Z 	libcublasLt.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublasLt.so.12
+2025-10-29T03:22:00.758625969Z 	libcublasLt.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublasLt.so
+2025-10-29T03:22:00.758628149Z 	libcublas.so.12 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublas.so.12
+2025-10-29T03:22:00.758630318Z 	libcublas.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcublas.so
+2025-10-29T03:22:00.758632898Z 	libcheckpoint.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libcheckpoint.so
+2025-10-29T03:22:00.758635149Z 	libaccinj64.so.12.8 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libaccinj64.so.12.8
+2025-10-29T03:22:00.758637278Z 	libaccinj64.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libaccinj64.so
+2025-10-29T03:22:00.758639689Z 	libOpenCL.so.1 (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libOpenCL.so.1
+2025-10-29T03:22:00.758641909Z 	libOpenCL.so (libc6,x86-64) => /usr/local/cuda/targets/x86_64-linux/lib/libOpenCL.so
+2025-10-29T03:22:00.763823713Z >>> Redis data directory bound to /runpod-volume/redis-data.
+2025-10-29T03:22:00.765039257Z >>> Detected existing Redis snapshot at /var/lib/redis-stack/dump.rdb.
+2025-10-29T03:22:00.772515690Z >>> vm.overcommit_memory set to 1 for Redis stability.
+2025-10-29T03:22:00.772616722Z >>> Starting core services...
+2025-10-29T03:22:00.777451550Z >>> Redis Stack Server started.
+2025-10-29T03:22:00.777472722Z >>> Waiting for Redis to accept connections...
+2025-10-29T03:22:00.781751964Z     - Redis not ready yet. Retrying in 2s... (1/30)
+2025-10-29T03:22:00.790210319Z Starting redis-stack-server, database path /var/lib/redis-stack
+2025-10-29T03:22:00.799780077Z 145:C 29 Oct 2025 03:22:00.799 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+2025-10-29T03:22:00.799820097Z 145:C 29 Oct 2025 03:22:00.799 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+2025-10-29T03:22:00.799825827Z 145:C 29 Oct 2025 03:22:00.799 * Redis version=7.4.6, bits=64, commit=00000000, modified=0, pid=145, just started
+2025-10-29T03:22:00.799829057Z 145:C 29 Oct 2025 03:22:00.799 * Configuration loaded
+2025-10-29T03:22:00.800271793Z 145:M 29 Oct 2025 03:22:00.800 * monotonic clock: POSIX clock_gettime
+2025-10-29T03:22:00.802258328Z 145:M 29 Oct 2025 03:22:00.802 * Running mode=standalone, port=6379.
+2025-10-29T03:22:00.802465510Z 145:M 29 Oct 2025 03:22:00.802 * Module 'RedisCompat' loaded from /opt/redis-stack/lib/rediscompat.so
+2025-10-29T03:22:00.803873118Z 145:M 29 Oct 2025 03:22:00.803 * <search> Redis version found by RedisSearch : 7.4.6 - oss
+2025-10-29T03:22:00.803885618Z 145:M 29 Oct 2025 03:22:00.803 * <search> RediSearch version 2.10.20 (Git=5c09b69)
+2025-10-29T03:22:00.803889458Z 145:M 29 Oct 2025 03:22:00.803 * <search> Low level api version 1 initialized successfully
+2025-10-29T03:22:00.803892328Z 145:M 29 Oct 2025 03:22:00.803 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  10000,
+2025-10-29T03:22:00.803945809Z 145:M 29 Oct 2025 03:22:00.803 * <search> Initialized thread pools!
+2025-10-29T03:22:00.803964369Z 145:M 29 Oct 2025 03:22:00.803 * <search> Subscribe to config changes
+2025-10-29T03:22:00.803981549Z 145:M 29 Oct 2025 03:22:00.803 * <search> Enabled role change notification
+2025-10-29T03:22:00.804070910Z 145:M 29 Oct 2025 03:22:00.803 * Module 'search' loaded from /opt/redis-stack/lib/redisearch.so
+2025-10-29T03:22:00.805221174Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> RedisTimeSeries version 11206, git_sha=cdcbe34f8e87e15ea700b737634be6bac6b6700b
+2025-10-29T03:22:00.805225845Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> Redis version found by RedisTimeSeries : 7.4.6 - oss
+2025-10-29T03:22:00.805228254Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> loaded default CHUNK_SIZE_BYTES policy: 4096
+2025-10-29T03:22:00.805232134Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> loaded server DUPLICATE_POLICY: block
+2025-10-29T03:22:00.805234585Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> loaded default IGNORE_MAX_TIME_DIFF: 0
+2025-10-29T03:22:00.805236705Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> loaded default IGNORE_MAX_VAL_DIFF: 0.000000
+2025-10-29T03:22:00.805239094Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> Setting default series ENCODING to: compressed
+2025-10-29T03:22:00.805247365Z 145:M 29 Oct 2025 03:22:00.805 * <timeseries> Detected redis oss
+2025-10-29T03:22:00.805346875Z 145:M 29 Oct 2025 03:22:00.805 * Module 'timeseries' loaded from /opt/redis-stack/lib/redistimeseries.so
+2025-10-29T03:22:00.805690770Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Created new data type 'ReJSON-RL'
+2025-10-29T03:22:00.805747971Z 145:M 29 Oct 2025 03:22:00.805 # <ReJSON> Skip register defrag callbacks as defrag callbacks is not supported on the current Redis server.
+2025-10-29T03:22:00.805754151Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> version: 20809 git sha: unknown branch: unknown
+2025-10-29T03:22:00.805756361Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Exported RedisJSON_V1 API
+2025-10-29T03:22:00.805760031Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Exported RedisJSON_V2 API
+2025-10-29T03:22:00.805762501Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Exported RedisJSON_V3 API
+2025-10-29T03:22:00.805764651Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Exported RedisJSON_V4 API
+2025-10-29T03:22:00.805766971Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Exported RedisJSON_V5 API
+2025-10-29T03:22:00.805769601Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Enabled diskless replication
+2025-10-29T03:22:00.805834302Z 145:M 29 Oct 2025 03:22:00.805 * <ReJSON> Initialized shared string cache, thread safe: false.
+2025-10-29T03:22:00.805860492Z 145:M 29 Oct 2025 03:22:00.805 * Module 'ReJSON' loaded from /opt/redis-stack/lib/rejson.so
+2025-10-29T03:22:00.805863652Z 145:M 29 Oct 2025 03:22:00.805 * <search> Acquired RedisJSON_V5 API
+2025-10-29T03:22:00.805965373Z 145:M 29 Oct 2025 03:22:00.805 * <bf> RedisBloom version 2.8.7 (Git=unknown)
+2025-10-29T03:22:00.806029774Z 145:M 29 Oct 2025 03:22:00.805 * Module 'bf' loaded from /opt/redis-stack/lib/redisbloom.so
+2025-10-29T03:22:00.806397428Z 145:M 29 Oct 2025 03:22:00.806 * <redisgears_2> Created new data type 'GearsType'
+2025-10-29T03:22:00.806509421Z 145:M 29 Oct 2025 03:22:00.806 * <redisgears_2> Detected redis oss
+2025-10-29T03:22:00.806556490Z 145:M 29 Oct 2025 03:22:00.806 # <redisgears_2> could not initialize RedisAI_InitError
+2025-10-29T03:22:00.806562450Z 145:M 29 Oct 2025 03:22:00.806 * <redisgears_2> Failed loading RedisAI API.
+2025-10-29T03:22:00.806564941Z 145:M 29 Oct 2025 03:22:00.806 * <redisgears_2> RedisGears v2.0.20, sha='9b737886bf825fe29ddc2f8da81f73cbe0b4e858', build_type='release', built_for='Linux-ubuntu22.04.x86_64', redis_version:'7.4.6', enterprise:'false'.
+2025-10-29T03:22:00.807318200Z 145:M 29 Oct 2025 03:22:00.807 * <redisgears_2> Registered backend: js.
+2025-10-29T03:22:00.807556843Z 145:M 29 Oct 2025 03:22:00.807 * Module 'redisgears_2' loaded from /opt/redis-stack/lib/redisgears.so
+2025-10-29T03:22:00.807903787Z 145:M 29 Oct 2025 03:22:00.807 * Server initialized
+2025-10-29T03:22:00.809500417Z 145:M 29 Oct 2025 03:22:00.809 * <search> Loading event starts
+2025-10-29T03:22:00.809503067Z 145:M 29 Oct 2025 03:22:00.809 * <redisgears_2> Got a loading start event, clear the entire functions data.
+2025-10-29T03:22:00.810879904Z 145:M 29 Oct 2025 03:22:00.810 * Loading RDB produced by version 7.4.6
+2025-10-29T03:22:00.810898944Z 145:M 29 Oct 2025 03:22:00.810 * RDB age 236 seconds
+2025-10-29T03:22:00.810901214Z 145:M 29 Oct 2025 03:22:00.810 * RDB memory usage when created 9.08 Mb
+2025-10-29T03:22:00.810926404Z 145:M 29 Oct 2025 03:22:00.810 # <search> creating vector index. Server memory limit: 1014091251712B, required memory: 3170696B, available memory: 1014089936824B
+2025-10-29T03:22:00.890857973Z 145:M 29 Oct 2025 03:22:00.890 * Done loading RDB, keys loaded: 428, keys expired: 0.
+2025-10-29T03:22:00.890881163Z 145:M 29 Oct 2025 03:22:00.890 * <search> Loading event ends
+2025-10-29T03:22:00.890884343Z 145:M 29 Oct 2025 03:22:00.890 * <redisgears_2> Loading finished, re-enable key space notificaitons.
+2025-10-29T03:22:00.891156816Z 145:M 29 Oct 2025 03:22:00.891 * DB loaded from disk: 0.083 seconds
+2025-10-29T03:22:00.891162996Z 145:M 29 Oct 2025 03:22:00.891 * Ready to accept connections tcp
+2025-10-29T03:22:02.791314954Z ✅ Redis is ready.
+2025-10-29T03:22:02.793630622Z >>> Starting Ollama server (logging to /tmp/ollama.log)
+2025-10-29T03:22:02.794028606Z >>> Waiting for Ollama server (http://127.0.0.1:11434)...
+2025-10-29T03:22:02.806100856Z     - Ollama server not ready yet. Retrying in 2 seconds... (1/30)
+2025-10-29T03:22:04.821024181Z ✅ Ollama server is ready.
+2025-10-29T03:22:04.821061552Z >>> Ollama initial log (last 80 lines)
+2025-10-29T03:22:04.823474612Z [ollama] Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+2025-10-29T03:22:04.823518632Z [ollama] Your new public key is:
+2025-10-29T03:22:04.823523993Z [ollama]
+2025-10-29T03:22:04.823527013Z [ollama] ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK5bBYALJBnDKXFOFxb5+41OD4gEUw53Dis8np8aA82o
+2025-10-29T03:22:04.823530662Z [ollama]
+2025-10-29T03:22:04.823536722Z [ollama] time=2025-10-29T03:22:02.821Z level=INFO source=routes.go:1511 msg="server config" env="map[CUDA_VISIBLE_DEVICES:0 GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:4096 OLLAMA_DEBUG:DEBUG OLLAMA_FLASH_ATTENTION:true OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:2 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/runpod-volume/ollama_models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+2025-10-29T03:22:04.823539613Z [ollama] time=2025-10-29T03:22:02.855Z level=INFO source=images.go:522 msg="total blobs: 21"
+2025-10-29T03:22:04.823541953Z [ollama] time=2025-10-29T03:22:02.867Z level=INFO source=images.go:529 msg="total unused blobs removed: 0"
+2025-10-29T03:22:04.823545602Z [ollama] time=2025-10-29T03:22:02.878Z level=INFO source=routes.go:1564 msg="Listening on [::]:11434 (version 0.12.6)"
+2025-10-29T03:22:04.823549562Z [ollama] time=2025-10-29T03:22:02.879Z level=DEBUG source=sched.go:123 msg="starting llm scheduler"
+2025-10-29T03:22:04.823551862Z [ollama] time=2025-10-29T03:22:02.879Z level=INFO source=runner.go:80 msg="discovering available GPUs..."
+2025-10-29T03:22:04.823554333Z [ollama] time=2025-10-29T03:22:02.879Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
+2025-10-29T03:22:04.823559742Z [ollama] time=2025-10-29T03:22:02.973Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=93.373123ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
+2025-10-29T03:22:04.823563202Z [ollama] time=2025-10-29T03:22:02.973Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
+2025-10-29T03:22:04.823582933Z [ollama] time=2025-10-29T03:22:03.184Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=211.537815ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
+2025-10-29T03:22:04.823585922Z [ollama] time=2025-10-29T03:22:03.184Z level=DEBUG source=runner.go:118 msg="filtering out unsupported or overlapping GPU library combinations" count=1
+2025-10-29T03:22:04.823589222Z [ollama] time=2025-10-29T03:22:03.184Z level=DEBUG source=runner.go:130 msg="verifying GPU is supported" library=/usr/lib/ollama/cuda_v12 description="NVIDIA A100 80GB PCIe" compute=8.0 pci_id=00:09.0
+2025-10-29T03:22:04.823591833Z [ollama] time=2025-10-29T03:22:03.185Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4]"
+2025-10-29T03:22:04.823595322Z [ollama] time=2025-10-29T03:22:03.385Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=200.185494ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4]"
+2025-10-29T03:22:04.823597562Z [ollama] time=2025-10-29T03:22:03.385Z level=DEBUG source=runner.go:45 msg="GPU bootstrap discovery took" duration=505.994582ms
+2025-10-29T03:22:04.823599842Z [ollama] time=2025-10-29T03:22:03.385Z level=INFO source=types.go:112 msg="inference compute" id=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4 library=CUDA compute=8.0 name=CUDA0 description="NVIDIA A100 80GB PCIe" libdirs=ollama,cuda_v12 driver=12.7 pci_id=00:09.0 type=discrete total="80.0 GiB" available="79.3 GiB"
+2025-10-29T03:22:04.823603082Z [ollama] [GIN] 2025/10/29 - 03:22:04 | 200 |      86.061µs |       127.0.0.1 | GET      "/"
+2025-10-29T03:22:04.823605262Z >>> Ollama compute summary from logs
+2025-10-29T03:22:04.826926384Z [ollama] time=2025-10-29T03:22:02.879Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
+2025-10-29T03:22:04.826940234Z [ollama] time=2025-10-29T03:22:02.973Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=93.373123ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v13]" extra_envs=[]
+2025-10-29T03:22:04.826945145Z [ollama] time=2025-10-29T03:22:02.973Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
+2025-10-29T03:22:04.826947735Z [ollama] time=2025-10-29T03:22:03.184Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=211.537815ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs=[]
+2025-10-29T03:22:04.826950315Z [ollama] time=2025-10-29T03:22:03.184Z level=DEBUG source=runner.go:130 msg="verifying GPU is supported" library=/usr/lib/ollama/cuda_v12 description="NVIDIA A100 80GB PCIe" compute=8.0 pci_id=00:09.0
+2025-10-29T03:22:04.826952785Z [ollama] time=2025-10-29T03:22:03.185Z level=DEBUG source=runner.go:448 msg="spawning runner with" OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4]"
+2025-10-29T03:22:04.826957315Z [ollama] time=2025-10-29T03:22:03.385Z level=DEBUG source=runner.go:451 msg="bootstrap discovery took" duration=200.185494ms OLLAMA_LIBRARY_PATH="[/usr/lib/ollama /usr/lib/ollama/cuda_v12]" extra_envs="[GGML_CUDA_INIT=1 CUDA_VISIBLE_DEVICES=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4]"
+2025-10-29T03:22:04.826959935Z [ollama] time=2025-10-29T03:22:03.385Z level=INFO source=types.go:112 msg="inference compute" id=GPU-414bafe9-1a5a-9d68-00d5-88221fbb2fd4 library=CUDA compute=8.0 name=CUDA0 description="NVIDIA A100 80GB PCIe" libdirs=ollama,cuda_v12 driver=12.7 pci_id=00:09.0 type=discrete total="80.0 GiB" available="79.3 GiB"
+2025-10-29T03:22:04.827201808Z >>> GPU state after Ollama start
+2025-10-29T03:22:04.853247680Z NVIDIA A100 80GB PCIe, 81920, 1, 0
+2025-10-29T03:22:04.859332285Z >>> Checking for required models in persistent storage...
+2025-10-29T03:22:04.926752937Z     - Model 'nomic-embed-text' already exists.
+2025-10-29T03:22:04.982145402Z     - Model 'llama3.1:8b' already exists.
+2025-10-29T03:22:05.038579269Z     - Model 'mixtral' already exists.
+2025-10-29T03:22:05.092727108Z     - Model 'llama3.1:70b' already exists.
+2025-10-29T03:22:05.092768209Z ✅ All required models are available.
+2025-10-29T03:22:05.092771779Z >>> Installed Ollama models (CLI)
+2025-10-29T03:22:05.141472871Z NAME                       ID              SIZE      MODIFIED
+2025-10-29T03:22:05.141505851Z gpt-oss:120b               a951a23b46a1    65 GB     8 days ago
+2025-10-29T03:22:05.141510781Z llama3.1:70b               711a9e8463af    42 GB     8 days ago
+2025-10-29T03:22:05.141513251Z mixtral:latest             a3b6bef0f836    26 GB     8 days ago
+2025-10-29T03:22:05.141515321Z llama3.1:8b                46e0c10c039e    4.9 GB    8 days ago
+2025-10-29T03:22:05.141518112Z nomic-embed-text:latest    0a109f422b47    274 MB    8 days ago
+2025-10-29T03:22:05.146134308Z >>> Installed Ollama models (REST)
+2025-10-29T03:22:05.177506386Z {"models":[{"name":"gpt-oss:120b","model":"gpt-oss:120b","modified_at":"2025-10-21T02:09:04Z","size":65369818941,"digest":"a951a23b46a1f6093dafee2ea481d634b4e31ac720a8a16f3f91e04f5a40ecd9","details":{"parent_model":"","format":"gguf","family":"gptoss","families":["gptoss"],"parameter_size":"116.8B","quantization_level":"MXFP4"}},{"name":"llama3.1:70b","model":"llama3.1:70b","modified_at":"2025-10-21T00:07:51Z","size":42520412561,"digest":"711a9e8463afd8edd580debd3b5c521521ebe55ba95bb80d576f4149969e07c6","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"70.6B","quantization_level":"Q4_K_M"}},{"name":"mixtral:latest","model":"mixtral:latest","modified_at":"2025-10-20T23:56:18Z","size":26443602516,"digest":"a3b6bef0f836ff29ddb576a80eeb1b7def43ec9b809466f62e96adb871fe8498","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"46.7B","quantization_level":"Q4_0"}},{"name":"llama3.1:8b","model":"llama3.1:8b","modified_at":"2025-10-20T23:47:45Z","size":4920753328,"digest":"46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"8.0B","quantization_level":"Q4_K_M"}},{"name":"nomic-embed-text:latest","model":"nomic-embed-text:latest","modified_at":"2025-10-20T23:46:52Z","size":274302450,"digest":"0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f","details":{"parent_model":"","format":"gguf","family":"nomic-bert","families":["nomic-bert"],"parameter_size":"137M","quantization_level":"F16"}}]}>>> Found existing /app/labnote-ai-backend/.env; keeping current configuration.
+2025-10-29T03:22:05.177540796Z Starting LabNote AI Backend server on port 8000 (foreground)...
+2025-10-29T03:22:09.536837208Z main.py             :48   2025-10-29 03:22:09,536 Initializing RAG pipeline within main.py for serverless environment...
+2025-10-29T03:22:09.536899539Z rag_pipeline.py     :450  2025-10-29 03:22:09,536 Lazy-initializing RAG pipeline on first access.
+2025-10-29T03:22:09.541824069Z rag_pipeline.py     :70   2025-10-29 03:22:09,541 Loaded Redis schema cache from /runpod-volume/redis-data/labnote_index_schema.json.
+2025-10-29T03:22:09.587290241Z rag_pipeline.py     :312  2025-10-29 03:22:09,586 Existing Redis index 'labnote_index' found. Connecting...
+2025-10-29T03:22:09.595645184Z main.py             :51   2025-10-29 03:22:09,595 RAG pipeline initialized successfully from main.py.
+2025-10-29T03:22:09.595665294Z main.py             :62   2025-10-29 03:22:09,595 SHUTDOWN-DIAGNOSIS: Custom signal handlers for SIGTERM and SIGINT have been registered.
+2025-10-29T03:22:09.595669785Z main.py             :228  2025-10-29 03:22:09,595 Pre-computing static data (ALL_UOS, ALL_WORKFLOWS)...
+2025-10-29T03:22:09.595886997Z main.py             :231  2025-10-29 03:22:09,595 Loaded 64 workflows and 83 unit operations.
+2025-10-29T03:22:09.708905564Z --- Starting Serverless Worker |  Version 1.7.13 ---
+2025-10-29T03:22:09.930787455Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
+2025-10-29T03:22:09.930822295Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
+2025-10-29T03:22:09.930870416Z {"requestId": "83c19140-7168-49ab-81d4-d5940b9198fa-e2", "message": "Started.", "level": "INFO"}
+2025-10-29T03:22:09.930921907Z [RunPod Handler] Incoming payload: {'body': {'file_content': "---\ntitle: WD010 General Design of Experiment - new\nexperimenter: ''\ncreated_date: '2025-10-29'\nend_date: 2025-10-29 10:09\nlast_updated_date: '2025-10-29'\n---\n\n## \\[WD010 General Design of Experiment\\] new\n\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose) This workflow provides a general-purpose approach for experimental design using the Design of Experiment methodology. It allows for the independent design of variables from various domains to optimize experimental conditions.\n\n## 🗂️ Related Unit Operations\n\n> Enter the list of related unit operations between the markers below. When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n------------------------------------------------------------------------\n\n### \\[USW080 Protein Structure Generation new\\]\n\n-   **Description**: Generating protein structures using AI models. This software facilitates the design of new proteins and enzymes with specific catalytic or binding functions.\n\n#### Meta\n\n-   Experimenter:\n-   Start_date: '2025-10-29 10:09'\n-   End_date: ''\n\n#### Input\n\n-   (samples from the previous step)\n\n#### Reagent\n\n-   (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n\n-   (e.g. filter, well-plate, etc.)\n\n#### Equipment\n\n-   (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n\n-   (method used in this step)\n\n#### Output\n\n-   (samples to the next step)\n\n#### Results & Discussions\n\n-   (Any results and discussions. Link file path if needed)\n\n------------------------------------------------------------------------\n\n### \\[UHW060 Colony Picking new\\]\n\n-   **Description**: The process of isolating individual bacterial or yeast colonies from an agar plate and transferring them to a liquid culture or multi-well plate for downstream applications. This unit operation is essential for microbial strain selection and screening.\n\n#### Meta\n\n-   Experimenter:\n-   Start_date: '2025-10-29 11:27'\n-   End_date: ''\n\n#### Input\n\n-   (samples from the previous step)\n\n#### Reagent\n\n1. LB broth with antibiotics (final concentration: 100 Î¼g/mL ampicillin)\n2. Pipette tips for colony picker\n3. Sterile water for rinsing the picked colonies\n\n#### Consumables\n\n-   (e.g. filter, well-plate, etc.)\n\n#### Equipment\n\n1. Colony picker\n2. Pipette\n3. 96-well plate\n4. Pipette tip\n5. LB media plate with colonies (LP001)\n6. Fresh LB broth with antibiotics\n\n#### Method\n\n1. Prepare a 96-well plate with fresh LB broth and antibiotics (200 Î¼L for each well).\n2. Use the colony picker to select and transfer individual bacterial colonies from the input LB media plate with colonies to the prepared 96-well plate.\n3. Ensure that the picked (spotted) tips of the colony picker soak into the 96-well plate containing LB media, allowing for proper colony isolation and growth in the liquid medium.\n\n#### Output\n\n-   (samples to the next step)\n\n#### Results & Discussions\n\n-   (Any results and discussions. Link file path if needed)", 'file_path': 'c:\\Users\\user\\Desktop\\templete\\labnote\\002_new\\001_WD010_General_Design_of_Experiment--new.md', 'query': 'WD010 General Design of Experiment - new', 'section': 'Input', 'uo_id': 'UHW060'}, 'method': 'POST', 'path': '/populate_note'}
+2025-10-29T03:22:09.943852386Z main.py             :1437 2025-10-29 03:22:09,943 Phase 2: Populating section 'Input' for UO 'UHW060'
+2025-10-29T03:22:09.948382142Z agents.py           :280  2025-10-29 03:22:09,948 Supervisor-led agent graph compiled successfully.
+2025-10-29T03:22:09.951459511Z agents.py           :57   2025-10-29 03:22:09,951 Generating drafts for UO 'UHW060' - Section 'Input'
+2025-10-29T03:22:09.951667533Z rag_pipeline.py     :391  2025-10-29 03:22:09,951 Retrieving top 3 documents for query: 'Find the specific procedure or list of items for the 'Input' section of the unit operation 'UHW060: Colony Picking new' related to the experiment: WD010 General Design of Experiment - new'
+2025-10-29T03:22:11.283230866Z _client.py          :1025 2025-10-29 03:22:11,282 HTTP Request: POST http://127.0.0.1:11434/api/embed "HTTP/1.1 200 OK"
+2025-10-29T03:22:11.286728418Z agents.py           :113  2025-10-29 03:22:11,286 Draft prompt prepared | uo=UHW060 | section=Input | chars=6164
+2025-10-29T03:22:11.286898981Z llm_utils.py        :66   2025-10-29 03:22:11,286 Calling LLM: llama3.1:8b for a specific task.
+2025-10-29T03:22:11.310616313Z llm_utils.py        :66   2025-10-29 03:22:11,310 Calling LLM: mixtral for a specific task.
+2025-10-29T03:22:11.329641048Z llm_utils.py        :66   2025-10-29 03:22:11,329 Calling LLM: llama3.1:70b for a specific task.
+2025-10-29T03:22:22.186088225Z _client.py          :1740 2025-10-29 03:22:22,185 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-29T03:23:04.552710346Z _client.py          :1740 2025-10-29 03:23:04,552 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-29T03:24:11.966612987Z _client.py          :1740 2025-10-29 03:24:11,966 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-29T03:24:11.967398377Z agents.py           :145  2025-10-29 03:24:11,967 Draft generated by llama3.1:8b:
+2025-10-29T03:24:11.967435607Z ### Input
+2025-10-29T03:24:11.967439897Z 1. Samples from the previous step (LP001)
+2025-10-29T03:24:11.967443707Z 2. Fresh LB broth with antibiotics
+2025-10-29T03:24:11.967446387Z 3. Pipette tip
+2025-10-29T03:24:11.967449147Z 4. 96-well plate
+2025-10-29T03:24:11.967451878Z agents.py           :145  2025-10-29 03:24:11,967 Draft generated by mixtral:
+2025-10-29T03:24:11.967455138Z ### Input
+2025-10-29T03:24:11.967460198Z 1. Media plate with colonies from the previous step (type not specified)
+2025-10-29T03:24:11.967462778Z agents.py           :145  2025-10-29 03:24:11,967 Draft generated by llama3.1:70b:
+2025-10-29T03:24:11.967465278Z ### Input
+2025-10-29T03:24:11.967467978Z 1. LB media plate with colonies (LP001) from the previous step
+2025-10-29T03:24:11.968960256Z agents.py           :155  2025-10-29 03:24:11,968 Supervisor Agent: Evaluating drafts for UO 'UHW060' - Section 'Input'
+2025-10-29T03:24:11.968968636Z agents.py           :188  2025-10-29 03:24:11,968 Calling Scoring LLM (llama3.1:70b) to evaluate drafts.
+2025-10-29T03:24:11.968973666Z llm_utils.py        :66   2025-10-29 03:24:11,968 Calling LLM: llama3.1:70b for a specific task.
+2025-10-29T03:24:19.531032029Z _client.py          :1740 2025-10-29 03:24:19,530 HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-10-29T03:24:19.531954090Z agents.py           :211  2025-10-29 03:24:19,531 Supervisor: Parsed evaluations: [{'draft_index': 0, 'model': 'llama3.1:8b', 'score': 6.5, 'justification': 'Lacks specificity in reagent details and SOP relevance.'}, {'draft_index': 1, 'model': 'mixtral', 'score': 4.0, 'justification': 'Too vague, missing crucial details like specific media types and equipment.'}, {'draft_index': 2, 'model': 'llama3.1:70b', 'score': 8.0, 'justification': 'Better detail than Draft 0, but still lacks quantitative specifics on reagents and equipment.'}]
+2025-10-29T03:24:19.531966640Z agents.py           :225  2025-10-29 03:24:19,531 Supervisor: Quality threshold passed with score 8.0. Finalizing options.
+2025-10-29T03:24:19.533474069Z agents.py           :256  2025-10-29 03:24:19,533 Routing: No feedback. Proceeding to end.
+2025-10-29T03:24:19.538542022Z _client.py          :1025 2025-10-29 03:24:19,538 HTTP Request: POST http://testserver/populate_note "HTTP/1.1 200 OK"
+2025-10-29T03:24:19.786905431Z {"requestId": "83c19140-7168-49ab-81d4-d5940b9198fa-e2", "message": "Finished.", "level": "INFO"}
+2025-10-29T03:24:40.986709305Z {"requestId": null, "message": "Jobs in queue: 1", "level": "INFO"}
+2025-10-29T03:24:40.986771794Z {"requestId": null, "message": "Jobs in progress: 1", "level": "INFO"}
+2025-10-29T03:24:40.986776295Z {"requestId": "fc153a6d-e15f-4d51-be69-2ae41145faf5-e2", "message": "Started.", "level": "INFO"}
+2025-10-29T03:24:40.986787655Z [RunPod Handler] Incoming payload: {'body': {'chosen_edited': '### Input\n1. Samples from the previous step (LP001)\n2. Fresh LB broth with antibiotics\n3. Pipette tip\n4. 96-well plate', 'chosen_original': '--- llama3.1:8bì\x9d\x98 ì\xa0\x9cì\x95\x88 (í\x92\x88ì§\x88 ì\xa0\x90ì\x88\x98: 6.5) ---\n\n### Input\n1. Samples from the previous step (LP001)\n2. Fresh LB broth with antibiotics\n3. Pipette tip\n4. 96-well plate', 'file_content': "---\ntitle: WD010 General Design of Experiment - new\nexperimenter: ''\ncreated_date: '2025-10-29'\nend_date: 2025-10-29 10:09\nlast_updated_date: '2025-10-29'\n---\n\n## \\[WD010 General Design of Experiment\\] new\n\n> Briefly describe this workflow (the description below is a template, modify it to fit your purpose) This workflow provides a general-purpose approach for experimental design using the Design of Experiment methodology. It allows for the independent design of variables from various domains to optimize experimental conditions.\n\n## 🗂️ Related Unit Operations\n\n> Enter the list of related unit operations between the markers below. When you run the `F1`, `New HW/SW Unit Operation` command, the list will be automatically added between the markers.\n\n------------------------------------------------------------------------\n\n### \\[USW080 Protein Structure Generation new\\]\n\n-   **Description**: Generating protein structures using AI models. This software facilitates the design of new proteins and enzymes with specific catalytic or binding functions.\n\n#### Meta\n\n-   Experimenter:\n-   Start_date: '2025-10-29 10:09'\n-   End_date: ''\n\n#### Input\n\n-   (samples from the previous step)\n\n#### Reagent\n\n-   (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n\n-   (e.g. filter, well-plate, etc.)\n\n#### Equipment\n\n-   (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n\n-   (method used in this step)\n\n#### Output\n\n-   (samples to the next step)\n\n#### Results & Discussions\n\n-   (Any results and discussions. Link file path if needed)\n\n------------------------------------------------------------------------\n\n### \\[UHW060 Colony Picking new\\]\n\n-   **Description**: The process of isolating individual bacterial or yeast colonies from an agar plate and transferring them to a liquid culture or multi-well plate for downstream applications. This unit operation is essential for microbial strain selection and screening.\n\n#### Meta\n\n-   Experimenter:\n-   Start_date: '2025-10-29 11:27'\n-   End_date: ''\n\n#### Input\n\n-   (samples from the previous step)\n\n#### Reagent\n\n1. LB broth with antibiotics (final concentration: 100 Î¼g/mL ampicillin)\n2. Pipette tips for colony picker\n3. Sterile water for rinsing the picked colonies\n\n#### Consumables\n\n-   (e.g. filter, well-plate, etc.)\n\n#### Equipment\n\n1. Colony picker\n2. Pipette\n3. 96-well plate\n4. Pipette tip\n5. LB media plate with colonies (LP001)\n6. Fresh LB broth with antibiotics\n\n#### Method\n\n1. Prepare a 96-well plate with fresh LB broth and antibiotics (200 Î¼L for each well).\n2. Use the colony picker to select and transfer individual bacterial colonies from the input LB media plate with colonies to the prepared 96-well plate.\n3. Ensure that the picked (spotted) tips of the colony picker soak into the 96-well plate containing LB media, allowing for proper colony isolation and growth in the liquid medium.\n\n#### Output\n\n-   (samples to the next step)\n\n#### Results & Discussions\n\n-   (Any results and discussions. Link file path if needed)", 'file_path': 'c:\\Users\\user\\Desktop\\templete\\labnote\\002_new\\001_WD010_General_Design_of_Experiment--new.md', 'query': 'WD010 General Design of Experiment - new', 'rejected': ['--- llama3.1:8b의 제안 (품질 점수: 6.5) ---\n\n### Input\n1. Samples from the previous step (LP001)\n2. Fresh LB broth with antibiotics\n3. Pipette tip\n4. 96-well plate', '--- llama3.1:70b의 제안 (품질 점수: 8.0) ---\n\n### Input\n1. LB media plate with colonies (LP001) from the previous step'], 'section': 'Input', 'supervisor_evaluations': [], 'uo_id': 'UHW060'}, 'method': 'POST', 'path': '/record_preference'}
+2025-10-29T03:24:40.989665261Z main.py             :1499 2025-10-29 03:24:40,989 Recording DPO data for UO 'UHW060' via dedicated endpoint.
+2025-10-29T03:24:41.005709089Z main.py             :1191 2025-10-29 03:24:41,005 Feedback metrics table initialized in '/runpod-volume/evaluation_results.db'
+2025-10-29T03:24:41.027699461Z main.py             :1353 2025-10-29 03:24:41,027 Saved edit_distance_ratio (0.82) to DB for UHW060/Input
+2025-10-29T03:24:41.065692901Z main.py             :1246 2025-10-29 03:24:41,065 Fetching latest changes from DPO repository...
+2025-10-29T03:24:41.415236429Z main.py             :1268 2025-10-29 03:24:41,414 Checking out local branch 'main' from origin/main...
+2025-10-29T03:24:41.430804621Z main.py             :1285 2025-10-29 03:24:41,430 DPO data saved to /app/labnote-ai-backend/labnote-dpo-trainer-data/data/20251029_032441_bb1fc700-a880-4e06-9985-bbf506c4bda2.json
+2025-10-29T03:24:41.458544304Z main.py             :1290 2025-10-29 03:24:41,458 Pushing DPO data to remote repository...
+2025-10-29T03:24:42.016736971Z main.py             :1296 2025-10-29 03:24:42,016 Successfully pushed DPO data to Git.
+2025-10-29T03:24:42.020794061Z _client.py          :1025 2025-10-29 03:24:42,020 HTTP Request: POST http://testserver/record_preference "HTTP/1.1 204 No Content"
+2025-10-29T03:24:42.250810773Z {"requestId": "fc153a6d-e15f-4d51-be69-2ae41145faf5-e2", "message": "Finished.", "level": "INFO"}

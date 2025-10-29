@@ -95,9 +95,14 @@
     "configuration": {
       "title": "LabNote AI Assistant",
       "properties": {
+        "labnote.ai.iconPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional path to a custom image (PNG/SVG) to use as the @labnote chat avatar. Absolute or workspace-relative path."
+        },
         "labnote.ai.backendUrl": {
           "type": "string",
-          "default": "http://123.37.6.117:31371",
+          "default": "https://api.runpod.ai/v2/xxw6nj0e0zt3w3",
           "description": "The base URL of the LabNote AI backend server (e.g., http://127.0.0.1:8000)."
         },
         "labnote.ai.vesslApiToken": {
@@ -133,6 +138,7 @@
       }
     }
   },
+  "icon": "images/icon.png",
   "configurationDefaults": {
     "[markdown]": {
       "markdown.copyFiles.destination": {

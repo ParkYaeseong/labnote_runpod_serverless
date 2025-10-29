@@ -1000,13 +1000,29 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
                     chatSessions.delete(sessionId);
                     return {};
                 }
+
+                // Parse arguments: `/populate <UO_ID> <Section>`
+                const args = request.prompt.slice(command.length).trim();
+                if (args) {
+                    const parts = args.split(/\s+/, 2);
+                    if (parts.length === 2) {
+                        const [uoIdRaw, sectionRaw] = parts;
+                        const uoId = uoIdRaw.toUpperCase();
+                        const section = sectionRaw.trim();
+                        await populateSectionFromWebview(context, outputChannel, editor.document.uri, uoId, section);
+                        chatSessions.delete(sessionId);
+                        return {};
+                    }
+                }
+
+                // No full args provided → show picker UI (legacy flow)
                 const sections = parseAllSections(editor.document);
                 if (sections.length === 0) {
                     stream.markdown("⚠️ No Unit Operation sections that can be populated were found in the current file."); // This is already in English, no change needed.
                     chatSessions.delete(sessionId);
                     return {};
                 }
-                
+
                 chatSessions.set(sessionId, {
                     flow: 'populate_section',
                     state: 'awaiting_section_choice',
@@ -1040,7 +1056,21 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
                 return {};
             }
             if (session.flow === 'populate_section') {
+                const userTyped = (request.prompt || '').trim();
+                // If user types a normal message (not a slash command), exit waiting state and do general chat
+                if (userTyped && !userTyped.startsWith('/')) {
+                    const chatResult = await callChatApi(userTyped, outputChannel, stream, session.context);
+                    if (chatResult) {
+                        session.context = chatResult.context;
+                    }
+                    // Exit the waiting state regardless of result
+                    chatSessions.delete(sessionId);
+                    return {};
+                }
+
+                // Still waiting for a section selection; render a cancel button for convenience
                 stream.markdown("Please select a section by clicking one of the buttons above."); // This is already in English, no change needed.
+                stream.button({ title: 'Cancel', command: 'labnote.ai.cancel.chat' });
                 return {};
             }
         }
@@ -1051,7 +1081,8 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
             stream.button({ title: '🔬 Create New Lab Note', command: 'labnote.ai.generate.chat' }); // This is already in English, no change needed.
             stream.button({ title: '✍️ Populate Section (AI)', command: 'labnote.ai.populateSection.chat' }); // This is already in English, no change needed.
             stream.button({ title: '➕ Add Workflow', command: 'labnote.manager.newWorkflow' }); // This is already in English, no change needed.
-            stream.button({ title: '➕ Add Unit Operation', command: 'labnote.manager.newHwUnitOperation' }); // This is already in English, no change needed.
+            stream.button({ title: '➕ Add Unit Operation (HW)', command: 'labnote.manager.newHwUnitOperation' }); // This is already in English, no change needed.
+            stream.button({ title: '➕ Add Unit Operation (SW)', command: 'labnote.manager.newSwUnitOperation' }); // This is already in English, no change needed.
             stream.button({ title: '🔄 Reorder Workflows', command: 'labnote.manager.reorderWorkflows' }); // This is already in English, no change needed.
             stream.button({ title: '🗂️ Reorder Experiment Folders', command: 'labnote.manager.reorderLabnotes' }); // This is already in English, no change needed.
             stream.button({ title: '✅ Complete Unit Operation', command: 'labnote.manager.completeUnitOperation.chat' }); // This is already in English, no change needed.
@@ -1073,14 +1104,38 @@ function registerChatParticipant(context: vscode.ExtensionContext, outputChannel
     };
 
     const participant = vscode.chat.createChatParticipant('labnote.participant', handler);
-    participant.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'images', 'icon.png'));
+    // Allow custom avatar via settings; fallback to bundled icon.
+    try {
+        const cfg = vscode.workspace.getConfiguration('labnote.ai');
+        const customIcon = (cfg.get<string>('iconPath') || '').trim();
+        if (customIcon) {
+            // Resolve workspace-relative paths if needed
+            const isAbs = path.isAbsolute(customIcon);
+            if (isAbs) {
+                participant.iconPath = vscode.Uri.file(customIcon);
+            } else {
+                const ws = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (ws) {
+                    participant.iconPath = vscode.Uri.file(path.join(ws, customIcon));
+                } else {
+                    participant.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'images', 'icon.png'));
+                }
+            }
+        } else {
+            participant.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'images', 'icon.png'));
+        }
+    } catch {
+        participant.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'images', 'icon.png'));
+    }
     
     participant.followupProvider = {
         provideFollowups(result: vscode.ChatResult, context: vscode.ChatContext, token: vscode.CancellationToken) {
             if (chatSessions.has("default_session")) {
-                return [{ prompt: '/cancel', label: 'Cancel current task', command: 'labnote.ai.cancel.chat' }]; // This is already in English, no change needed.
+                // Only inject the slash command text to avoid echoing internal command ids in the prompt
+                return [{ prompt: '/cancel', label: 'Cancel current task' }]; // This is already in English, no change needed.
             }
-            return [{ prompt: '', label: 'View other tasks', command: 'labnote.ai.showMainMenu.chat' }]; // This is already in English, no change needed.
+            // Keep this simple to avoid duplicating internal command id text into the prompt
+            return [{ prompt: '', label: 'View other tasks' }]; // This is already in English, no change needed.
         }
     };
     
@@ -1755,10 +1810,27 @@ async function callChatApi(userInput: string, outputChannel: vscode.OutputChanne
         // 실제 애플리케이션에서는 전체 대화 기록을 보내야 할 수 있습니다.
         const messages = [{ role: 'user', content: userInput }];
 
+        // Attach current workflow file content/path if available to help router/populate flows
+        let fileContent: string | undefined = undefined;
+        let filePath: string | undefined = undefined;
+        let experimentGoal: string | undefined = undefined;
+        try {
+            const editor = vscode.window.activeTextEditor;
+            if (editor && logic.isValidWorkflowPath(editor.document.uri.fsPath)) {
+                fileContent = editor.document.getText();
+                filePath = editor.document.uri.fsPath;
+                const fm = logic.parseWorkflowFrontMatter(fileContent);
+                experimentGoal = fm?.title || undefined;
+            }
+        } catch {}
+
         const chatData = await callBackendJson<ChatResponse>(baseUrl, '/api/chat', { // path를 '/api/chat'으로 명시
             body: {
                 messages,
-                context
+                context,
+                file_content: fileContent,
+                file_path: filePath,
+                experiment_goal: experimentGoal
             },
             outputChannel
         });

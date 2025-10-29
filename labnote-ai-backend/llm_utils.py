@@ -68,13 +68,25 @@ async def call_llm_api(system_prompt: str, user_prompt: str, model_name: str = N
         ollama_base_url = os.getenv("OLLAMA_BASE_URL")
         client = ollama.AsyncClient(host=ollama_base_url)
 
+        # Allow token length tuning via environment variable.
+        # POPULATE_MAX_TOKENS takes precedence; fallback to LLM_NUM_PREDICT; then None (Ollama default)
+        max_tokens_env = os.getenv("POPULATE_MAX_TOKENS") or os.getenv("LLM_NUM_PREDICT")
+        try:
+            num_predict = int(max_tokens_env) if max_tokens_env else None
+        except ValueError:
+            num_predict = None
+
+        options = {'temperature': 0.1, 'top_p': 0.8}
+        if num_predict and num_predict > 0:
+            options['num_predict'] = num_predict
+
         response = await client.chat(
             model=model_name,
             messages=[
                 {'role': 'system', 'content': system_prompt},
                 {'role': 'user', 'content': user_prompt}
             ],
-            options={'temperature': 0.1, 'top_p': 0.8}
+            options=options
         )
         content = response['message']['content'].strip()
         

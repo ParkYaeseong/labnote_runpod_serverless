@@ -26,6 +26,8 @@
   * **대화형 AI 어시스턴트 (`@labnote`)**: VS Code 채팅창에서 `@labnote`를 호출하여 AI와 대화하며 연구노트 생성, 섹션 채우기 등 대부분의 기능을 직관적으로 실행할 수 있습니다.
   * **AI 기반 연구노트 자동 생성**: 실험의 핵심 내용을 AI와의 대화를 통해 전달하면, AI가 최적의 워크플로우와 Unit Operation을 조합하여 연구노트의 전체 구조와 파일(Scaffold)을 자동으로 생성합니다.
   * **AI 섹션 내용 채우기**: 연구노트의 각 섹션(Method, Reagent, Results 등)을 AI를 통해 자동으로 채울 수 있습니다. 여러 초안 중 원하는 것을 선택하고 수정하여 AI를 학습시킬 수 있습니다.
+  * **빠른 채우기(슬래시 직행)**: `@labnote /populate <UO_ID> <Section>` 입력 시 선택 UI 없이 즉시 채웁니다. (예: `/populate USW110 Method`)
+  * **자동 DPO 저장(선택)**: 워크플로 파일 저장 시 변경된 섹션만 자동으로 DPO로 전송할 수 있습니다.
   * **Visual Editor**: 마크다운 문법에 익숙하지 않은 사용자를 위해 직관적인 WYSIWYG 편집 환경을 제공합니다. (Quarto CLI 설치 필요)
   * **워크플로우 상태 관리**: 명령어 또는 채팅 UI를 통해 워크플로우와 개별 유닛 오퍼레이션의 완료 상태를 쉽게 업데이트하고, 실험 종료일을 자동으로 기록합니다.
   * **체계적인 템플릿 관리**: `Workflows`, `Hardware/Software Unit Operations` 등 표준화된 템플릿을 쉽게 추가하고 관리할 수 있습니다.
@@ -135,6 +137,10 @@ sequenceDiagram
     Extension->>AI_Backend: `/record_preference` API 호출 (사용자 선택/수정 내용 전송)
 ```
 
+참고
+- 슬래시 없이 자연어로 “USW110 Method 섹션 채워줘”처럼 물어보면, 확장이 현재 열린 워크플로 파일의 내용/경로를 함께 보내고, 백엔드 라우터가 문맥을 이용해 자동으로 populate로 분기합니다.
+- 슬래시 명령으로 바로 실행하려면 `@labnote /populate <UO_ID> <Section>`을 사용하세요. 인자가 없으면(UI 모드) 현재 문서에서 감지된 UO/섹션 버튼을 표시합니다.
+
 -----
 
 ## 📥 설치
@@ -223,8 +229,7 @@ models:
   - name: "LabNote Backend" 
     provider: openai
     model: "labnote-backend"
-    # RunPod Serverless Endpoint (동기 실행)
-    apiBase: "https://api.runpod.ai/v2/[YOUR_SERVERLESS_ENDPOINT_ID]/runsync"
+    apiBase: "https://[YOUR_SERVERLESS_ENDPOINT_ID]/v1"
     apiKey: "YOUR_RUNPOD_API_KEY"
     title: "LabNote Backend"
 
@@ -270,6 +275,9 @@ slashCommands:
 | --- | --- | --- |
 | `labnote.ai.backendUrl` | 백엔드 URL 설정. 기본적으로 `runpod://<ID>` 또는 `https://<ID>.runpod.run` 형태는 RunPod runsync 모드로 동작합니다. HTTP 엔드포인트(uvicorn)에 직접 붙이고 싶다면 URL 끝에 `#http` 또는 `?mode=http`를 붙여 강제로 HTTP 모드로 사용하세요. 예: `https://<ENDPOINT_ID>.runpod.run#http` | `runpod://t8z31me8m865sl` |
 | `labnote.ai.vesslApiToken`| RunPod API Key를 저장합니다. | `rp_sk_********` |
+| `labnote.ai.iconPath` | @labnote 채팅 아바타로 사용할 사용자 정의 이미지 경로(절대/작업공간 상대). 비우면 기본 아이콘 사용 | `""` |
+| `labnote.ai.autoDpoOnEdit` | 워크플로 파일 저장 시 변경된 섹션을 자동으로 DPO로 전송 | `true` |
+| `labnote.ai.autoDpoMinChars` | 자동 DPO 전송 최소 변경 글자 수 | `200` |
 | `labnote.manager.workflowsPath` | 사용자 정의 워크플로우 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.hwUnitOperationsPath`| 사용자 정의 하드웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |
 | `labnote.manager.swUnitOperationsPath`| 사용자 정의 소프트웨어 Unit Operation 마크다운 파일의 경로입니다. | `""` |
@@ -289,3 +297,27 @@ slashCommands:
 
   * **사용자 생성 콘텐츠**: 사용자가 이 확장 프로그램을 통해 작성하고 수정한 모든 연구노트의 저작권은 **사용자**에게 있습니다.
   * **AI 생성 콘텐츠**: AI가 생성한 초안은 사용자의 작업을 돕기 위한 보조 자료이며, 최종 콘텐츠에 대한 책임과 권리는 이를 채택하고 수정한 사용자에게 귀속됩니다.
+
+-----
+
+## 🧪 자동 DPO(선택 기능)
+
+- 트리거: 파일 저장(onDidSaveTextDocument) 시에만 실행됩니다. 자동 저장을 켜면 저장될 때마다 평가합니다.
+- 전송 대상: 이전 저장본 대비 변경된 섹션만 `/record_chat_preference`로 전송합니다.
+- 길이 임계치: `labnote.ai.autoDpoMinChars` 이상인 변경만 전송(기본 200자).
+
+-----
+
+## 🖼️ 아이콘 커스텀(선택)
+
+- 설정 `labnote.ai.iconPath`에 이미지 경로(PNG 권장)를 지정하면 @labnote 채팅 아바타가 해당 이미지로 표시됩니다.
+- 확장 전체 아이콘은 `vscode-labnote-extension/images/icon.png` 파일 교체로 변경할 수 있습니다.
+
+-----
+
+## 📝 생성되는 마크다운 포맷 메모
+
+- 유닛 오퍼레이션 헤더: `### [USW080 Protein Structure Generation] new`
+  - 괄호 안: `UO ID + 표준 이름`
+  - 괄호 밖: 사용자가 입력한 주제(예: `new`, `vector`)
+  - Visual Editor가 `\[`/`\]`를 삽입하는 경우도 백엔드가 인식합니다.

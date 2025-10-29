@@ -13,3 +13,6 @@ __pycache__/
 .DS_Store
 *.swp
 *~
+
+# tokens and secrets
+github_token.txt

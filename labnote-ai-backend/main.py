@@ -531,8 +531,9 @@ def _extract_file_path_from_messages(messages: List[Dict[str, Any]]) -> Optional
 def _extract_uo_block_from_text(file_content: str, uo_id: str) -> Optional[str]:
     if not file_content or not uo_id:
         return None
+    # Allow optional backslashes before brackets (e.g. "\[UHW010 ...\]")
     pattern = re.compile(
-        r"(###\s*\[" + re.escape(uo_id) + r"[^\]]*\][\s\S]*?)(?=\n###\s*\[U[A-Z]{2,3}\d{3}|\Z)",
+        r"(###\s*\\?\[" + re.escape(uo_id) + r"[^\]]*\\?\][\s\S]*?)(?=\n###\s*\\?\[U[A-Z]{2,3}\d{3}|\Z)",
         re.DOTALL
     )
     match = pattern.search(file_content)
@@ -681,7 +682,7 @@ def _summarize_uo_sections(file_content: Optional[str], max_uos: int = 5, max_se
 
     summary_parts: List[str] = []
     pattern = re.compile(
-        r"###\s*\[(?P<uo>[A-Z]{2,3}\d{3})(?P<label>[^\]]*)\](?P<body>[\s\S]*?)(?=\n###\s*\[U[A-Z]{2,3}\d{3}|\Z)",
+        r"###\s*\\?\[(?P<uo>[A-Z]{2,3}\d{3})(?P<label>[^\]]*)\\?\](?P<body>[\s\S]*?)(?=\n###\s*\\?\[U[A-Z]{2,3}\d{3}|\Z)",
         re.MULTILINE
     )
 
@@ -706,13 +707,22 @@ def _summarize_uo_sections(file_content: Optional[str], max_uos: int = 5, max_se
 
 async def _call_router_model(system_prompt: str, user_prompt: str, model_name: str) -> str:
     client = ollama.AsyncClient(timeout=45)
+    # Allow router token cap via env; fall back to general cap if set.
+    max_tokens_env = os.getenv("ROUTER_MAX_TOKENS") or os.getenv("POPULATE_MAX_TOKENS") or os.getenv("LLM_NUM_PREDICT")
+    try:
+        num_predict = int(max_tokens_env) if max_tokens_env else None
+    except ValueError:
+        num_predict = None
+    options = {"temperature": 0.1, "top_p": 0.8}
+    if num_predict and num_predict > 0:
+        options["num_predict"] = num_predict
     response = await client.chat(
         model=model_name,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        options={"temperature": 0.1, "top_p": 0.8}
+        options=options
     )
     return (response.get("message", {}).get("content") or "").strip()
 
@@ -935,7 +945,8 @@ def _replace_section_content(file_content: str, uo_id: str, section: str, new_co
     if not file_content:
         return None, None
 
-    uo_pattern = r"(###\s*\[" + re.escape(uo_id) + r"[^\]]*\][\s\S]*?)" \
+    # Allow optional backslashes before brackets when locating the UO block
+    uo_pattern = r"(###\s*\\?\[" + re.escape(uo_id) + r"[^\]]*\\?\][\s\S]*?)" \
                  r"(?=\n###\s*\[U[A-Z]{2,3}\d{3}|\Z)"
     uo_match = re.search(uo_pattern, file_content)
     if not uo_match:
@@ -1297,7 +1308,7 @@ async def _save_dpo_data(
         raise HTTPException(status_code=500, detail="DPO Git repository is not configured on the server.")
 
     uo_name = ALL_UOS_DATA.get(uo_id, "Unknown Operation")
-    uo_block_pattern = re.compile(r"(### \[" + re.escape(uo_id) + r".*?\]\n.*?)(?=### \[U[A-Z]{2,3}\d{3}|\Z)", re.DOTALL)
+    uo_block_pattern = re.compile(r"(###\\s*\\?\[" + re.escape(uo_id) + r".*?\\?\]\n.*?)(?=###\\s*\\?\[U[A-Z]{2,3}\d{3}|\Z)", re.DOTALL)
     uo_match = uo_block_pattern.search(file_content)
     uo_block_content = uo_match.group(1) if uo_match else ""
     input_context = _extract_section_content(uo_block_content, "Input")
@@ -1499,7 +1510,22 @@ async def record_preference(request: PreferenceRequest):
         )
     except git.exc.GitCommandError as e:
         logger.error(f"Git command failed: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to push DPO data to Git repository: {e.stderr}")
+        # Fallback: persist payload locally so UI doesn't fail, and operator can sync later
+        try:
+            fallback_dir = Path(os.getenv("DPO_FALLBACK_DIR", "/runpod-volume/dpo_fallback"))
+            fallback_dir.mkdir(parents=True, exist_ok=True)
+            fallback_file = fallback_dir / f"record_preference_{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4()}.json"
+            with open(fallback_file, 'w', encoding='utf-8') as fh:
+                json.dump({
+                    "type": "record_preference",
+                    "payload": request.model_dump(),
+                    "error": str(e),
+                }, fh, ensure_ascii=False, indent=2)
+            logger.warning("Saved DPO data to local fallback: %s", fallback_file)
+            return
+        except Exception as fe:
+            logger.error("Failed to write DPO fallback file: %s", fe, exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Failed to push DPO data to Git repository: {e.stderr}")
     except Exception as e:
         logger.error(f"Error recording preference to Git: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="An internal error occurred while recording preference.")
@@ -1572,7 +1598,22 @@ async def record_chat_preference(request: ChatPreferenceRequest):
         )
     except git.exc.GitCommandError as e:
         logger.error(f"Git command failed: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to push DPO data to Git repository: {e.stderr}")
+        # Fallback: persist payload locally so UI doesn't fail
+        try:
+            fallback_dir = Path(os.getenv("DPO_FALLBACK_DIR", "/runpod-volume/dpo_fallback"))
+            fallback_dir.mkdir(parents=True, exist_ok=True)
+            fallback_file = fallback_dir / f"record_chat_preference_{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4()}.json"
+            with open(fallback_file, 'w', encoding='utf-8') as fh:
+                json.dump({
+                    "type": "record_chat_preference",
+                    "payload": request.model_dump(),
+                    "error": str(e),
+                }, fh, ensure_ascii=False, indent=2)
+            logger.warning("Saved chat preference to local fallback: %s", fallback_file)
+            return
+        except Exception as fe:
+            logger.error("Failed to write chat preference fallback: %s", fe, exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Failed to push DPO data to Git repository: {e.stderr}")
     except Exception as e:
         logger.error(f"Error recording chat preference: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="An internal error occurred while recording chat preference.")
@@ -1694,10 +1735,23 @@ async def chat(request: ChatRequest):
                         router_used = True
                     else:
                         logger.info("Router suggested populate but details were insufficient; requesting clarification.")
-                        generated_text = (
-                            "어느 유닛 오퍼레이션과 섹션을 채워야 할지 정확히 알려주세요. "
-                            "예: `/populate USW070 Method`"
-                        )
+                        # Provide a context-aware hint listing the available UOs and sections if we have file content
+                        available_summary = _summarize_uo_sections(context.get("file_content")) if context.get("file_content") else "(열려있는 워크플로 파일이 없습니다)"
+                        hint_lines = [
+                            "어느 유닛 오퍼레이션과 섹션을 채울지 알려주세요.",
+                            "예: `/populate USW070 Method`",
+                        ]
+                        if available_summary and available_summary != "No unit operations detected.":
+                            hint_lines.extend([
+                                "",
+                                f"현재 문서의 유닛 오퍼레이션: {available_summary}",
+                            ])
+                        else:
+                            hint_lines.extend([
+                                "",
+                                "현재 문서에서 유닛 오퍼레이션을 찾지 못했습니다. 해당 워크플로 파일을 열어두고 다시 시도해주세요.",
+                            ])
+                        generated_text = "\n".join(hint_lines)
                         router_used = True
 
             if not router_used:

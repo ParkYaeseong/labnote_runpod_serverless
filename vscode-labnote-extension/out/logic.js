@@ -86,6 +86,17 @@ function getSeoulDateTimeString(date) {
 function getFormattedDate(date) {
     return getSeoulDateString(date);
 }
+// Sanitize a string to be used as a single path segment on Windows/macOS/Linux.
+// - Replace path separators and reserved chars with '_'
+// - Collapse consecutive underscores
+// - Trim leading/trailing underscores
+function sanitizePathSegment(input) {
+    const replaced = (input || '')
+        .trim()
+        .replace(/[\\\/:*?"<>|]/g, '_')
+        .replace(/\s+/g, '_');
+    return replaced.replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+}
 /**
  * 디렉토리 내의 'XXX_' 형태의 파일/폴더 번호를 분석하여
  * 사용 가능한 다음 번호를 찾아 반환합니다. (예: 001, 003이 있으면 002 반환)
@@ -131,7 +142,7 @@ function createNewLabnote(provider, workspaceRoot, experimentTitle) {
     const existingDirs = entries.filter(e => e.isDirectory() && /^\d{3}_/.test(e.name)).map(e => e.name); // ⭐️ [수정] 타입 일관성을 위해 명시적으로 map(e => e.name) 추가
     const nextId = getNextAvailableIndex(existingDirs);
     const formattedId = nextId.toString().padStart(3, '0');
-    const safeTitle = experimentTitle.replace(/\s+/g, '_');
+    const safeTitle = sanitizePathSegment(experimentTitle);
     const newDirName = `${formattedId}_${safeTitle}`;
     const newDirPath = path.join(labnoteRoot, newDirName);
     provider.mkdir(path.join(newDirPath, 'images'));
@@ -155,8 +166,8 @@ function createNewLabnote(provider, workspaceRoot, experimentTitle) {
 }
 function createNewWorkflow(provider, readmePath, selectedWorkflow, description) {
     const today = new Date();
-    const safeName = selectedWorkflow.name.replace(/\s+/g, '_');
-    const safeDescription = description.replace(/\s+/g, '_');
+    const safeName = sanitizePathSegment(selectedWorkflow.name);
+    const safeDescription = sanitizePathSegment(description);
     const currentDir = path.dirname(readmePath);
     const entries = provider.readDir(currentDir);
     const existingWfFiles = entries
@@ -273,7 +284,12 @@ function createUnitOperationContent(selectedUo, userDescription, date, experimen
     const descriptionPart = userDescription ? ` ${userDescription}` : '';
     const uoDescriptionLine = selectedUo.description ? `\n\n- **Description**: ${selectedUo.description}` : '';
     const finalExperimenter = experimenter !== undefined ? experimenter : getDefaultExperimenter();
-    return `\n\n---\n\n### [${selectedUo.id} ${selectedUo.name}${descriptionPart}]${uoDescriptionLine}\n\n#### Meta\n- Experimenter: ${finalExperimenter}\n- Start_date: '${formattedDateTime}'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n- (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n- (e.g. filter, well-plate, etc.)\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n`;
+    // Generate header with ID and UO name INSIDE brackets, and only the user subject OUTSIDE brackets.
+    // e.g. ### [USW080 Protein Structure Generation] new
+    const subject = descriptionPart.trim();
+    const subjectSuffix = subject ? `${subject}` : '';
+    const headerLine = `### [${selectedUo.id} ${selectedUo.name}]${subjectSuffix ? ` ${subjectSuffix}` : ''}`;
+    return `\n\n---\n\n${headerLine}${uoDescriptionLine}\n\n#### Meta\n- Experimenter: ${finalExperimenter}\n- Start_date: '${formattedDateTime}'\n- End_date: ''\n\n#### Input\n- (samples from the previous step)\n\n#### Reagent\n- (e.g. enzyme, buffer, etc.)\n\n#### Consumables\n- (e.g. filter, well-plate, etc.)\n\n#### Equipment\n- (e.g. centrifuge, spectrophotometer, etc.)\n\n#### Method\n- (method used in this step)\n\n#### Output\n- (samples to the next step)\n\n#### Results & Discussions\n- (Any results and discussions. Link file path if needed)\n\n`;
 }
 function parseUnitOperations(content) {
     const unitOperations = [];

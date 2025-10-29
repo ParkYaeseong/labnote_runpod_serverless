@@ -64,11 +64,11 @@ echo "🚀 이미지 빌드 및 푸시를 시작합니다..."
 
 # --- 1. 베이스 이미지 빌드 및 푸시 ---
 echo "--- Step 1/2: 베이스 이미지(${FULL_BASE_IMAGE_NAME}) 빌드 및 푸시 ---"
-DOCKER_BUILDKIT=1 docker buildx build \
-    -f Dockerfile.base \
-    -t "${FULL_BASE_IMAGE_NAME}" \
-    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
-    --push .
+#DOCKER_BUILDKIT=1 docker buildx build \
+#    -f Dockerfile.base \
+#    -t "${FULL_BASE_IMAGE_NAME}" \
+#    -t "${DOCKER_USERNAME}/${BASE_IMAGE_NAME}:latest" \
+#    --push .
 
 # --- 2. 최종 애플리케이션 이미지 빌드 및 푸시 ---
 echo "--- Step 2/2: 최종 앱 이미지(${FULL_APP_IMAGE_NAME}) 빌드 및 푸시 ---"
